@@ -1630,24 +1630,44 @@
                 console.warn('Impossible de sauvegarder la prédiction', e);
             }
 
-            // 2) Ici, plus tard, tu pourras envoyer vers ton backend / Google Analytics, par ex :
-            /*
-            fetch('https://ton-api.com/predictions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-        
-            if (window.gtag) {
-                gtag('event', 'prediction_submitted', {
-                    mode: data.mode,
-                    champion: data.champion,
-                    finalists: data.finalists.join(','),
-                    semi_finalists: data.semiFinalists.join(','),
-                    quarter_finalists: data.quarterFinalists.join(',')
-                });
-            }
-            */
+            function savePrediction(mode) {
+    const data = buildPredictionData(mode);
+    if (!data) return;
+
+    // 1) Sauvegarde locale
+    try {
+        const raw = localStorage.getItem('predictions') || '[]';
+        const arr = JSON.parse(raw);
+        arr.push(data);
+        localStorage.setItem('predictions', JSON.stringify(arr));
+    } catch (e) {
+        console.warn('Impossible de sauvegarder la prédiction', e);
+    }
+
+    // 2) Envoi vers Google Analytics (JSON découpé)
+    if (window.gtag) {
+        const json = JSON.stringify(data);
+
+        // Limites GA4 : 100 caractères max par valeur, 25 params max par event
+        const MAX_VALUE_LEN = 90;   // un peu en dessous pour être safe
+        const MAX_PARTS = 20;       // 1 (mode) + 1 (pred_parts) + 20 = 22 params
+
+        const params = {
+            mode: data.mode
+        };
+
+        let partCount = 0;
+        for (let i = 0; i < MAX_PARTS && i * MAX_VALUE_LEN < json.length; i++) {
+            const part = json.slice(i * MAX_VALUE_LEN, (i + 1) * MAX_VALUE_LEN);
+            params['pred_part_' + i] = part;
+            partCount++;
+        }
+
+        params.pred_parts = partCount;
+
+        gtag('event', 'prediction_submitted', params);
+    }
+}
         }
 
         function showChampionPopup(winnerName, mode) {
@@ -3739,6 +3759,7 @@
     </script>
 </body>
 </html>
+
 
 
 
