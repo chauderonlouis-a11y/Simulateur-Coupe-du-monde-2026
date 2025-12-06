@@ -2291,13 +2291,29 @@ function showChampionPopup(winnerName, mode) {
             team2NameSpan.className = 'name';
 
             let placeholder1, placeholder2;
-            if (round === 'R32') {
-                placeholder1 = 'Qualifié ' + (config.seed1 + 1);
-                placeholder2 = 'Qualifié ' + (config.seed2 + 1);
-            } else {
-                placeholder1 = 'Vainqueur ' + config.from1;
-                placeholder2 = 'Vainqueur ' + config.from2;
-            }
+
+if (round === 'R32') {
+    // Côté "tête de série" (1er ou 2e de groupe)
+    if (config.slot1) {
+        placeholder1 = config.slot1;   // ex : "1E", "2A"
+    } else {
+        placeholder1 = '?';
+    }
+
+    // Côté adversaire : soit un autre 1er/2e, soit un 3e issu d’une liste
+    if (config.slot2) {
+        placeholder2 = config.slot2;   // ex : "2C"
+    } else if (config.thirdGroups) {
+        placeholder2 = '3ᵉ ' + config.thirdGroups.join('/');
+        // ex : "3ᵉ C/D/F/G/H"
+    } else {
+        placeholder2 = '?';
+    }
+} else {
+    placeholder1 = 'Vainqueur ' + config.from1;
+    placeholder2 = 'Vainqueur ' + config.from2;
+}
+
 
             team1NameSpan.dataset.placeholder = placeholder1;
             team2NameSpan.dataset.placeholder = placeholder2;
@@ -2348,85 +2364,103 @@ function showChampionPopup(winnerName, mode) {
         }
 
         function createKnockout() {
-            const bracketEl = document.getElementById('bracket');
-            if (!bracketEl) return;
+    const bracketEl = document.getElementById('bracket');
+    if (!bracketEl) return;
 
-            initBracketConfig();
-            bracketEl.innerHTML = '';
+    initBracketConfig();
+    bracketEl.innerHTML = '';
 
-            const titles = {
-                R32: 'Seizièmes',
-                R16: 'Huitièmes',
-                QF: 'Quarts',
-                SF: 'Demi-finales',
-                F: 'Finale'
-            };
+    const titles = {
+        R32: 'Seizièmes',
+        R16: 'Huitièmes',
+        QF: 'Quarts',
+        SF: 'Demi-finales',
+        F: 'Finale'
+    };
 
-            const colR32Left = createRoundColumn(titles.R32);
-            BRACKET_CONFIG.R32.slice(0, 8).forEach(cfg => {
-                colR32Left.appendChild(createKoMatchElement('R32', cfg));
-            });
-            bracketEl.appendChild(colR32Left);
-            bracketColumns.R32_left = colR32Left;
+    // --- ORDRE D’AFFICHAGE DES SEIZIÈMES (R32) ---
+    // On regroupe les matches par paires qui se retrouvent en huitième,
+    // pour que, par ex., 73 & 75 soient bien l’un sous l’autre (→ match 90).
+    const R32_LEFT_DISPLAY  = ['R32-2', 'R32-5', 'R32-1', 'R32-3', 'R32-4', 'R32-6', 'R32-7', 'R32-8'];
+    const R32_RIGHT_DISPLAY = ['R32-11', 'R32-12', 'R32-9', 'R32-10', 'R32-14', 'R32-16', 'R32-13', 'R32-15'];
 
-            const colR16Left = createRoundColumn(titles.R16);
-            BRACKET_CONFIG.R16.slice(0, 4).forEach(cfg => {
-                colR16Left.appendChild(createKoMatchElement('R16', cfg));
-            });
-            bracketEl.appendChild(colR16Left);
-            bracketColumns.R16_left = colR16Left;
+    // Colonne R32 gauche
+    const colR32Left = createRoundColumn(titles.R32);
+    R32_LEFT_DISPLAY.forEach(id => {
+        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+        if (cfg) colR32Left.appendChild(createKoMatchElement('R32', cfg));
+    });
+    bracketEl.appendChild(colR32Left);
+    bracketColumns.R32_left = colR32Left;
 
-            const colQFLeft = createRoundColumn(titles.QF);
-            BRACKET_CONFIG.QF.slice(0, 2).forEach(cfg => {
-                colQFLeft.appendChild(createKoMatchElement('QF', cfg));
-            });
-            bracketEl.appendChild(colQFLeft);
-            bracketColumns.QF_left = colQFLeft;
+    // Colonne R16 gauche
+    const colR16Left = createRoundColumn(titles.R16);
+    BRACKET_CONFIG.R16.slice(0, 4).forEach(cfg => {
+        colR16Left.appendChild(createKoMatchElement('R16', cfg));
+    });
+    bracketEl.appendChild(colR16Left);
+    bracketColumns.R16_left = colR16Left;
 
-            const colSFLeft = createRoundColumn(titles.SF);
-            BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
-                colSFLeft.appendChild(createKoMatchElement('SF', cfg));
-            });
-            bracketEl.appendChild(colSFLeft);
-            bracketColumns.SF_left = colSFLeft;
+    // Colonne QF gauche
+    const colQFLeft = createRoundColumn(titles.QF);
+    BRACKET_CONFIG.QF.slice(0, 2).forEach(cfg => {
+        colQFLeft.appendChild(createKoMatchElement('QF', cfg));
+    });
+    bracketEl.appendChild(colQFLeft);
+    bracketColumns.QF_left = colQFLeft;
 
-            const colFinal = createRoundColumn(titles.F);
-            BRACKET_CONFIG.F.forEach(cfg => {
-                colFinal.appendChild(createKoMatchElement('F', cfg));
-            });
-            bracketEl.appendChild(colFinal);
-            bracketColumns.F_center = colFinal;
+    // Colonne SF gauche
+    const colSFLeft = createRoundColumn(titles.SF);
+    BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
+        colSFLeft.appendChild(createKoMatchElement('SF', cfg));
+    });
+    bracketEl.appendChild(colSFLeft);
+    bracketColumns.SF_left = colSFLeft;
 
-            const colSFRight = createRoundColumn(titles.SF);
-            BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
-                colSFRight.appendChild(createKoMatchElement('SF', cfg));
-            });
-            bracketEl.appendChild(colSFRight);
-            bracketColumns.SF_right = colSFRight;
+    // Finale (centre)
+    const colFinal = createRoundColumn(titles.F);
+    BRACKET_CONFIG.F.forEach(cfg => {
+        colFinal.appendChild(createKoMatchElement('F', cfg));
+    });
+    bracketEl.appendChild(colFinal);
+    bracketColumns.F_center = colFinal;
 
-            const colQFRight = createRoundColumn(titles.QF);
-            BRACKET_CONFIG.QF.slice(2).forEach(cfg => {
-                colQFRight.appendChild(createKoMatchElement('QF', cfg));
-            });
-            bracketEl.appendChild(colQFRight);
-            bracketColumns.QF_right = colQFRight;
+    // Colonne SF droite
+    const colSFRight = createRoundColumn(titles.SF);
+    BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
+        colSFRight.appendChild(createKoMatchElement('SF', cfg));
+    });
+    bracketEl.appendChild(colSFRight);
+    bracketColumns.SF_right = colSFRight;
 
-            const colR16Right = createRoundColumn(titles.R16);
-            BRACKET_CONFIG.R16.slice(4).forEach(cfg => {
-                colR16Right.appendChild(createKoMatchElement('R16', cfg));
-            });
-            bracketEl.appendChild(colR16Right);
-            bracketColumns.R16_right = colR16Right;
+    // Colonne QF droite
+    const colQFRight = createRoundColumn(titles.QF);
+    BRACKET_CONFIG.QF.slice(2).forEach(cfg => {
+        colQFRight.appendChild(createKoMatchElement('QF', cfg));
+    });
+    bracketEl.appendChild(colQFRight);
+    bracketColumns.QF_right = colQFRight;
 
-            const colR32Right = createRoundColumn(titles.R32);
-            BRACKET_CONFIG.R32.slice(8).forEach(cfg => {
-                colR32Right.appendChild(createKoMatchElement('R32', cfg));
-            });
-            bracketEl.appendChild(colR32Right);
-            bracketColumns.R32_right = colR32Right;
+    // Colonne R16 droite
+    const colR16Right = createRoundColumn(titles.R16);
+    BRACKET_CONFIG.R16.slice(4).forEach(cfg => {
+        colR16Right.appendChild(createKoMatchElement('R16', cfg));
+    });
+    bracketEl.appendChild(colR16Right);
+    bracketColumns.R16_right = colR16Right;
 
-            bracketInitialized = true;
-        }
+    // Colonne R32 droite
+    const colR32Right = createRoundColumn(titles.R32);
+    R32_RIGHT_DISPLAY.forEach(id => {
+        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+        if (cfg) colR32Right.appendChild(createKoMatchElement('R32', cfg));
+    });
+    bracketEl.appendChild(colR32Right);
+    bracketColumns.R32_right = colR32Right;
+
+    bracketInitialized = true;
+}
+
 
         function alignMatchesBetween(roundHigher, roundLower, cfgList, colHigher) {
             if (!colHigher) return;
@@ -3418,85 +3452,91 @@ function computeThirdAssignments(slot) {
         }
 
         function createKnockoutExpert() {
-            const bracketEl = document.getElementById('bracket-expert');
-            if (!bracketEl) return;
+    const bracketEl = document.getElementById('bracket-expert');
+    if (!bracketEl) return;
 
-            initBracketConfig();
-            bracketEl.innerHTML = '';
+    initBracketConfig();
+    bracketEl.innerHTML = '';
 
-            const titles = {
-                R32: 'Seizièmes',
-                R16: 'Huitièmes',
-                QF: 'Quarts',
-                SF: 'Demi-finales',
-                F: 'Finale'
-            };
+    const titles = {
+        R32: 'Seizièmes',
+        R16: 'Huitièmes',
+        QF: 'Quarts',
+        SF: 'Demi-finales',
+        F: 'Finale'
+    };
 
-            const colR32Left = createRoundColumn(titles.R32);
-            BRACKET_CONFIG.R32.slice(0, 8).forEach(cfg => {
-                colR32Left.appendChild(createKoMatchElementExpert('R32', cfg));
-            });
-            bracketEl.appendChild(colR32Left);
-            bracketColumnsExpert.R32_left = colR32Left;
+    const R32_LEFT_DISPLAY  = ['R32-2', 'R32-5', 'R32-1', 'R32-3', 'R32-4', 'R32-6', 'R32-7', 'R32-8'];
+    const R32_RIGHT_DISPLAY = ['R32-11', 'R32-12', 'R32-9', 'R32-10', 'R32-14', 'R32-16', 'R32-13', 'R32-15'];
 
-            const colR16Left = createRoundColumn(titles.R16);
-            BRACKET_CONFIG.R16.slice(0, 4).forEach(cfg => {
-                colR16Left.appendChild(createKoMatchElementExpert('R16', cfg));
-            });
-            bracketEl.appendChild(colR16Left);
-            bracketColumnsExpert.R16_left = colR16Left;
+    const colR32Left = createRoundColumn(titles.R32);
+    R32_LEFT_DISPLAY.forEach(id => {
+        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+        if (cfg) colR32Left.appendChild(createKoMatchElementExpert('R32', cfg));
+    });
+    bracketEl.appendChild(colR32Left);
+    bracketColumnsExpert.R32_left = colR32Left;
 
-            const colQFLeft = createRoundColumn(titles.QF);
-            BRACKET_CONFIG.QF.slice(0, 2).forEach(cfg => {
-                colQFLeft.appendChild(createKoMatchElementExpert('QF', cfg));
-            });
-            bracketEl.appendChild(colQFLeft);
-            bracketColumnsExpert.QF_left = colQFLeft;
+    const colR16Left = createRoundColumn(titles.R16);
+    BRACKET_CONFIG.R16.slice(0, 4).forEach(cfg => {
+        colR16Left.appendChild(createKoMatchElementExpert('R16', cfg));
+    });
+    bracketEl.appendChild(colR16Left);
+    bracketColumnsExpert.R16_left = colR16Left;
 
-            const colSFLeft = createRoundColumn(titles.SF);
-            BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
-                colSFLeft.appendChild(createKoMatchElementExpert('SF', cfg));
-            });
-            bracketEl.appendChild(colSFLeft);
-            bracketColumnsExpert.SF_left = colSFLeft;
+    const colQFLeft = createRoundColumn(titles.QF);
+    BRACKET_CONFIG.QF.slice(0, 2).forEach(cfg => {
+        colQFLeft.appendChild(createKoMatchElementExpert('QF', cfg));
+    });
+    bracketEl.appendChild(colQFLeft);
+    bracketColumnsExpert.QF_left = colQFLeft;
 
-            const colFinal = createRoundColumn(titles.F);
-            BRACKET_CONFIG.F.forEach(cfg => {
-                colFinal.appendChild(createKoMatchElementExpert('F', cfg));
-            });
-            bracketEl.appendChild(colFinal);
-            bracketColumnsExpert.F_center = colFinal;
+    const colSFLeft = createRoundColumn(titles.SF);
+    BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
+        colSFLeft.appendChild(createKoMatchElementExpert('SF', cfg));
+    });
+    bracketEl.appendChild(colSFLeft);
+    bracketColumnsExpert.SF_left = colSFLeft;
 
-            const colSFRight = createRoundColumn(titles.SF);
-            BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
-                colSFRight.appendChild(createKoMatchElementExpert('SF', cfg));
-            });
-            bracketEl.appendChild(colSFRight);
-            bracketColumnsExpert.SF_right = colSFRight;
+    const colFinal = createRoundColumn(titles.F);
+    BRACKET_CONFIG.F.forEach(cfg => {
+        colFinal.appendChild(createKoMatchElementExpert('F', cfg));
+    });
+    bracketEl.appendChild(colFinal);
+    bracketColumnsExpert.F_center = colFinal;
 
-            const colQFRight = createRoundColumn(titles.QF);
-            BRACKET_CONFIG.QF.slice(2).forEach(cfg => {
-                colQFRight.appendChild(createKoMatchElementExpert('QF', cfg));
-            });
-            bracketEl.appendChild(colQFRight);
-            bracketColumnsExpert.QF_right = colQFRight;
+    const colSFRight = createRoundColumn(titles.SF);
+    BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
+        colSFRight.appendChild(createKoMatchElementExpert('SF', cfg));
+    });
+    bracketEl.appendChild(colSFRight);
+    bracketColumnsExpert.SF_right = colSFRight;
 
-            const colR16Right = createRoundColumn(titles.R16);
-            BRACKET_CONFIG.R16.slice(4).forEach(cfg => {
-                colR16Right.appendChild(createKoMatchElementExpert('R16', cfg));
-            });
-            bracketEl.appendChild(colR16Right);
-            bracketColumnsExpert.R16_right = colR16Right;
+    const colQFRight = createRoundColumn(titles.QF);
+    BRACKET_CONFIG.QF.slice(2).forEach(cfg => {
+        colQFRight.appendChild(createKoMatchElementExpert('QF', cfg));
+    });
+    bracketEl.appendChild(colQFRight);
+    bracketColumnsExpert.QF_right = colQFRight;
 
-            const colR32Right = createRoundColumn(titles.R32);
-            BRACKET_CONFIG.R32.slice(8).forEach(cfg => {
-                colR32Right.appendChild(createKoMatchElementExpert('R32', cfg));
-            });
-            bracketEl.appendChild(colR32Right);
-            bracketColumnsExpert.R32_right = colR32Right;
+    const colR16Right = createRoundColumn(titles.R16);
+    BRACKET_CONFIG.R16.slice(4).forEach(cfg => {
+        colR16Right.appendChild(createKoMatchElementExpert('R16', cfg));
+    });
+    bracketEl.appendChild(colR16Right);
+    bracketColumnsExpert.R16_right = colR16Right;
 
-            bracketInitializedExpert = true;
-        }
+    const colR32Right = createRoundColumn(titles.R32);
+    R32_RIGHT_DISPLAY.forEach(id => {
+        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+        if (cfg) colR32Right.appendChild(createKoMatchElementExpert('R32', cfg));
+    });
+    bracketEl.appendChild(colR32Right);
+    bracketColumnsExpert.R32_right = colR32Right;
+
+    bracketInitializedExpert = true;
+}
+
 
         function alignMatchesBetweenExpert(roundHigher, roundLower, cfgList, colHigher) {
             if (!colHigher) return;
@@ -4040,6 +4080,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
