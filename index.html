@@ -1616,6 +1616,7 @@
         }
 
         // Sauvegarde locale + envoi vers Google Analytics
+        // Sauvegarde locale + envoi vers Google Analytics
 function savePrediction(mode) {
     const data = buildPredictionData(mode);
     if (!data) return;
@@ -1635,12 +1636,12 @@ function savePrediction(mode) {
         const json = JSON.stringify(data);
 
         // Limites GA4 : 100 caractères max / valeur, 25 params max / event
-        const MAX_VALUE_LEN = 90;   // un peu en dessous pour être safe
-        const MAX_PARTS = 20;       // 1 (mode) + 1 (pred_parts) + 20 = 22 params
+        const MAX_VALUE_LEN = 90;
+        const MAX_PARTS = 20;
 
         const params = {
             mode: data.mode,
-            debug_mode: true // pour forcer l’apparition dans DebugView
+            debug_mode: true
         };
 
         let partCount = 0;
@@ -1656,31 +1657,38 @@ function savePrediction(mode) {
         gtag('event', 'prediction_submitted', params);
     } else {
         console.warn('gtag non disponible au moment de savePrediction');
-    } 
+    }
+} // <-- ***fermer la fonction ici***
 
-        function showChampionPopup(winnerName, mode) {
-            if (!winnerName || winnerName === '?') return;
 
-            const backdrop = document.getElementById('winner-modal-backdrop');
-            const content = document.getElementById('winner-modal-content');
-            const summaryEl = document.getElementById('winner-modal-summary');
-            if (!backdrop || !content) return;
+// Popup du champion
+function showChampionPopup(winnerName, mode) {
+    if (!winnerName || winnerName === '?') return;
 
-            // Drapeau + nom du vainqueur
-            content.innerHTML = '';
-            appendFlagAndName(content, winnerName);
+    const backdrop = document.getElementById('winner-modal-backdrop');
+    const content = document.getElementById('winner-modal-content');
+    const summaryEl = document.getElementById('winner-modal-summary');
+    if (!backdrop || !content) return;
 
-            // Message simple et lisible
-            if (summaryEl) {
-                summaryEl.textContent = "Merci d'avoir utilisé le simulateur ! N'hésite pas à partager ton prono avec tes amis ⚽";
-            }
+    // Drapeau + nom du vainqueur
+    content.innerHTML = '';
+    appendFlagAndName(content, winnerName);
 
-            backdrop.style.display = 'flex';
-            backdrop.classList.add('show');
+    // Optionnel : résumé réel de ton prono (finale / demies / quarts)
+    if (summaryEl) {
+        const summary = buildPredictionSummary(mode);
+        summaryEl.textContent = summary
+            ? summary + " • Merci d'avoir utilisé le simulateur ! ⚽"
+            : "Merci d'avoir utilisé le simulateur ! N'hésite pas à partager ton prono avec tes amis ⚽";
+    }
 
-            // On continue à enregistrer la prédiction (avec les 16ᵉ et 8ᵉ maintenant)
-            savePrediction(mode);
-        }
+    backdrop.style.display = 'flex';
+    backdrop.classList.add('show');
+
+    // Sauvegarde (localStorage + GA)
+    savePrediction(mode);
+}
+
 
 
         function closeWinnerModal() {
@@ -3747,6 +3755,7 @@ function savePrediction(mode) {
     </script>
 </body>
 </html>
+
 
 
 
