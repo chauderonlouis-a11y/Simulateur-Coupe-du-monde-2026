@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HB4MT8KEDH"></script>
 <script>
@@ -10,6 +12,7 @@
 
   gtag('config', 'G-HB4MT8KEDH');
 </script>
+    
     <meta name="description"
       content="Simulateur Coupe du Monde 2026 : fais tes pronos, classements et ton tableau final." />
     <meta charset="UTF-8">
@@ -1110,6 +1113,11 @@
     </main>
 
     <script>
+
+        const SUPABASE_URL = 'https://vlsdgkzvszrtwvbhdzmr.supabase.co';       // ton URL Supabase
+        const SUPABASE_ANON_KEY = 'sb_publishable_polHQa6zV1T3l8sSfGrnsQ_0zIfNIAu'; // ta anon key
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         const GROUP_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
         // Groupes officiels Coupe du monde 2026 (tirage du 5 décembre 2025)
@@ -1621,28 +1629,43 @@ function savePrediction(mode) {
     const data = buildPredictionData(mode);
     if (!data) return;
 
-    // 1) Sauvegarde locale
+    // 1) Sauvegarde locale (comme tu fais déjà)
     try {
         const raw = localStorage.getItem('predictions') || '[]';
         const arr = JSON.parse(raw);
         arr.push(data);
         localStorage.setItem('predictions', JSON.stringify(arr));
     } catch (e) {
-        console.warn('Impossible de sauvegarder la prédiction', e);
+        console.warn('Impossible de sauvegarder la prédiction en localStorage', e);
     }
 
-    // 2) Envoi vers Google Analytics (JSON découpé)
+    // 2) Envoi vers Supabase (base de données en ligne)
+    if (typeof supabaseClient !== 'undefined') {
+        supabaseClient
+            .from('predictions')
+            .insert({
+                mode: data.mode,
+                champion: data.champion,
+                finalists: data.finalists,
+                semi_finalists: data.semiFinalists,
+                quarter_finalists: data.quarterFinalists,
+                round_of_16: data.roundOf16,
+                round_of_32: data.roundOf32,
+                raw: data        // on garde l’objet complet en JSON
+            })
+            .then(({ error }) => {
+                if (error) {
+                    console.warn('Erreur Supabase insert', error);
+                }
+            });
+    }
+
+    // 3) Event Google Analytics (si tu veux garder le debug)
     if (window.gtag) {
         const json = JSON.stringify(data);
-
-        // Limites GA4 : 100 caractères max / valeur, 25 params max / event
         const MAX_VALUE_LEN = 90;
         const MAX_PARTS = 20;
-
-        const params = {
-            mode: data.mode,
-            debug_mode: true
-        };
+        const params = { mode: data.mode, debug_mode: true };
 
         let partCount = 0;
         for (let i = 0; i < MAX_PARTS && i * MAX_VALUE_LEN < json.length; i++) {
@@ -1650,17 +1673,13 @@ function savePrediction(mode) {
             params['pred_part_' + i] = part;
             partCount++;
         }
-
         params.pred_parts = partCount;
 
-        console.log('Envoi GA4 prediction_submitted', params);
         gtag('event', 'prediction_submitted', params);
     } else {
         console.warn('gtag non disponible au moment de savePrediction');
     }
-} // <-- ***fermer la fonction ici***
-
-
+}
 // Popup du champion
 function showChampionPopup(winnerName, mode) {
     if (!winnerName || winnerName === '?') return;
@@ -3755,6 +3774,7 @@ function showChampionPopup(winnerName, mode) {
     </script>
 </body>
 </html>
+
 
 
 
