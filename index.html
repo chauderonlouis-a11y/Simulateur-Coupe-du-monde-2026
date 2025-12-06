@@ -1788,18 +1788,68 @@ function showChampionPopup(winnerName, mode) {
 
         const MATCH_TIMES = ['14:00', '18:00', '21:00'];
 
-        function getMatchInfoText(matchId) {
-            const parts = matchId.split('-');
-            const round = parts[0];
-            const n = parseInt(parts[1] || '1', 10);
-            const roundLabel = MATCH_ROUND_LABELS[round] || round;
-            const dateText = MATCH_ROUND_DATES[round] || 'Été 2026';
-            const time = MATCH_TIMES[(n - 1) % MATCH_TIMES.length];
-            const stadiumArray = MATCH_STADIUMS[round] || MATCH_STADIUMS.R32;
-            const stadium = stadiumArray[(n - 1) % stadiumArray.length];
+        const OFFICIAL_MATCH_INFO = {
+  // Seizièmes (R32)
+  'R32-1':  { number: 73, round: 'R32', date: '28 juin 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
+  'R32-2':  { number: 74, round: 'R32', date: '29 juin 2026', stadium: 'Gillette Stadium', city: 'Boston' },
+  'R32-3':  { number: 75, round: 'R32', date: '29 juin 2026', stadium: 'Stade BBVA', city: 'Monterrey' },
+  'R32-4':  { number: 76, round: 'R32', date: '29 juin 2026', stadium: 'NRG Stadium', city: 'Houston' },
+  'R32-5':  { number: 77, round: 'R32', date: '30 juin 2026', stadium: 'MetLife Stadium', city: 'New York' },
+  'R32-6':  { number: 78, round: 'R32', date: '30 juin 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
+  'R32-7':  { number: 79, round: 'R32', date: '30 juin 2026', stadium: 'Estadio Azteca', city: 'Mexico' },
+  'R32-8':  { number: 80, round: 'R32', date: '1er juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
+  'R32-9':  { number: 81, round: 'R32', date: '1er juillet 2026', stadium: "Levi's Stadium", city: 'San Francisco' },
+  'R32-10': { number: 82, round: 'R32', date: '1er juillet 2026', stadium: 'Lumen Field', city: 'Seattle' },
+  'R32-11': { number: 83, round: 'R32', date: '2 juillet 2026', stadium: 'BMO Field', city: 'Toronto' },
+  'R32-12': { number: 84, round: 'R32', date: '2 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
+  'R32-13': { number: 85, round: 'R32', date: '2 juillet 2026', stadium: 'BC Place', city: 'Vancouver' },
+  'R32-14': { number: 86, round: 'R32', date: '3 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami' },
+  'R32-15': { number: 87, round: 'R32', date: '3 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City' },
+  'R32-16': { number: 88, round: 'R32', date: '3 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
 
-            return `${roundLabel} — match ${n}\n${dateText} à ${time}\n${stadium}`;
-        }
+  // Huitièmes (R16)
+  'R16-1': { number: 89, round: 'R16', date: '4 juillet 2026', stadium: 'Lincoln Financial Field', city: 'Philadelphie' },
+  'R16-2': { number: 90, round: 'R16', date: '4 juillet 2026', stadium: 'NRG Stadium', city: 'Houston' },
+  'R16-3': { number: 91, round: 'R16', date: '5 juillet 2026', stadium: 'MetLife Stadium', city: 'New York' },
+  'R16-4': { number: 92, round: 'R16', date: '5 juillet 2026', stadium: 'Estadio Azteca', city: 'Mexico' },
+  'R16-5': { number: 93, round: 'R16', date: '6 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
+  'R16-6': { number: 94, round: 'R16', date: '6 juillet 2026', stadium: 'Lumen Field', city: 'Seattle' },
+  'R16-7': { number: 95, round: 'R16', date: '7 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
+  'R16-8': { number: 96, round: 'R16', date: '7 juillet 2026', stadium: 'BC Place', city: 'Vancouver' },
+
+  // Quarts (QF)
+  'QF-1': { number: 97, round: 'QF', date: '9 juillet 2026', stadium: 'Gillette Stadium', city: 'Boston' },
+  'QF-2': { number: 98, round: 'QF', date: '10 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
+  'QF-3': { number: 99, round: 'QF', date: '11 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami' },
+  'QF-4': { number: 100, round: 'QF', date: '11 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City' },
+
+  // Demi-finales (SF)
+  'SF-1': { number: 101, round: 'SF', date: '14 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
+  'SF-2': { number: 102, round: 'SF', date: '15 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
+
+  // Finale (F)
+  'F-1': { number: 104, round: 'F', date: '19 juillet 2026', stadium: 'MetLife Stadium', city: 'New York' },
+};
+
+
+        function getMatchInfoText(matchId) {
+  const info = OFFICIAL_MATCH_INFO[matchId];
+  const roundKey = matchId.split('-')[0];
+  const roundLabel = MATCH_ROUND_LABELS[roundKey] || 'Phase finale';
+
+  if (!info) {
+    return `${roundLabel}\nDétails à confirmer`;
+  }
+
+  const numLabel = info.number ? `Match ${info.number}` : matchId;
+  const dateLine = info.date || 'Date à confirmer';
+  const stadiumLine = info.stadium
+    ? `${info.stadium}${info.city ? ', ' + info.city : ''}`
+    : '';
+
+  return `${roundLabel} — ${numLabel}\n${dateLine}\n${stadiumLine}`;
+}
+
 
         let currentInfoBubble = null;
         let currentInfoBubbleMatchId = null;
@@ -2071,38 +2121,115 @@ function showChampionPopup(winnerName, mode) {
         /* Phase finale : config commune (simple + expert) */
 
         function initBracketConfig() {
-            BRACKET_CONFIG.R32 = [];
-            for (let i = 0; i < 16; i++) {
-                BRACKET_CONFIG.R32.push({ id: 'R32-' + (i + 1), seed1: i, seed2: 31 - i });
-            }
+  // Seizièmes de finale (matches 73 à 88)
+  BRACKET_CONFIG.R32 = [
+    // Match 73 : 2A - 2B (SoFi, Los Angeles)
+    { id: 'R32-1', matchNumber: 73, slot1: '2A', slot2: '2B' },
 
-            BRACKET_CONFIG.R16 = [];
-            for (let i = 0; i < 8; i++) {
-                BRACKET_CONFIG.R16.push({
-                    id: 'R16-' + (i + 1),
-                    from1: 'R32-' + (2 * i + 1),
-                    from2: 'R32-' + (2 * i + 2)
-                });
-            }
+    // Match 74 : 1E - 3A/B/C/D/F (Gillette, Boston)
+    { id: 'R32-2', matchNumber: 74, slot1: '1E', thirdGroups: ['A','B','C','D','F'] },
 
-            BRACKET_CONFIG.QF = [];
-            for (let i = 0; i < 4; i++) {
-                BRACKET_CONFIG.QF.push({
-                    id: 'QF-' + (i + 1),
-                    from1: 'R16-' + (2 * i + 1),
-                    from2: 'R16-' + (2 * i + 2)
-                });
-            }
+    // Match 75 : 1F - 2C (BBVA, Monterrey)
+    { id: 'R32-3', matchNumber: 75, slot1: '1F', slot2: '2C' },
 
-            BRACKET_CONFIG.SF = [
-                { id: 'SF-1', from1: 'QF-1', from2: 'QF-2' },
-                { id: 'SF-2', from1: 'QF-3', from2: 'QF-4' }
-            ];
+    // Match 76 : 1C - 2F (NRG, Houston)
+    { id: 'R32-4', matchNumber: 76, slot1: '1C', slot2: '2F' },
 
-            BRACKET_CONFIG.F = [
-                { id: 'F-1', from1: 'SF-1', from2: 'SF-2' }
-            ];
-        }
+    // Match 77 : 1I - 3C/D/F/G/H (MetLife, New York)
+    { id: 'R32-5', matchNumber: 77, slot1: '1I', thirdGroups: ['C','D','F','G','H'] },
+
+    // Match 78 : 2E - 2I (AT&T, Arlington)
+    { id: 'R32-6', matchNumber: 78, slot1: '2E', slot2: '2I' },
+
+    // Match 79 : 1A - 3C/E/F/H/I (Azteca, Mexico)
+    { id: 'R32-7', matchNumber: 79, slot1: '1A', thirdGroups: ['C','E','F','H','I'] },
+
+    // Match 80 : 1L - 3E/H/I/J/K (Mercedes-Benz, Atlanta)
+    { id: 'R32-8', matchNumber: 80, slot1: '1L', thirdGroups: ['E','H','I','J','K'] },
+
+    // Match 81 : 1D - 3B/E/F/I/J (Levi's, San Francisco)
+    { id: 'R32-9', matchNumber: 81, slot1: '1D', thirdGroups: ['B','E','F','I','J'] },
+
+    // Match 82 : 1G - 3A/E/H/I/J (Lumen Field, Seattle)
+    { id: 'R32-10', matchNumber: 82, slot1: '1G', thirdGroups: ['A','E','H','I','J'] },
+
+    // Match 83 : 2K - 2L (BMO Field, Toronto)
+    { id: 'R32-11', matchNumber: 83, slot1: '2K', slot2: '2L' },
+
+    // Match 84 : 1H - 2J (SoFi, Los Angeles)
+    { id: 'R32-12', matchNumber: 84, slot1: '1H', slot2: '2J' },
+
+    // Match 85 : 1B - 3E/F/G/I/J (BC Place, Vancouver)
+    { id: 'R32-13', matchNumber: 85, slot1: '1B', thirdGroups: ['E','F','G','I','J'] },
+
+    // Match 86 : 1J - 2H (Hard Rock, Miami)
+    { id: 'R32-14', matchNumber: 86, slot1: '1J', slot2: '2H' },
+
+    // Match 87 : 1K - 3D/E/I/J/L (Arrowhead, Kansas City)
+    { id: 'R32-15', matchNumber: 87, slot1: '1K', thirdGroups: ['D','E','I','J','L'] },
+
+    // Match 88 : 2D - 2G (AT&T, Arlington)
+    { id: 'R32-16', matchNumber: 88, slot1: '2D', slot2: '2G' },
+  ];
+
+  // Huitièmes de finale (matches 89 à 96)
+  BRACKET_CONFIG.R16 = [
+    // Match 89 : V74 - V77
+    { id: 'R16-1', matchNumber: 89, from1: 'R32-2', from2: 'R32-5' },
+
+    // Match 90 : V73 - V75
+    { id: 'R16-2', matchNumber: 90, from1: 'R32-1', from2: 'R32-3' },
+
+    // Match 91 : V76 - V78
+    { id: 'R16-3', matchNumber: 91, from1: 'R32-4', from2: 'R32-6' },
+
+    // Match 92 : V79 - V80
+    { id: 'R16-4', matchNumber: 92, from1: 'R32-7', from2: 'R32-8' },
+
+    // Match 93 : V83 - V84
+    { id: 'R16-5', matchNumber: 93, from1: 'R32-11', from2: 'R32-12' },
+
+    // Match 94 : V81 - V82
+    { id: 'R16-6', matchNumber: 94, from1: 'R32-9', from2: 'R32-10' },
+
+    // Match 95 : V86 - V88
+    { id: 'R16-7', matchNumber: 95, from1: 'R32-14', from2: 'R32-16' },
+
+    // Match 96 : V85 - V87
+    { id: 'R16-8', matchNumber: 96, from1: 'R32-13', from2: 'R32-15' },
+  ];
+
+  // Quarts de finale (matches 97 à 100)
+  BRACKET_CONFIG.QF = [
+    // Match 97 : V89 - V90
+    { id: 'QF-1', matchNumber: 97, from1: 'R16-1', from2: 'R16-2' },
+
+    // Match 98 : V93 - V94
+    { id: 'QF-2', matchNumber: 98, from1: 'R16-5', from2: 'R16-6' },
+
+    // Match 99 : V91 - V92
+    { id: 'QF-3', matchNumber: 99, from1: 'R16-3', from2: 'R16-4' },
+
+    // Match 100 : V95 - V96
+    { id: 'QF-4', matchNumber: 100, from1: 'R16-7', from2: 'R16-8' },
+  ];
+
+  // Demi-finales (matches 101 et 102)
+  BRACKET_CONFIG.SF = [
+    // Match 101 : V97 - V98
+    { id: 'SF-1', matchNumber: 101, from1: 'QF-1', from2: 'QF-2' },
+
+    // Match 102 : V99 - V100
+    { id: 'SF-2', matchNumber: 102, from1: 'QF-3', from2: 'QF-4' },
+  ];
+
+  // Finale (match 104)
+  BRACKET_CONFIG.F = [
+    // Match 104 : V101 - V102
+    { id: 'F-1', matchNumber: 104, from1: 'SF-1', from2: 'SF-2' },
+  ];
+}
+
 
         function isPlaceholderSpan(span) {
             return span &&
@@ -2124,7 +2251,12 @@ function showChampionPopup(winnerName, mode) {
 
             const titleEl = document.createElement('div');
             titleEl.className = 'ko-match-title';
-            titleEl.textContent = matchId.replace('-', ' ');
+            const info = OFFICIAL_MATCH_INFO[matchId];
+            if (info && info.number) {
+              titleEl.textContent = `Match ${info.number}`;
+            } else {
+              titleEl.textContent = matchId.replace('-', ' ');
+            }
 
             const infoBtn = document.createElement('button');
             infoBtn.type = 'button';
@@ -2562,33 +2694,111 @@ function showChampionPopup(winnerName, mode) {
             return qualifiers.slice(0, 32);
         }
 
+        // Transforme les résultats de groupes en slots 1A, 2A, 3A, etc.
+function buildSlotMap() {
+  const slot = {};
+  GROUP_IDS.forEach(groupId => {
+    const ranks = groupRanks[groupId];
+    if (!ranks) return;
+    if (ranks.first)  slot['1' + groupId] = ranks.first;
+    if (ranks.second) slot['2' + groupId] = ranks.second;
+    if (ranks.third)  slot['3' + groupId] = ranks.third;
+  });
+  return slot;
+}
+
+// Calcule l'affectation des meilleurs 3e aux matches de R32
+// en respectant les listes de groupes autorisés pour chaque match.
+function computeThirdAssignments(slot) {
+  const qualifiedGroups = Array.from(selectedThirdGroups); // ex: ['A','C','E','F','I','J','K','L']
+
+  // On prend tous les matches de R32 qui ont besoin d'un 3e
+  const matchesNeedingThird = BRACKET_CONFIG.R32.filter(cfg => Array.isArray(cfg.thirdGroups));
+
+  const mapping = {};        // matchId -> { group: 'A', team: 'Mexique' }
+  const usedGroups = new Set();
+
+  function backtrack(i) {
+    if (i === matchesNeedingThird.length) return true;
+
+    const cfg = matchesNeedingThird[i];
+    const allowed = cfg.thirdGroups; // ex: ['A','B','C','D','F']
+
+    for (const g of qualifiedGroups) {
+      if (usedGroups.has(g)) continue;
+      if (!allowed.includes(g)) continue;
+
+      const teamName = slot['3' + g];
+      if (!teamName) continue; // sécurité
+
+      mapping[cfg.id] = { group: g, team: teamName };
+      usedGroups.add(g);
+
+      if (backtrack(i + 1)) return true;
+
+      usedGroups.delete(g);
+      delete mapping[cfg.id];
+    }
+
+    return false;
+  }
+
+  if (!backtrack(0)) {
+    console.warn('[3e] Impossible de trouver une affectation parfaite, fallback simple.');
+    const mf = {};
+    let idx = 0;
+    for (const cfg of matchesNeedingThird) {
+      const g = qualifiedGroups[idx % qualifiedGroups.length];
+      const teamName = slot['3' + g] || ('3e ' + g);
+      mf[cfg.id] = { group: g, team: teamName };
+      idx++;
+    }
+    return mf;
+  }
+
+  return mapping;
+}
+
+
         function updateKnockoutSeeds() {
-            if (!bracketInitialized) return;
+  if (!bracketInitialized) return;
 
-            const qualifiers = computeQualifiers();
+  const slot = buildSlotMap();
+  const thirdAssignments = computeThirdAssignments(slot);
 
-            const champSpan = document.getElementById('champion-name');
-            if (champSpan) {
-                champSpan.dataset.placeholder = '';
-                renderTeamLabel(champSpan, '?');
-            }
+  const champSpan = document.getElementById('champion-name');
+  if (champSpan) {
+    champSpan.dataset.placeholder = '';
+    renderTeamLabel(champSpan, '?');
+  }
 
-            BRACKET_CONFIG.R32.forEach(cfg => {
-                const dom = koDom.R32[cfg.id];
-                if (!dom) return;
+  // On remplit les seizièmes (R32) en fonction des slots 1A, 2B, 3C, etc.
+  BRACKET_CONFIG.R32.forEach(cfg => {
+    const dom = koDom.R32[cfg.id];
+    if (!dom) return;
 
-                const t1 = qualifiers[cfg.seed1];
-                const t2 = qualifiers[cfg.seed2];
+    const name1 = cfg.slot1
+      ? (slot[cfg.slot1] || dom.team1NameSpan.dataset.placeholder)
+      : dom.team1NameSpan.dataset.placeholder;
 
-                const name1 = t1 ? t1.name : dom.team1NameSpan.dataset.placeholder;
-                const name2 = t2 ? t2.name : dom.team2NameSpan.dataset.placeholder;
+    let name2;
+    if (cfg.slot2) {
+      name2 = slot[cfg.slot2] || dom.team2NameSpan.dataset.placeholder;
+    } else if (cfg.thirdGroups) {
+      const assign = thirdAssignments[cfg.id];
+      name2 = assign ? assign.team : dom.team2NameSpan.dataset.placeholder;
+    } else {
+      name2 = dom.team2NameSpan.dataset.placeholder;
+    }
 
-                renderTeamLabel(dom.team1NameSpan, name1);
-                renderTeamLabel(dom.team2NameSpan, name2);
-            });
+    renderTeamLabel(dom.team1NameSpan, name1);
+    renderTeamLabel(dom.team2NameSpan, name2);
+  });
 
-            resetKnockoutSelections();
-        }
+  // On efface les vainqueurs déjà cliqués et on laisse la propagation faire le reste
+  resetKnockoutSelections();
+}
+
 
         /* Étape 4 – création des matchs de poules (mode expert) */
 
@@ -3107,7 +3317,12 @@ function showChampionPopup(winnerName, mode) {
             header.className = 'ko-match-header';
             const titleEl = document.createElement('div');
             titleEl.className = 'ko-match-title';
-            titleEl.textContent = matchId.replace('-', ' ');
+            const info = OFFICIAL_MATCH_INFO[matchId];
+            if (info && info.number) {
+              titleEl.textContent = `Match ${info.number}`;
+            } else {
+              titleEl.textContent = matchId.replace('-', ' ');
+            }
             const infoBtn = document.createElement('button');
             infoBtn.type = 'button';
             infoBtn.className = 'match-info-btn';
@@ -3416,45 +3631,63 @@ function showChampionPopup(winnerName, mode) {
         }
 
         function updateKnockoutSeedsExpert() {
-            if (!bracketInitializedExpert) return;
-            const qualifiers = computeQualifiers();
-            const champSpan = document.getElementById('champion-name-expert');
-            if (champSpan) {
-                champSpan.dataset.placeholder = '';
-                renderTeamLabel(champSpan, '?');
-            }
-            Object.keys(expertKnockoutWinners).forEach(k => delete expertKnockoutWinners[k]);
+  if (!bracketInitializedExpert) return;
 
-            BRACKET_CONFIG.R32.forEach(cfg => {
-                const dom = koDomExpert.R32[cfg.id];
-                if (!dom) return;
-                const t1 = qualifiers[cfg.seed1];
-                const t2 = qualifiers[cfg.seed2];
-                const name1 = t1 ? t1.name : dom.team1NameSpan.dataset.placeholder;
-                const name2 = t2 ? t2.name : dom.team2NameSpan.dataset.placeholder;
-                renderTeamLabelFlagsOnly(dom.team1NameSpan, name1);
-                renderTeamLabelFlagsOnly(dom.team2NameSpan, name2);
-                dom.score1.value = '';
-                dom.score2.value = '';
-                dom.team1Row.classList.remove('winner');
-                dom.team2Row.classList.remove('winner');
-            });
+  const slot = buildSlotMap();
+  const thirdAssignments = computeThirdAssignments(slot);
 
-            ['R16', 'QF', 'SF', 'F'].forEach(round => {
-                BRACKET_CONFIG[round].forEach(cfg => {
-                    const dom = koDomExpert[round][cfg.id];
-                    if (!dom) return;
-                    renderTeamLabelFlagsOnly(dom.team1NameSpan, dom.team1NameSpan.dataset.placeholder);
-                    renderTeamLabelFlagsOnly(dom.team2NameSpan, dom.team2NameSpan.dataset.placeholder);
-                    dom.team1Row.classList.remove('winner');
-                    dom.team2Row.classList.remove('winner');
-                    if (dom.score1) dom.score1.value = '';
-                    if (dom.score2) dom.score2.value = '';
-                });
-            });
+  const champSpan = document.getElementById('champion-name-expert');
+  if (champSpan) {
+    champSpan.dataset.placeholder = '';
+    renderTeamLabel(champSpan, '?');
+  }
+  Object.keys(expertKnockoutWinners).forEach(k => delete expertKnockoutWinners[k]);
 
-            setTimeout(layoutBracketExpert, 0);
-        }
+  // Seizièmes
+  BRACKET_CONFIG.R32.forEach(cfg => {
+    const dom = koDomExpert.R32[cfg.id];
+    if (!dom) return;
+
+    const name1 = cfg.slot1
+      ? (slot[cfg.slot1] || dom.team1NameSpan.dataset.placeholder)
+      : dom.team1NameSpan.dataset.placeholder;
+
+    let name2;
+    if (cfg.slot2) {
+      name2 = slot[cfg.slot2] || dom.team2NameSpan.dataset.placeholder;
+    } else if (cfg.thirdGroups) {
+      const assign = thirdAssignments[cfg.id];
+      name2 = assign ? assign.team : dom.team2NameSpan.dataset.placeholder;
+    } else {
+      name2 = dom.team2NameSpan.dataset.placeholder;
+    }
+
+    renderTeamLabelFlagsOnly(dom.team1NameSpan, name1);
+    renderTeamLabelFlagsOnly(dom.team2NameSpan, name2);
+
+    dom.score1.value = '';
+    dom.score2.value = '';
+    dom.team1Row.classList.remove('winner');
+    dom.team2Row.classList.remove('winner');
+  });
+
+  // On remet tout à zéro pour R16, QF, SF, F
+  ['R16', 'QF', 'SF', 'F'].forEach(round => {
+    BRACKET_CONFIG[round].forEach(cfg => {
+      const dom = koDomExpert[round][cfg.id];
+      if (!dom) return;
+      renderTeamLabelFlagsOnly(dom.team1NameSpan, dom.team1NameSpan.dataset.placeholder);
+      renderTeamLabelFlagsOnly(dom.team2NameSpan, dom.team2NameSpan.dataset.placeholder);
+      dom.team1Row.classList.remove('winner');
+      dom.team2Row.classList.remove('winner');
+      if (dom.score1) dom.score1.value = '';
+      if (dom.score2) dom.score2.value = '';
+    });
+  });
+
+  setTimeout(layoutBracketExpert, 0);
+}
+
 
         function updateExpertKoFromWinners() {
             BRACKET_CONFIG.R16.forEach(cfg => {
@@ -3793,6 +4026,7 @@ function showChampionPopup(winnerName, mode) {
     </script>
 </body>
 </html>
+
 
 
 
