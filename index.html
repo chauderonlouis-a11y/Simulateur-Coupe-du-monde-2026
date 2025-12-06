@@ -1640,36 +1640,42 @@ async function savePrediction(mode) {
   }
 
   // 2) Envoi vers Supabase
-  try {
-    if (typeof supabaseClient === 'undefined') {
-      console.error('supabaseClient est undefined');
+try {
+  if (typeof supabaseClient === 'undefined') {
+    console.error('supabaseClient est undefined');
+  } else {
+    const row = {
+      mode: data.mode,
+      champion: data.champion,
+      finalists: data.finalists,
+      semi_finalists: data.semiFinalists,
+      quarter_finalists: data.quarterFinalists,
+      round_of_16: data.roundOf16,
+      round_of_32: data.roundOf32
+    };
+
+    console.log('Row envoyé à Supabase :', row, 'clés =', Object.keys(row));
+
+    const { data: inserted, error } = await supabaseClient
+      .from('predictions')
+      .insert([row]); // si tu n'as pas besoin de la ligne retournée
+
+    // Si tu veux récupérer la ligne insérée :
+    // const { data: inserted, error } = await supabaseClient
+    //   .from('predictions')
+    //   .insert([row])
+    //   .select();
+
+    if (error) {
+      console.error('Erreur Supabase insert', error);
     } else {
-      const row = {
-        mode: data.mode,
-        champion: data.champion,
-        finalists: data.finalists,
-        semi_finalists: data.semiFinalists,
-        quarter_finalists: data.quarterFinalists,
-        round_of_16: data.roundOf16,
-        round_of_32: data.roundOf32,
-      };
-
-      console.log('Row envoyé à Supabase :', row, 'clés =', Object.keys(row));
-
-      const { data: inserted, error } = await supabaseClient
-        .from('predictions')
-        .insert([row])
-        .select();
-
-      if (error) {
-        console.error('Erreur Supabase insert', error);
-      } else {
-        console.log('Insert Supabase OK :', inserted);
-      }
+      console.log('Insert Supabase OK :', inserted);
     }
-  } catch (e) {
-    console.error('Exception pendant l’insert Supabase', e);
   }
+} catch (e) {
+  console.error('Exception pendant l’insert Supabase', e);
+}
+
 
     // 3) Event Google Analytics (inchangé)
     if (window.gtag) {
@@ -3787,6 +3793,7 @@ function showChampionPopup(winnerName, mode) {
     </script>
 </body>
 </html>
+
 
 
 
