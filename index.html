@@ -1625,11 +1625,11 @@
 
         // Sauvegarde locale + envoi vers Google Analytics
         // Sauvegarde locale + envoi vers Google Analytics
-function savePrediction(mode) {
+async function savePrediction(mode) {
     const data = buildPredictionData(mode);
     if (!data) return;
 
-    // 1) Sauvegarde locale (comme tu fais déjà)
+    // 1) Sauvegarde locale
     try {
         const raw = localStorage.getItem('predictions') || '[]';
         const arr = JSON.parse(raw);
@@ -1639,28 +1639,40 @@ function savePrediction(mode) {
         console.warn('Impossible de sauvegarder la prédiction en localStorage', e);
     }
 
-    // 2) Envoi vers Supabase (base de données en ligne)
-    if (typeof supabaseClient !== 'undefined') {
-        supabaseClient
-            .from('predictions')
-            .insert({
-                mode: data.mode,
-                champion: data.champion,
-                finalists: data.finalists,
-                semi_finalists: data.semiFinalists,
-                quarter_finalists: data.quarterFinalists,
-                round_of_16: data.roundOf16,
-                round_of_32: data.roundOf32,
-                raw: data        // on garde l’objet complet en JSON
-            })
-            .then(({ error }) => {
-                if (error) {
-                    console.warn('Erreur Supabase insert', error);
-                }
-            });
+    // 2) Envoi vers Supabase
+    try {
+        if (typeof supabaseClient === 'undefined') {
+            console.error('supabaseClient est undefined');
+        } else {
+            console.log('Envoi de la prédiction vers Supabase...', data);
+
+            const { data: inserted, error } = await supabaseClient
+                .from('predictions')
+                .insert([
+                    {
+                        mode: data.mode,
+                        champion: data.champion,
+                        finalists: data.finalists,
+                        semi_finalists: data.semiFinalists,
+                        quarter_finalists: data.quarterFinalists,
+                        round_of_16: data.roundOf16,
+                        round_of_32: data.roundOf32,
+                        raw: data
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error('Erreur Supabase insert', error);
+            } else {
+                console.log('Insert Supabase OK :', inserted);
+            }
+        }
+    } catch (e) {
+        console.error('Exception pendant l’insert Supabase', e);
     }
 
-    // 3) Event Google Analytics (si tu veux garder le debug)
+    // 3) Event Google Analytics (inchangé)
     if (window.gtag) {
         const json = JSON.stringify(data);
         const MAX_VALUE_LEN = 90;
@@ -1680,6 +1692,8 @@ function savePrediction(mode) {
         console.warn('gtag non disponible au moment de savePrediction');
     }
 }
+
+        
 // Popup du champion
 function showChampionPopup(winnerName, mode) {
     if (!winnerName || winnerName === '?') return;
@@ -3774,6 +3788,7 @@ function showChampionPopup(winnerName, mode) {
     </script>
 </body>
 </html>
+
 
 
 
