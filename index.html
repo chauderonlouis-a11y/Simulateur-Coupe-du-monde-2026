@@ -2334,8 +2334,31 @@ if (round === 'R32') {
     // --- ORDRE D’AFFICHAGE DES SEIZIÈMES (R32) ---
     // On regroupe les matches par paires qui se retrouvent en huitième,
     // pour que, par ex., 73 & 75 soient bien l’un sous l’autre (→ match 90).
-    const R32_LEFT_DISPLAY  = ['R32-2', 'R32-5', 'R32-1', 'R32-3', 'R32-4', 'R32-6', 'R32-7', 'R32-8'];
-    const R32_RIGHT_DISPLAY = ['R32-11', 'R32-12', 'R32-9', 'R32-10', 'R32-14', 'R32-16', 'R32-13', 'R32-15'];
+    // --- ORDRE D’AFFICHAGE DES SEIZIÈMES (R32) ---
+// Colonne gauche : 74, 77, 73, 75, 83, 84, 81, 82, 76, 78
+// Colonne droite : 79, 80, 86, 88, 85, 87
+const R32_LEFT_DISPLAY  = [
+  'R32-2',  // 74
+  'R32-5',  // 77
+  'R32-1',  // 73
+  'R32-3',  // 75
+  'R32-11', // 83
+  'R32-12', // 84
+  'R32-9',  // 81
+  'R32-10', // 82
+  'R32-4',  // 76
+  'R32-6'   // 78
+];
+
+const R32_RIGHT_DISPLAY = [
+  'R32-7',  // 79
+  'R32-8',  // 80
+  'R32-14', // 86
+  'R32-16', // 88
+  'R32-13', // 85
+  'R32-15'  // 87
+];
+
 
     // Colonne R32 gauche
     const colR32Left = createRoundColumn(titles.R32);
@@ -3426,8 +3449,28 @@ function computeThirdAssignments(slot) {
         F: 'Finale'
     };
 
-    const R32_LEFT_DISPLAY  = ['R32-2', 'R32-5', 'R32-1', 'R32-3', 'R32-4', 'R32-6', 'R32-7', 'R32-8'];
-    const R32_RIGHT_DISPLAY = ['R32-11', 'R32-12', 'R32-9', 'R32-10', 'R32-14', 'R32-16', 'R32-13', 'R32-15'];
+    const R32_LEFT_DISPLAY  = [
+  'R32-2',  // 74
+  'R32-5',  // 77
+  'R32-1',  // 73
+  'R32-3',  // 75
+  'R32-11', // 83
+  'R32-12', // 84
+  'R32-9',  // 81
+  'R32-10', // 82
+  'R32-4',  // 76
+  'R32-6'   // 78
+];
+
+const R32_RIGHT_DISPLAY = [
+  'R32-7',  // 79
+  'R32-8',  // 80
+  'R32-14', // 86
+  'R32-16', // 88
+  'R32-13', // 85
+  'R32-15'  // 87
+];
+
 
     const colR32Left = createRoundColumn(titles.R32);
     R32_LEFT_DISPLAY.forEach(id => {
@@ -4047,6 +4090,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
