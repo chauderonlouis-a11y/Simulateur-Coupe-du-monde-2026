@@ -473,22 +473,23 @@
                 background: rgba(55, 65, 194, 0.9);
             }
 
-        /* BULLES D'INFO LARGES */
-        .match-info-bubble {
-            position: fixed;
-            min-width: 260px;
-            max-width: 340px;
-            padding: 0.45rem 0.7rem;
-            border-radius: 0.6rem;
-            background: rgba(15, 23, 42, 0.98);
-            border: 1px solid rgba(129, 140, 248, 0.8);
-            color: #e5e7ff;
-            font-size: 0.72rem;
-            line-height: 1.35;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            z-index: 999;
-            white-space: pre-line;
-        }
+                    /* BULLES D'INFO LARGES */
+                    .match-info-bubble {
+                position: absolute;          /* <-- au lieu de fixed */
+                min-width: 260px;
+                max-width: 340px;
+                padding: 0.45rem 0.7rem;
+                border-radius: 0.6rem;
+                background: rgba(15, 23, 42, 0.98);
+                border: 1px solid rgba(129, 140, 248, 0.8);
+                color: #e5e7ff;
+                font-size: 0.72rem;
+                line-height: 1.35;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+                z-index: 999;
+                white-space: pre-line;
+            }
+
 
             .match-info-bubble::before {
                 content: "";
@@ -1855,46 +1856,59 @@ function showChampionPopup(winnerName, mode) {
         let currentInfoBubbleMatchId = null;
 
         function toggleMatchInfoBubble(matchEl, matchId) {
-            if (currentInfoBubble && currentInfoBubbleMatchId === matchId) {
-                currentInfoBubble.remove();
-                currentInfoBubble = null;
-                currentInfoBubbleMatchId = null;
-                return;
-            }
+    // Si on reclique sur le même match : on ferme
+    if (currentInfoBubble && currentInfoBubbleMatchId === matchId) {
+        currentInfoBubble.remove();
+        currentInfoBubble = null;
+        currentInfoBubbleMatchId = null;
+        return;
+    }
 
-            if (currentInfoBubble) {
-                currentInfoBubble.remove();
-                currentInfoBubble = null;
-                currentInfoBubbleMatchId = null;
-            }
+    // On ferme une éventuelle bulle déjà ouverte
+    if (currentInfoBubble) {
+        currentInfoBubble.remove();
+        currentInfoBubble = null;
+        currentInfoBubbleMatchId = null;
+    }
 
-            const bubble = document.createElement('div');
-            bubble.className = 'match-info-bubble';
-            bubble.textContent = getMatchInfoText(matchId);
-            document.body.appendChild(bubble);
+    const bubble = document.createElement('div');
+    bubble.className = 'match-info-bubble';
+    bubble.textContent = getMatchInfoText(matchId);
 
-            const rect = matchEl.getBoundingClientRect();
-            const bubbleRect = bubble.getBoundingClientRect();
+    // On accroche la bulle au wrapper correspondant (simple ou expert)
+    const wrapper = matchEl.closest('#bracket-wrapper, #bracket-wrapper-expert');
+    if (!wrapper) return;
+    wrapper.appendChild(bubble);
 
-            const centerX = (rect.left + rect.right) / 2;
-            let top = rect.bottom + 6;
-            let left = centerX - bubbleRect.width / 2;
+    // Rectangles pour calculer une position relative au wrapper
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const matchRect = matchEl.getBoundingClientRect();
+    const bubbleRect = bubble.getBoundingClientRect();
 
-            const margin = 8;
-            if (left < margin) left = margin;
-            const maxLeft = window.innerWidth - bubbleRect.width - margin;
-            if (left > maxLeft) left = maxLeft;
+    // Centre horizontal du match, ramené dans le repère du wrapper
+    const centerX = (matchRect.left + matchRect.right) / 2 - wrapperRect.left;
 
-            if (top + bubbleRect.height > window.innerHeight - margin) {
-                top = rect.top - bubbleRect.height - 6;
-            }
+    let top = matchRect.bottom - wrapperRect.top + 6; // par défaut : sous le match
+    let left = centerX - bubbleRect.width / 2;
 
-            bubble.style.top = `${top}px`;
-            bubble.style.left = `${left}px`;
+    const margin = 8;
 
-            currentInfoBubble = bubble;
-            currentInfoBubbleMatchId = matchId;
-        }
+    // On borne horizontalement à l'intérieur du wrapper
+    if (left < margin) left = margin;
+    const maxLeft = wrapperRect.width - bubbleRect.width - margin;
+    if (left > maxLeft) left = maxLeft;
+
+    // Si ça sort en bas du wrapper, on la met au-dessus du match
+    if (top + bubbleRect.height > wrapperRect.height - margin) {
+        top = matchRect.top - wrapperRect.top - bubbleRect.height - 6;
+    }
+
+    bubble.style.top = `${top}px`;
+    bubble.style.left = `${left}px`;
+
+    currentInfoBubble = bubble;
+    currentInfoBubbleMatchId = matchId;
+}
 
         /* Steps */
 
@@ -4026,6 +4040,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
