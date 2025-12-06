@@ -2137,54 +2137,27 @@ function showChampionPopup(winnerName, mode) {
         function initBracketConfig() {
   // Seizièmes de finale (matches 73 à 88)
   BRACKET_CONFIG.R32 = [
-    // Match 73 : 2A - 2B (SoFi, Los Angeles)
-    { id: 'R32-1', matchNumber: 73, slot1: '2A', slot2: '2B' },
+  // gauche haut
+  /* Match 74 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-2'),
+  /* Match 77 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-5'),
+  /* Match 73 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-1'),
+  /* Match 75 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-3'),
+  /* Match 76 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-4'),
+  /* Match 78 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-6'),
+  /* Match 79 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-7'),
+  /* Match 80 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-8'),
 
-    // Match 74 : 1E - 3A/B/C/D/F (Gillette, Boston)
-    { id: 'R32-2', matchNumber: 74, slot1: '1E', thirdGroups: ['A','B','C','D','F'] },
+  // droite haut
+  /* Match 83 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-11'),
+  /* Match 84 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-12'),
+  /* Match 81 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-9'),
+  /* Match 82 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-10'),
+  /* Match 86 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-14'),
+  /* Match 88 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-16'),
+  /* Match 85 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-13'),
+  /* Match 87 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-15'),
+];
 
-    // Match 75 : 1F - 2C (BBVA, Monterrey)
-    { id: 'R32-3', matchNumber: 75, slot1: '1F', slot2: '2C' },
-
-    // Match 76 : 1C - 2F (NRG, Houston)
-    { id: 'R32-4', matchNumber: 76, slot1: '1C', slot2: '2F' },
-
-    // Match 77 : 1I - 3C/D/F/G/H (MetLife, New York)
-    { id: 'R32-5', matchNumber: 77, slot1: '1I', thirdGroups: ['C','D','F','G','H'] },
-
-    // Match 78 : 2E - 2I (AT&T, Arlington)
-    { id: 'R32-6', matchNumber: 78, slot1: '2E', slot2: '2I' },
-
-    // Match 79 : 1A - 3C/E/F/H/I (Azteca, Mexico)
-    { id: 'R32-7', matchNumber: 79, slot1: '1A', thirdGroups: ['C','E','F','H','I'] },
-
-    // Match 80 : 1L - 3E/H/I/J/K (Mercedes-Benz, Atlanta)
-    { id: 'R32-8', matchNumber: 80, slot1: '1L', thirdGroups: ['E','H','I','J','K'] },
-
-    // Match 81 : 1D - 3B/E/F/I/J (Levi's, San Francisco)
-    { id: 'R32-9', matchNumber: 81, slot1: '1D', thirdGroups: ['B','E','F','I','J'] },
-
-    // Match 82 : 1G - 3A/E/H/I/J (Lumen Field, Seattle)
-    { id: 'R32-10', matchNumber: 82, slot1: '1G', thirdGroups: ['A','E','H','I','J'] },
-
-    // Match 83 : 2K - 2L (BMO Field, Toronto)
-    { id: 'R32-11', matchNumber: 83, slot1: '2K', slot2: '2L' },
-
-    // Match 84 : 1H - 2J (SoFi, Los Angeles)
-    { id: 'R32-12', matchNumber: 84, slot1: '1H', slot2: '2J' },
-
-    // Match 85 : 1B - 3E/F/G/I/J (BC Place, Vancouver)
-    { id: 'R32-13', matchNumber: 85, slot1: '1B', thirdGroups: ['E','F','G','I','J'] },
-
-    // Match 86 : 1J - 2H (Hard Rock, Miami)
-    { id: 'R32-14', matchNumber: 86, slot1: '1J', slot2: '2H' },
-
-    // Match 87 : 1K - 3D/E/I/J/L (Arrowhead, Kansas City)
-    { id: 'R32-15', matchNumber: 87, slot1: '1K', thirdGroups: ['D','E','I','J','L'] },
-
-    // Match 88 : 2D - 2G (AT&T, Arlington)
-    { id: 'R32-16', matchNumber: 88, slot1: '2D', slot2: '2G' },
-  ];
 
   // Huitièmes de finale (matches 89 à 96)
   BRACKET_CONFIG.R16 = [
@@ -4094,6 +4067,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
