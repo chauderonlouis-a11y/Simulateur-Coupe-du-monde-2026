@@ -3528,112 +3528,141 @@ function computeThirdAssignments(slot) {
         }
 
         function createKnockoutExpert() {
-    const bracketEl = document.getElementById('bracket-expert');
-    if (!bracketEl) return;
+  // Adapte l'id si ton conteneur expert a un autre id
+  const bracketEl = document.getElementById('bracket-expert');
+  if (!bracketEl) return;
 
-    initBracketConfig();
-    bracketEl.innerHTML = '';
+  initBracketConfig(); // mêmes configs que pour le mode normal
+  bracketEl.innerHTML = '';
 
-    const titles = {
-        R32: 'Seizièmes',
-        R16: 'Huitièmes',
-        QF: 'Quarts',
-        SF: 'Demi-finales',
-        F: 'Finale'
-    };
+  const titles = {
+    R32: 'Seizièmes',
+    R16: 'Huitièmes',
+    QF:  'Quarts',
+    SF:  'Demi-finales',
+    F:   'Finale'
+  };
 
-    const R32_LEFT_DISPLAY  = [
-  'R32-2',  // 74
-  'R32-5',  // 77
-  'R32-1',  // 73
-  'R32-3',  // 75
-  'R32-11', // 83
-  'R32-12', // 84
-  'R32-9',  // 81
-  'R32-10', // 82
-];
+  // Même ordre visuel que le mode normal
+  const R32_LEFT_DISPLAY  = [
+    'R32-2',  // 74
+    'R32-5',  // 77
+    'R32-1',  // 73
+    'R32-3',  // 75
+    'R32-11', // 83
+    'R32-12', // 84
+    'R32-9',  // 81
+    'R32-10', // 82
+  ];
 
-const R32_RIGHT_DISPLAY = [
-  'R32-4',  // 76
-  'R32-6',  // 78
-  'R32-7',  // 79
-  'R32-8',  // 80
-  'R32-14', // 86
-  'R32-16', // 88
-  'R32-13', // 85
-  'R32-15'  // 87
-];
+  const R32_RIGHT_DISPLAY = [
+    'R32-4',  // 76
+    'R32-6',  // 78
+    'R32-7',  // 79
+    'R32-8',  // 80
+    'R32-14', // 86
+    'R32-16', // 88
+    'R32-13', // 85
+    'R32-15', // 87
+  ];
 
+  const R16_LEFT_CONFIGS  = [
+    BRACKET_CONFIG.R16[0], // 89 : V74-V77
+    BRACKET_CONFIG.R16[1], // 90 : V73-V75
+    BRACKET_CONFIG.R16[4], // 93 : V83-V84
+    BRACKET_CONFIG.R16[5], // 94 : V81-V82
+  ];
+  const R16_RIGHT_CONFIGS = [
+    BRACKET_CONFIG.R16[2], // 91 : V76-V78
+    BRACKET_CONFIG.R16[3], // 92 : V79-V80
+    BRACKET_CONFIG.R16[6], // 95 : V86-V88
+    BRACKET_CONFIG.R16[7], // 96 : V85-V87
+  ];
 
-    const colR32Left = createRoundColumn(titles.R32);
-    R32_LEFT_DISPLAY.forEach(id => {
-        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
-        if (cfg) colR32Left.appendChild(createKoMatchElementExpert('R32', cfg));
-    });
-    bracketEl.appendChild(colR32Left);
-    bracketColumnsExpert.R32_left = colR32Left;
+  const QF_LEFT_CONFIGS  = [
+    BRACKET_CONFIG.QF[0],  // 97 : V89-V90
+    BRACKET_CONFIG.QF[1],  // 98 : V93-V94
+  ];
+  const QF_RIGHT_CONFIGS = [
+    BRACKET_CONFIG.QF[2],  // 99 : V91-V92
+    BRACKET_CONFIG.QF[3],  // 100 : V95-V96
+  ];
 
-    const colR16Left = createRoundColumn(titles.R16);
-    BRACKET_CONFIG.R16.slice(0, 4).forEach(cfg => {
-        colR16Left.appendChild(createKoMatchElementExpert('R16', cfg));
-    });
-    bracketEl.appendChild(colR16Left);
-    bracketColumnsExpert.R16_left = colR16Left;
+  // --- Colonne R32 gauche ---
+  const colR32Left = createRoundColumn(titles.R32);
+  R32_LEFT_DISPLAY.forEach(id => {
+    const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+    if (cfg) colR32Left.appendChild(createKoMatchElementExpert('R32', cfg));
+  });
+  bracketEl.appendChild(colR32Left);
+  bracketColumnsExpert.R32_left = colR32Left;
 
-    const QF_LEFT_CONFIGS  = [BRACKET_CONFIG.QF[0], BRACKET_CONFIG.QF[2]];
-    const QF_RIGHT_CONFIGS = [BRACKET_CONFIG.QF[1], BRACKET_CONFIG.QF[3]];
+  // --- Colonne R16 gauche ---
+  const colR16Left = createRoundColumn(titles.R16);
+  R16_LEFT_CONFIGS.forEach(cfg => {
+    colR16Left.appendChild(createKoMatchElementExpert('R16', cfg));
+  });
+  bracketEl.appendChild(colR16Left);
+  bracketColumnsExpert.R16_left = colR16Left;
 
-    const colQFLeft = createRoundColumn(titles.QF);
-    QF_LEFT_CONFIGS.forEach(cfg => {
-        colQFLeft.appendChild(createKoMatchElementExpert('QF', cfg));
-    });
-    bracketEl.appendChild(colQFLeft);
-    bracketColumnsExpert.QF_left = colQFLeft;
+  // --- Quarts gauche ---
+  const colQFLeft = createRoundColumn(titles.QF);
+  QF_LEFT_CONFIGS.forEach(cfg => {
+    colQFLeft.appendChild(createKoMatchElementExpert('QF', cfg));
+  });
+  bracketEl.appendChild(colQFLeft);
+  bracketColumnsExpert.QF_left = colQFLeft;
 
-    const colSFLeft = createRoundColumn(titles.SF);
-    BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
-        colSFLeft.appendChild(createKoMatchElementExpert('SF', cfg));
-    });
-    bracketEl.appendChild(colSFLeft);
-    bracketColumnsExpert.SF_left = colSFLeft;
+  // --- Demi gauche ---
+  const colSFLeft = createRoundColumn(titles.SF);
+  BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
+    colSFLeft.appendChild(createKoMatchElementExpert('SF', cfg));
+  });
+  bracketEl.appendChild(colSFLeft);
+  bracketColumnsExpert.SF_left = colSFLeft;
 
-    const colFinal = createRoundColumn(titles.F);
-    BRACKET_CONFIG.F.forEach(cfg => {
-        colFinal.appendChild(createKoMatchElementExpert('F', cfg));
-    });
-    bracketEl.appendChild(colFinal);
-    bracketColumnsExpert.F_center = colFinal;
+  // --- Finale centre ---
+  const colFinal = createRoundColumn(titles.F);
+  BRACKET_CONFIG.F.forEach(cfg => {
+    colFinal.appendChild(createKoMatchElementExpert('F', cfg));
+  });
+  bracketEl.appendChild(colFinal);
+  bracketColumnsExpert.F_center = colFinal;
 
-    const colSFRight = createRoundColumn(titles.SF);
-    BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
-        colSFRight.appendChild(createKoMatchElementExpert('SF', cfg));
-    });
-    bracketEl.appendChild(colSFRight);
-    bracketColumnsExpert.SF_right = colSFRight;
+  // --- Demi droite ---
+  const colSFRight = createRoundColumn(titles.SF);
+  BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
+    colSFRight.appendChild(createKoMatchElementExpert('SF', cfg));
+  });
+  bracketEl.appendChild(colSFRight);
+  bracketColumnsExpert.SF_right = colSFRight;
 
-    const colQFRight = createRoundColumn(titles.QF);
-    QF_RIGHT_CONFIGS.forEach(cfg => {
-        colQFRight.appendChild(createKoMatchElementExpert('QF', cfg));
-    });
-    bracketEl.appendChild(colQFRight);
-    bracketColumnsExpert.QF_right = colQFRight;
+  // --- Quarts droite ---
+  const colQFRight = createRoundColumn(titles.QF);
+  QF_RIGHT_CONFIGS.forEach(cfg => {
+    colQFRight.appendChild(createKoMatchElementExpert('QF', cfg));
+  });
+  bracketEl.appendChild(colQFRight);
+  bracketColumnsExpert.QF_right = colQFRight;
 
-    const colR16Right = createRoundColumn(titles.R16);
-    BRACKET_CONFIG.R16.slice(4).forEach(cfg => {
-        colR16Right.appendChild(createKoMatchElementExpert('R16', cfg));
-    });
-    bracketEl.appendChild(colR16Right);
-    bracketColumnsExpert.R16_right = colR16Right;
+  // --- Colonne R16 droite ---
+  const colR16Right = createRoundColumn(titles.R16);
+  R16_RIGHT_CONFIGS.forEach(cfg => {
+    colR16Right.appendChild(createKoMatchElementExpert('R16', cfg));
+  });
+  bracketEl.appendChild(colR16Right);
+  bracketColumnsExpert.R16_right = colR16Right;
 
-    const colR32Right = createRoundColumn(titles.R32);
-    R32_RIGHT_DISPLAY.forEach(id => {
-        const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
-        if (cfg) colR32Right.appendChild(createKoMatchElementExpert('R32', cfg));
-    });
-    bracketEl.appendChild(colR32Right);
-    bracketColumnsExpert.R32_right = colR32Right;
+  // --- Colonne R32 droite ---
+  const colR32Right = createRoundColumn(titles.R32);
+  R32_RIGHT_DISPLAY.forEach(id => {
+    const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+    if (cfg) colR32Right.appendChild(createKoMatchElementExpert('R32', cfg));
+  });
+  bracketEl.appendChild(colR32Right);
+  bracketColumnsExpert.R32_right = colR32Right;
 
-    bracketInitializedExpert = true;
+  bracketInitializedExpert = true;
 }
 
 
@@ -3752,40 +3781,57 @@ const R32_RIGHT_DISPLAY = [
         }
 
         function layoutBracketExpert() {
-            if (!bracketInitializedExpert) return;
+  if (!bracketInitializedExpert) return;
 
-            ['R16', 'QF', 'SF', 'F'].forEach(round => {
-                BRACKET_CONFIG[round].forEach(cfg => {
-                    const dom = koDomExpert[round][cfg.id];
-                    if (!dom) return;
-                    const el = dom.el;
-                    el.style.position = '';
-                    el.style.top = '';
-                });
-            });
+  // Reset positions
+  ['R16', 'QF', 'SF', 'F'].forEach(round => {
+    BRACKET_CONFIG[round].forEach(cfg => {
+      const dom = koDomExpert[round][cfg.id];
+      if (!dom) return;
+      const el = dom.el;
+      el.style.position = '';
+      el.style.top = '';
+    });
+  });
 
-            const cols = bracketColumnsExpert;
-            if (!cols.R32_left || !cols.R32_right) return;
+  const cols = bracketColumnsExpert;
+  if (!cols.R32_left || !cols.R32_right) return;
 
-            alignMatchesBetweenExpert('R16', 'R32', BRACKET_CONFIG.R16.slice(0, 4), cols.R16_left);
-            alignMatchesBetweenExpert('R16', 'R32', BRACKET_CONFIG.R16.slice(4, 8), cols.R16_right);
+  const R16_LEFT_CONFIGS  = [
+    BRACKET_CONFIG.R16[0],
+    BRACKET_CONFIG.R16[1],
+    BRACKET_CONFIG.R16[4],
+    BRACKET_CONFIG.R16[5],
+  ];
+  const R16_RIGHT_CONFIGS = [
+    BRACKET_CONFIG.R16[2],
+    BRACKET_CONFIG.R16[3],
+    BRACKET_CONFIG.R16[6],
+    BRACKET_CONFIG.R16[7],
+  ];
 
-            const QF_LEFT_CONFIGS  = [BRACKET_CONFIG.QF[0], BRACKET_CONFIG.QF[2]];
-            const QF_RIGHT_CONFIGS = [BRACKET_CONFIG.QF[1], BRACKET_CONFIG.QF[3]];
-            
-            alignMatchesBetweenExpert('QF', 'R16', QF_LEFT_CONFIGS, cols.QF_left);
-            alignMatchesBetweenExpert('QF', 'R16', QF_RIGHT_CONFIGS, cols.QF_right);
+  const QF_LEFT_CONFIGS  = [BRACKET_CONFIG.QF[0], BRACKET_CONFIG.QF[1]];
+  const QF_RIGHT_CONFIGS = [BRACKET_CONFIG.QF[2], BRACKET_CONFIG.QF[3]];
 
+  // 8e alignés sur les 16e
+  alignMatchesBetweenExpert('R16', 'R32', R16_LEFT_CONFIGS, cols.R16_left);
+  alignMatchesBetweenExpert('R16', 'R32', R16_RIGHT_CONFIGS, cols.R16_right);
 
-            alignMatchesBetweenExpert('SF', 'QF', BRACKET_CONFIG.SF.slice(0, 1), cols.SF_left);
-            alignMatchesBetweenExpert('SF', 'QF', BRACKET_CONFIG.SF.slice(1, 2), cols.SF_right);
+  // Quarts alignés sur les 8e
+  alignMatchesBetweenExpert('QF', 'R16', QF_LEFT_CONFIGS, cols.QF_left);
+  alignMatchesBetweenExpert('QF', 'R16', QF_RIGHT_CONFIGS, cols.QF_right);
 
-            if (cols.F_center) {
-                alignMatchesBetweenExpert('F', 'SF', BRACKET_CONFIG.F, cols.F_center);
-            }
+  // Demies alignées sur les quarts
+  alignMatchesBetweenExpert('SF', 'QF', BRACKET_CONFIG.SF.slice(0, 1), cols.SF_left);
+  alignMatchesBetweenExpert('SF', 'QF', BRACKET_CONFIG.SF.slice(1, 2), cols.SF_right);
 
-            drawBracketLinesExpert();
-        }
+  // Finale alignée sur les demies
+  if (cols.F_center) {
+    alignMatchesBetweenExpert('F', 'SF', BRACKET_CONFIG.F, cols.F_center);
+  }
+
+  drawBracketLinesExpert();
+}
 
         function updateKnockoutSeedsExpert() {
   if (!bracketInitializedExpert) return;
@@ -4183,6 +4229,7 @@ const R32_RIGHT_DISPLAY = [
     </script>
 </body>
 </html>
+
 
 
 
