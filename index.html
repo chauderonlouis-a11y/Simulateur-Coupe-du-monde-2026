@@ -2134,88 +2134,68 @@ function showChampionPopup(winnerName, mode) {
 
         /* Phase finale : config commune (simple + expert) */
 
-        function initBracketConfig() {
-  // Seizièmes de finale (matches 73 à 88)
+        /* Phase finale : config commune (simple + expert) */
+function initBracketConfig() {
+  // On utilise les 12 groupes A → L
+  const ALL_GROUPS = GROUP_IDS.slice(); // ['A','B',...,'L']
+
+  // Seizièmes de finale (R32 : matches 73 à 88)
+  // 8 matches "1er vs 2e", puis 8 matches "1er/2e vs meilleur 3e"
   BRACKET_CONFIG.R32 = [
-  // gauche haut
-  /* Match 74 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-2'),
-  /* Match 77 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-5'),
-  /* Match 73 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-1'),
-  /* Match 75 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-3'),
-  /* Match 76 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-4'),
-  /* Match 78 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-6'),
-  /* Match 79 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-7'),
-  /* Match 80 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-8'),
+    // 1er vs 2e
+    { id: 'R32-1',  matchNumber: 73, slot1: '1A', slot2: '2B' },
+    { id: 'R32-2',  matchNumber: 74, slot1: '1B', slot2: '2C' },
+    { id: 'R32-3',  matchNumber: 75, slot1: '1C', slot2: '2D' },
+    { id: 'R32-4',  matchNumber: 76, slot1: '1D', slot2: '2E' },
+    { id: 'R32-5',  matchNumber: 77, slot1: '1E', slot2: '2F' },
+    { id: 'R32-6',  matchNumber: 78, slot1: '1F', slot2: '2G' },
+    { id: 'R32-7',  matchNumber: 79, slot1: '1G', slot2: '2H' },
+    { id: 'R32-8',  matchNumber: 80, slot1: '1H', slot2: '2A' },
 
-  // droite haut
-  /* Match 83 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-11'),
-  /* Match 84 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-12'),
-  /* Match 81 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-9'),
-  /* Match 82 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-10'),
-  /* Match 86 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-14'),
-  /* Match 88 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-16'),
-  /* Match 85 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-13'),
-  /* Match 87 */ BRACKET_CONFIG.R32.find(m => m.id === 'R32-15'),
-];
+    // 1er/2e vs meilleur 3e (groupe flexible)
+    // thirdGroups = ALL_GROUPS → n’importe quel 3e qualifié peut aller dans ce match
+    { id: 'R32-9',  matchNumber: 81, slot1: '1I', thirdGroups: ALL_GROUPS },
+    { id: 'R32-10', matchNumber: 82, slot1: '2I', thirdGroups: ALL_GROUPS },
+    { id: 'R32-11', matchNumber: 83, slot1: '1J', thirdGroups: ALL_GROUPS },
+    { id: 'R32-12', matchNumber: 84, slot1: '2J', thirdGroups: ALL_GROUPS },
+    { id: 'R32-13', matchNumber: 85, slot1: '1K', thirdGroups: ALL_GROUPS },
+    { id: 'R32-14', matchNumber: 86, slot1: '2K', thirdGroups: ALL_GROUPS },
+    { id: 'R32-15', matchNumber: 87, slot1: '1L', thirdGroups: ALL_GROUPS },
+    { id: 'R32-16', matchNumber: 88, slot1: '2L', thirdGroups: ALL_GROUPS }
+  ];
 
-
-  // Huitièmes de finale (matches 89 à 96)
+  // Huitièmes de finale (R16 : matches 89 à 96)
   BRACKET_CONFIG.R16 = [
-    // Match 89 : V74 - V77
-    { id: 'R16-1', matchNumber: 89, from1: 'R32-2', from2: 'R32-5' },
-
-    // Match 90 : V73 - V75
-    { id: 'R16-2', matchNumber: 90, from1: 'R32-1', from2: 'R32-3' },
-
-    // Match 91 : V76 - V78
-    { id: 'R16-3', matchNumber: 91, from1: 'R32-4', from2: 'R32-6' },
-
-    // Match 92 : V79 - V80
-    { id: 'R16-4', matchNumber: 92, from1: 'R32-7', from2: 'R32-8' },
-
-    // Match 93 : V83 - V84
-    { id: 'R16-5', matchNumber: 93, from1: 'R32-11', from2: 'R32-12' },
-
-    // Match 94 : V81 - V82
-    { id: 'R16-6', matchNumber: 94, from1: 'R32-9', from2: 'R32-10' },
-
-    // Match 95 : V86 - V88
-    { id: 'R16-7', matchNumber: 95, from1: 'R32-14', from2: 'R32-16' },
-
-    // Match 96 : V85 - V87
-    { id: 'R16-8', matchNumber: 96, from1: 'R32-13', from2: 'R32-15' },
+    { id: 'R16-1', matchNumber: 89, from1: 'R32-1',  from2: 'R32-2' },
+    { id: 'R16-2', matchNumber: 90, from1: 'R32-3',  from2: 'R32-4' },
+    { id: 'R16-3', matchNumber: 91, from1: 'R32-5',  from2: 'R32-6' },
+    { id: 'R16-4', matchNumber: 92, from1: 'R32-7',  from2: 'R32-8' },
+    { id: 'R16-5', matchNumber: 93, from1: 'R32-9',  from2: 'R32-10' },
+    { id: 'R16-6', matchNumber: 94, from1: 'R32-11', from2: 'R32-12' },
+    { id: 'R16-7', matchNumber: 95, from1: 'R32-13', from2: 'R32-14' },
+    { id: 'R16-8', matchNumber: 96, from1: 'R32-15', from2: 'R32-16' }
   ];
 
-  // Quarts de finale (matches 97 à 100)
+  // Quarts de finale (QF : matches 97 à 100)
   BRACKET_CONFIG.QF = [
-    // Match 97 : V89 - V90
     { id: 'QF-1', matchNumber: 97, from1: 'R16-1', from2: 'R16-2' },
-
-    // Match 98 : V93 - V94
-    { id: 'QF-2', matchNumber: 98, from1: 'R16-5', from2: 'R16-6' },
-
-    // Match 99 : V91 - V92
-    { id: 'QF-3', matchNumber: 99, from1: 'R16-3', from2: 'R16-4' },
-
-    // Match 100 : V95 - V96
-    { id: 'QF-4', matchNumber: 100, from1: 'R16-7', from2: 'R16-8' },
+    { id: 'QF-2', matchNumber: 98, from1: 'R16-3', from2: 'R16-4' },
+    { id: 'QF-3', matchNumber: 99, from1: 'R16-5', from2: 'R16-6' },
+    { id: 'QF-4', matchNumber: 100, from1: 'R16-7', from2: 'R16-8' }
   ];
 
-  // Demi-finales (matches 101 et 102)
+  // Demi-finales (SF : matches 101, 102)
   BRACKET_CONFIG.SF = [
-    // Match 101 : V97 - V98
     { id: 'SF-1', matchNumber: 101, from1: 'QF-1', from2: 'QF-2' },
-
-    // Match 102 : V99 - V100
-    { id: 'SF-2', matchNumber: 102, from1: 'QF-3', from2: 'QF-4' },
+    { id: 'SF-2', matchNumber: 102, from1: 'QF-3', from2: 'QF-4' }
   ];
 
-  // Finale (match 104)
+  // Finale (F : match 104)
   BRACKET_CONFIG.F = [
-    // Match 104 : V101 - V102
-    { id: 'F-1', matchNumber: 104, from1: 'SF-1', from2: 'SF-2' },
+    { id: 'F-1', matchNumber: 104, from1: 'SF-1', from2: 'SF-2' }
   ];
 }
+
 
 
         function isPlaceholderSpan(span) {
@@ -4067,6 +4047,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
