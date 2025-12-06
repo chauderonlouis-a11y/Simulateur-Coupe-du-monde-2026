@@ -1626,51 +1626,50 @@
         // Sauvegarde locale + envoi vers Google Analytics
         // Sauvegarde locale + envoi vers Google Analytics
 async function savePrediction(mode) {
-    const data = buildPredictionData(mode);
-    if (!data) return;
+  const data = buildPredictionData(mode);
+  if (!data) return;
 
-    // 1) Sauvegarde locale
-    try {
-        const raw = localStorage.getItem('predictions') || '[]';
-        const arr = JSON.parse(raw);
-        arr.push(data);
-        localStorage.setItem('predictions', JSON.stringify(arr));
-    } catch (e) {
-        console.warn('Impossible de sauvegarder la prédiction en localStorage', e);
+  // 1) Sauvegarde locale
+  try {
+    const rawLocal = localStorage.getItem('predictions') || '[]';
+    const arr = JSON.parse(rawLocal);
+    arr.push(data);
+    localStorage.setItem('predictions', JSON.stringify(arr));
+  } catch (e) {
+    console.warn('Impossible de sauvegarder la prédiction en localStorage', e);
+  }
+
+  // 2) Envoi vers Supabase
+  try {
+    if (typeof supabaseClient === 'undefined') {
+      console.error('supabaseClient est undefined');
+    } else {
+      const row = {
+        mode: data.mode,
+        champion: data.champion,
+        finalists: data.finalists,
+        semi_finalists: data.semiFinalists,
+        quarter_finalists: data.quarterFinalists,
+        round_of_16: data.roundOf16,
+        round_of_32: data.roundOf32,
+      };
+
+      console.log('Row envoyé à Supabase :', row, 'clés =', Object.keys(row));
+
+      const { data: inserted, error } = await supabaseClient
+        .from('predictions')
+        .insert([row])
+        .select();
+
+      if (error) {
+        console.error('Erreur Supabase insert', error);
+      } else {
+        console.log('Insert Supabase OK :', inserted);
+      }
     }
-
-    // 2) Envoi vers Supabase
-    try {
-        if (typeof supabaseClient === 'undefined') {
-            console.error('supabaseClient est undefined');
-        } else {
-            console.log('Envoi de la prédiction vers Supabase...', data);
-
-            const { data: inserted, error } = await supabaseClient
-                .from('predictions')
-                .insert([
-                    {
-                        mode: data.mode,
-                        champion: data.champion,
-                        finalists: data.finalists,
-                        semi_finalists: data.semiFinalists,
-                        quarter_finalists: data.quarterFinalists,
-                        round_of_16: data.roundOf16,
-                        round_of_32: data.roundOf32,
-                    
-                    }
-                ])
-                .select();
-
-            if (error) {
-                console.error('Erreur Supabase insert', error);
-            } else {
-                console.log('Insert Supabase OK :', inserted);
-            }
-        }
-    } catch (e) {
-        console.error('Exception pendant l’insert Supabase', e);
-    }
+  } catch (e) {
+    console.error('Exception pendant l’insert Supabase', e);
+  }
 
     // 3) Event Google Analytics (inchangé)
     if (window.gtag) {
@@ -3788,6 +3787,7 @@ function showChampionPopup(winnerName, mode) {
     </script>
 </body>
 </html>
+
 
 
 
