@@ -3475,100 +3475,109 @@ function computeThirdAssignments(slot) {
 }
 
         // MAJ live des classements + éventuel tableau des 3e
-        function updateExpertStandingsLive() {
-            const containerThird = document.getElementById('expert-third-summary');
-            if (containerThird) {
-                containerThird.style.display = 'none';
-                containerThird.innerHTML = '';
-            }
+function updateExpertStandingsLive() {
+    const containerThird = document.getElementById('expert-third-summary');
+    if (containerThird) {
+        containerThird.style.display = 'none';
+        containerThird.innerHTML = '';
+    }
 
-            const allThirds = [];
-            let allComplete = true;
+    const allThirds = [];
+    let allComplete = true;
 
-            for (const groupId of GROUP_IDS) {
-                const res = computeGroupStats(groupId, false, false);
-                if (!res) continue;
+    for (const groupId of GROUP_IDS) {
+        const res = computeGroupStats(groupId, false, false); // strict=false, pas de popup fair-play
+        if (!res) continue;
 
-                const { statsArr, third, complete } = res;
-                if (!complete) allComplete = false;
+        const { statsArr, third, complete } = res;
+        if (!complete) allComplete = false;
 
-                const tbodyStand = expertStandingsBodies[groupId];
-                if (tbodyStand) {
-                    tbodyStand.innerHTML = '';
-                    statsArr.forEach((s, idx) => {
-                        const tr = document.createElement('tr');
+        // MAJ tableau du groupe
+        const tbodyStand = expertStandingsBodies[groupId];
+        if (tbodyStand) {
+            tbodyStand.innerHTML = '';
+            statsArr.forEach((s, idx) => {
+                const tr = document.createElement('tr');
 
-                        const tdPos = document.createElement('td');
-                        tdPos.textContent = idx + 1;
+                const tdPos = document.createElement('td');
+                tdPos.textContent = idx + 1;
 
-                        const tdTeam = document.createElement('td');
-                        appendFlagAndName(tdTeam, s.name);
+                const tdTeam = document.createElement('td');
+                appendFlagAndName(tdTeam, s.name);
 
-                        const tdMj = document.createElement('td');
-                        tdMj.textContent = s.played;
+                const tdMj = document.createElement('td');
+                tdMj.textContent = s.played;
 
-                        const tdG = document.createElement('td');
-                        tdG.textContent = s.wins;
+                const tdG = document.createElement('td');
+                tdG.textContent = s.wins;
 
-                        const tdN = document.createElement('td');
-                        tdN.textContent = s.draws;
+                const tdN = document.createElement('td');
+                tdN.textContent = s.draws;
 
-                        const tdP = document.createElement('td');
-                        tdP.textContent = s.losses;
+                const tdP = document.createElement('td');
+                tdP.textContent = s.losses;
 
-                        const tdDb = document.createElement('td');
-                        tdDb.textContent = s.gd >= 0 ? '+' + s.gd : s.gd;
+                const tdDb = document.createElement('td');
+                tdDb.textContent = s.gd >= 0 ? '+' + s.gd : s.gd;
 
-                        const tdPts = document.createElement('td');
-                        tdPts.textContent = s.pts;
+                const tdPts = document.createElement('td');
+                tdPts.textContent = s.pts;
 
-                        tr.appendChild(tdPos);
-                        tr.appendChild(tdTeam);
-                        tr.appendChild(tdMj);
-                        tr.appendChild(tdG);
-                        tr.appendChild(tdN);
-                        tr.appendChild(tdP);
-                        tr.appendChild(tdDb);
-                        tr.appendChild(tdPts);
+                tr.appendChild(tdPos);
+                tr.appendChild(tdTeam);
+                tr.appendChild(tdMj);
+                tr.appendChild(tdG);
+                tr.appendChild(tdN);
+                tr.appendChild(tdP);
+                tr.appendChild(tdDb);
+                tr.appendChild(tdPts);
 
-                        tbodyStand.appendChild(tr);
-                    });
-                }
-
-                groupRanks[groupId] = {
-                    first: statsArr[0].name,
-                    second: statsArr[1].name,
-                    third: statsArr[2].name,
-                    fourth: statsArr[3].name
-                };
-
-                allThirds.push({
-                    groupId,
-                    name: third.name,
-                    pts: third.pts,
-                    gd: third.gd,
-                    gf: third.gf,
-                    played: third.played,
-                    wins: third.wins,
-                    draws: third.draws,
-                    losses: third.losses
-                });
-            }
-
-            if (allComplete && allThirds.length === GROUP_IDS.length && containerThird) {
-                            allThirds.sort((a, b) => {
-                if (b.pts !== a.pts) return b.pts - a.pts;
-                if (b.gd !== a.gd) return b.gd - a.gd;
-                if (b.gf !== a.gf) return b.gf - a.gf;
-                const fa = FAIR_PLAY_SCORE[a.name];
-                const fb = FAIR_PLAY_SCORE[b.name];
-                if (fa != null && fb != null && fa !== fb) return fa - fb;
-                return a.name.localeCompare(b.name);
+                tbodyStand.appendChild(tr);
             });
-
         }
 
-        /* Appliquer les pronos experts (poules) */
+        // On garde le classement pour l'arbre et les 3e
+        groupRanks[groupId] = {
+            first:  statsArr[0].name,
+            second: statsArr[1].name,
+            third:  statsArr[2].name,
+            fourth: statsArr[3].name
+        };
+
+        allThirds.push({
+            groupId,
+            name:   third.name,
+            pts:    third.pts,
+            gd:     third.gd,
+            gf:     third.gf,
+            played: third.played,
+            wins:   third.wins,
+            draws:  third.draws,
+            losses: third.losses
+        });
+    }
+
+    // Si tous les matchs de poule sont remplis, on affiche le tableau des 3e
+    if (allComplete && allThirds.length === GROUP_IDS.length && containerThird) {
+        allThirds.sort((a, b) => {
+            if (b.pts !== a.pts) return b.pts - a.pts;
+            if (b.gd !== a.gd)   return b.gd - a.gd;
+            if (b.gf !== a.gf)   return b.gf - a.gf;
+
+            // Fair-play : plus petit = plus fair-play
+            const fa = FAIR_PLAY_SCORE[a.name];
+            const fb = FAIR_PLAY_SCORE[b.name];
+            if (fa != null && fb != null && fa !== fb) return fa - fb;
+
+            // Ultime secours : ordre alphabétique
+            return a.name.localeCompare(b.name);
+        });
+
+        const bestThird = allThirds.slice(0, 8);
+        updateExpertThirdSummary(allThirds, bestThird);
+    }
+}
+
 
         function applyExpertPredictions() {
     const expertContainer = document.getElementById('expert-groups');
@@ -4564,6 +4573,7 @@ if (fairplayBackdrop) {
     </script>
 </body>
 </html>
+
 
 
 
