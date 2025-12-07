@@ -1398,12 +1398,19 @@
         const FLAG_BASE_URL = "https://flagcdn.com/w20/";
 
         function allGroupScoresFilled() {
-  // Adapte le sélecteur à tes inputs de scores
-  const inputs = document.querySelectorAll('.score-input'); 
-  if (inputs.length === 0) return false;
+  // Ancienne version : document.querySelectorAll('.score-input')
+  // → ça prend aussi les scores de la phase finale expert
+
+  const expertWrapper = document.getElementById('expert-groups');
+  if (!expertWrapper) return false;
+
+  // On ne regarde que les scores des matchs de poules (step 4)
+  const inputs = expertWrapper.querySelectorAll('.expert-match .score-input');
+  if (!inputs.length) return false;
 
   return Array.from(inputs).every(input => input.value !== '');
 }
+
 
 
         function moveFairPlayRow(row, direction) {
@@ -3593,19 +3600,10 @@ function computeThirdAssignments(slot) {
 
     container.style.display = 'block';
     container.innerHTML = '';
-    if (!allGroupScoresFilled()) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" style="text-align:center; font-style:italic; opacity:0.7;">
-          Renseigne d'abord tous les scores de la phase de groupes pour afficher
-          le classement des meilleurs troisièmes.
-        </td>
-      </tr>
-    `;
-    return;
-  }
+
     const title = document.createElement('h3');
     title.textContent = 'Classement des 3ᵉ (les 8 premiers sont qualifiés)';
+
     const info = document.createElement('p');
     info.textContent = 'Triés par points, différence de buts, buts marqués, puis ordre alphabétique.';
 
@@ -3626,6 +3624,7 @@ function computeThirdAssignments(slot) {
             <th>Pts</th>
         </tr>
     `;
+
     const tbody = document.createElement('tbody');
 
     const bestSet = new Set(bestThird.map(t => t.groupId));
@@ -3643,34 +3642,14 @@ function computeThirdAssignments(slot) {
         const tdTeam = document.createElement('td');
         appendFlagAndName(tdTeam, t.name);
 
-        const tdMj = document.createElement('td');
-        tdMj.textContent = t.played;
+        const tdMj = document.createElement('td'); tdMj.textContent = t.played;
+        const tdG  = document.createElement('td'); tdG.textContent  = t.wins;
+        const tdN  = document.createElement('td'); tdN.textContent  = t.draws;
+        const tdP  = document.createElement('td'); tdP.textContent  = t.losses;
+        const tdDb = document.createElement('td'); tdDb.textContent = t.gd >= 0 ? '+' + t.gd : t.gd;
+        const tdPts= document.createElement('td'); tdPts.textContent = t.pts;
 
-        const tdG = document.createElement('td');
-        tdG.textContent = t.wins;
-
-        const tdN = document.createElement('td');
-        tdN.textContent = t.draws;
-
-        const tdP = document.createElement('td');
-        tdP.textContent = t.losses;
-
-        const tdDb = document.createElement('td');
-        tdDb.textContent = t.gd >= 0 ? '+' + t.gd : t.gd;
-
-        const tdPts = document.createElement('td');
-        tdPts.textContent = t.pts;
-
-        tr.appendChild(tdRank);
-        tr.appendChild(tdGroup);
-        tr.appendChild(tdTeam);
-        tr.appendChild(tdMj);
-        tr.appendChild(tdG);
-        tr.appendChild(tdN);
-        tr.appendChild(tdP);
-        tr.appendChild(tdDb);
-        tr.appendChild(tdPts);
-
+        tr.append(tdRank, tdGroup, tdTeam, tdMj, tdG, tdN, tdP, tdDb, tdPts);
         tbody.appendChild(tr);
     });
 
@@ -3681,7 +3660,7 @@ function computeThirdAssignments(slot) {
     container.appendChild(info);
     container.appendChild(table);
 
-    // Bloc fair-play juste en dessous : uniquement les équipes ex æquo
+    // Bloc fair-play spécifique aux 3e à parfaite égalité
     const clusters = findFairPlayClustersFromStats(allThirds);
     if (clusters.length) {
         const block = document.createElement('div');
@@ -3911,27 +3890,32 @@ function updateExpertStandingsLive() {
         }
     }
 
-    // Affichage des blocs fair-play sous les groupes
-    renderGroupFairPlayBlocks(groupFairPlayClusters);
+        // On ne montre le fair-play que si TOUTES les poules sont entièrement renseignées
+    const everyMatchFilled = allGroupScoresFilled();
 
-    // Tableau des 3e (uniquement si tous les matchs ont un score)
-    if (allThirds.length === GROUP_IDS.length && allComplete && containerThird) {
-        allThirds.sort((a, b) => {
-            if (b.pts !== a.pts) return b.pts - a.pts;
-            if (b.gd !== a.gd)   return b.gd - a.gd;
-            if (b.gf !== a.gf)   return b.gf - a.gf;
+    if (everyMatchFilled) {
+        // Blocs "Fair-play – Groupe X" sous chaque groupe
+        renderGroupFairPlayBlocks(groupFairPlayClusters);
 
-            const fa = FAIR_PLAY_SCORE[a.name];
-            const fb = FAIR_PLAY_SCORE[b.name];
-            if (fa != null && fb != null && fa !== fb) return fa - fb;
+        // Tableau des meilleurs 3e
+        if (allThirds.length === GROUP_IDS.length && allComplete && containerThird) {
+            allThirds.sort((a, b) => {
+                if (b.pts !== a.pts) return b.pts - a.pts;
+                if (b.gd !== a.gd)   return b.gd - a.gd;
+                if (b.gf !== a.gf)   return b.gf - a.gf;
 
-            return a.name.localeCompare(b.name);
-        });
+                const fa = FAIR_PLAY_SCORE[a.name];
+                const fb = FAIR_PLAY_SCORE[b.name];
+                if (fa != null && fb != null && fa !== fb) return fa - fb;
 
-        const bestThird = allThirds.slice(0, 8);
-        updateExpertThirdSummary(allThirds, bestThird);
+                return a.name.localeCompare(b.name);
+            });
+
+            const bestThird = allThirds.slice(0, 8);
+            updateExpertThirdSummary(allThirds, bestThird);
+        }
     }
-}
+
 
 
         function applyExpertPredictions() {
@@ -4905,6 +4889,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
