@@ -53,6 +53,37 @@
     flex-wrap: wrap;
 }
 
+/* Mini-blocs fair-play affichés sous les groupes et sous le tableau des 3e */
+.group-fairplay-block,
+.third-fairplay-block {
+    margin: 0.5rem 0 0.7rem;
+    background: rgba(5, 12, 30, 0.95);
+    border-radius: 0.9rem;
+    border: 1px solid rgba(129, 140, 248, 0.7);
+    padding: 0.6rem 0.7rem 0.7rem;
+}
+
+.group-fairplay-block h3,
+.third-fairplay-block h3 {
+    margin: 0 0 0.25rem;
+    font-size: 0.8rem;
+    color: #9ea8ff;
+}
+
+.group-fairplay-block p,
+.third-fairplay-block p {
+    margin: 0 0 0.3rem;
+    font-size: 0.75rem;
+    color: #c3cbff;
+}
+
+.fairplay-inline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+
 
 .fairplay-item span.name {
     display: inline-flex;
@@ -1059,8 +1090,10 @@
             <div id="groups"></div>
 
             <div class="step-footer">
-                <button class="btn primary" id="go-step2-btn">Suivant : meilleurs 3ᵉ</button>
-            </div>
+    <button class="btn" id="back-from-expert-btn">Retour : mode simple</button>
+    <button class="btn primary" id="expert-apply-btn">Utiliser ces scores pour la phase finale expert</button>
+</div>
+
         </section>
 
         <!-- Étape 2 : choix des meilleurs 3e -->
@@ -1127,19 +1160,6 @@
             <div id="expert-groups"></div>
 
             <div id="expert-third-summary" class="expert-third-summary" style="display:none;"></div>
-                <div id="fairplay-panel" class="fairplay-panel" style="display:none;">
-                <h3>Classement fair-play</h3>
-                <p class="modal-subtitle">
-                    Classe les équipes de la plus fair-play (en haut) à la moins fair-play (en bas).
-                    Ce classement sert à départager les égalités parfaites et tu peux le modifier à tout moment.
-                </p>
-            
-                <div id="fairplay-list-container"></div>
-            
-                <div class="fairplay-panel-footer">
-                    <button class="btn" id="fairplay-cancel">Fermer</button>
-                    <button class="btn primary" id="fairplay-validate">Valider ce classement</button>
-                </div>
             </div>
 
 
@@ -1329,8 +1349,118 @@
     const index = children.indexOf(row);
     const newIndex = index + direction;
     if (newIndex < 0 || newIndex >= children.length) return;
-    parent.insertBefore(row, direction < 0 ? children[newIndex] : children[newIndex].nextSibling);
+    parent.insertBefore(
+        row,
+        direction < 0 ? children[newIndex] : children[newIndex].nextSibling
+    );
 }
+
+function recomputeFairPlayFromDOM() {
+    const lists = document.querySelectorAll('.fairplay-inline-list');
+    const graph = {};
+    const allTeams = new Set();
+
+    lists.forEach(list => {
+        const rows = Array.from(list.querySelectorAll('.fairplay-item'));
+        rows.forEach(r => {
+            const name = r.dataset.teamName;
+            if (name) allTeams.add(name);
+        });
+        for (let i = 0; i < rows.length - 1; i++) {
+            const a = rows[i].dataset.teamName;
+            const b = rows[i + 1].dataset.teamName;
+            if (!a || !b) continue;
+            if (!graph[a]) graph[a] = new Set();
+            graph[a].add(b); // a plus fair-play que b
+        }
+    });
+
+    // Compléter les sommets sans arcs sortants
+    allTeams.forEach(name => {
+        if (!graph[name]) graph[name] = new Set();
+    });
+
+    // Degrés entrants
+    const inDeg = {};
+    allTeams.forEach(name => (inDeg[name] = 0));
+    Object.keys(graph).forEach(a => {
+        graph[a].forEach(b => {
+            inDeg[b] = (inDeg[b] || 0) + 1;
+        });
+    });
+
+    // Tri topologique (toujours prendre le nom le plus "petit" dispo pour rester stable)
+    const queue = Array.from(allTeams).filter(name => inDeg[name] === 0).sort();
+    const order = [];
+
+    while (queue.length) {
+        const name = queue.shift();
+        order.push(name);
+        graph[name].forEach(b => {
+            inDeg[b]--;
+            if (inDeg[b] === 0) {
+                queue.push(b);
+                queue.sort();
+            }
+        });
+    }
+
+    let finalOrder;
+    if (order.length === allTeams.size) {
+        finalOrder = order;
+    } else {
+        // En cas de cycle improbable, fallback ordre alphabétique
+        finalOrder = Array.from(allTeams).sort();
+    }
+
+    // Plus l'indice est petit, plus l'équipe est fair-play
+    Object.keys(FAIR_PLAY_SCORE).forEach(k => delete FAIR_PLAY_SCORE[k]);
+    finalOrder.forEach((name, idx) => {
+        FAIR_PLAY_SCORE[name] = idx;
+    });
+}
+
+function createFairPlayRow(listEl, teamName) {
+    const row = document.createElement('div');
+    row.className = 'fairplay-item';
+    row.dataset.teamName = teamName;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    appendFlagAndName(nameSpan, teamName);
+    row.appendChild(nameSpan);
+
+    const upBtn = document.createElement('button');
+    upBtn.type = 'button';
+    upBtn.className = 'btn';
+    upBtn.textContent = '↑';
+    upBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        moveFairPlayRow(row, -1);
+        recomputeFairPlayFromDOM();
+        updateExpertStandingsLive();
+    });
+
+    const downBtn = document.createElement('button');
+    downBtn.type = 'button';
+    downBtn.className = 'btn';
+    downBtn.textContent = '↓';
+    downBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        moveFairPlayRow(row, 1);
+        recomputeFairPlayFromDOM();
+        updateExpertStandingsLive();
+    });
+
+    row.appendChild(upBtn);
+    row.appendChild(downBtn);
+
+    listEl.appendChild(row);
+}
+
+
 function openFairPlayModal() {
     const panel = document.getElementById('fairplay-panel');
     const list  = document.getElementById('fairplay-list-container');
@@ -3225,7 +3355,7 @@ function computeThirdAssignments(slot) {
 
         // Calcule les stats d'un groupe à partir des scores
         // strict = true => renvoie null si un match n'a pas de score
-        function computeGroupStats(groupId, strict, enableFairPlayPrompt) {
+        function computeGroupStats(groupId, strict) {
     const expertContainer = document.getElementById('expert-groups');
     if (!expertContainer) return null;
 
@@ -3251,7 +3381,7 @@ function computeThirdAssignments(slot) {
 
     const matchRows = card.querySelectorAll('.expert-match');
     let complete = true;
-    const matches = []; // pour la mini-ligue (confrontations directes)
+    const matches = [];
 
     for (const row of matchRows) {
         const t1Index = parseInt(row.dataset.team1Index, 10);
@@ -3301,7 +3431,7 @@ function computeThirdAssignments(slot) {
         s.gd = s.gf - s.ga;
     });
 
-    // Tri global : points → diff buts → buts marqués (pas encore fair-play ici)
+    // Tri global pts → diff → buts marqués → nom
     statsArr.sort((a, b) => {
         if (b.pts !== a.pts) return b.pts - a.pts;
         if (b.gd !== a.gd) return b.gd - a.gd;
@@ -3309,105 +3439,205 @@ function computeThirdAssignments(slot) {
         return a.name.localeCompare(b.name);
     });
 
-    // Confrontations directes + fair-play éventuel
-    applyHeadToHeadTiebreaker(statsArr, matches, groupId, enableFairPlayPrompt);
+    // Puis on applique la mini-ligue + fair-play
+    applyHeadToHeadTiebreaker(statsArr, matches);
 
     const third = statsArr[2];
     return { statsArr, third, complete };
 }
 
 
-        function updateExpertThirdSummary(allThirds, bestThird) {
-            const container = document.getElementById('expert-third-summary');
-            if (!container) return;
-
-            container.style.display = 'block';
-            container.innerHTML = '';
-
-            const title = document.createElement('h3');
-            title.textContent = 'Classement des 3ᵉ (les 8 premiers sont qualifiés)';
-            const info = document.createElement('p');
-            info.textContent = 'Triés par points, différence de buts, buts marqués, puis ordre alphabétique.';
-
-            const table = document.createElement('table');
-            table.className = 'expert-third-summary-table';
-
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-                                <tr>
-                                    <th>#</th>
-                                    <th>Groupe</th>
-                                    <th>Équipe</th>
-                                    <th>MJ</th>
-                                    <th>G</th>
-                                    <th>N</th>
-                                    <th>P</th>
-                                    <th>DB</th>
-                                    <th>Pts</th>
-                                </tr>
-                            `;
-            const tbody = document.createElement('tbody');
-
-            const bestSet = new Set(bestThird.map(t => t.groupId));
-
-            allThirds.forEach((t, idx) => {
-                const tr = document.createElement('tr');
-                tr.classList.add(bestSet.has(t.groupId) ? 'qualified-third' : 'eliminated-third');
-
-                const tdRank = document.createElement('td');
-                tdRank.textContent = idx + 1;
-
-                const tdGroup = document.createElement('td');
-                tdGroup.textContent = t.groupId;
-
-                const tdTeam = document.createElement('td');
-                appendFlagAndName(tdTeam, t.name);
-
-                const tdMj = document.createElement('td');
-                tdMj.textContent = t.played;
-
-                const tdG = document.createElement('td');
-                tdG.textContent = t.wins;
-
-                const tdN = document.createElement('td');
-                tdN.textContent = t.draws;
-
-                const tdP = document.createElement('td');
-                tdP.textContent = t.losses;
-
-                const tdDb = document.createElement('td');
-                tdDb.textContent = t.gd >= 0 ? '+' + t.gd : t.gd;
-
-                const tdPts = document.createElement('td');
-                tdPts.textContent = t.pts;
-
-                tr.appendChild(tdRank);
-                tr.appendChild(tdGroup);
-                tr.appendChild(tdTeam);
-                tr.appendChild(tdMj);
-                tr.appendChild(tdG);
-                tr.appendChild(tdN);
-                tr.appendChild(tdP);
-                tr.appendChild(tdDb);
-                tr.appendChild(tdPts);
-
-                tbody.appendChild(tr);
-            });
-
-            table.appendChild(thead);
-            table.appendChild(tbody);
-
-            container.appendChild(title);
-            container.appendChild(info);
-            container.appendChild(table);
-        }
-
-        function applyHeadToHeadTiebreaker(statsArr, matches, groupId, enableFairPlayPrompt) {
+        function findFairPlayClustersFromStats(statsArr) {
+    const clusters = [];
     let i = 0;
     while (i < statsArr.length) {
         let j = i + 1;
+        while (
+            j < statsArr.length &&
+            statsArr[j].pts === statsArr[i].pts &&
+            statsArr[j].gd === statsArr[i].gd &&
+            statsArr[j].gf === statsArr[i].gf
+        ) {
+            j++;
+        }
+        if (j - i >= 2) {
+            clusters.push(statsArr.slice(i, j).map(s => s.name));
+        }
+        i = j;
+    }
+    return clusters;
+}
 
-        // Segment d'équipes ex æquo sur les stats globales
+        function renderGroupFairPlayBlocks(groupClusters) {
+    const wrapper = document.getElementById('expert-groups');
+    if (!wrapper) return;
+
+    // On nettoie d'abord les anciens blocs
+    wrapper.querySelectorAll('.group-fairplay-block').forEach(el => el.remove());
+
+    GROUP_IDS.forEach(groupId => {
+        const clusters = groupClusters[groupId];
+        if (!clusters || !clusters.length) return;
+
+        const card = wrapper.querySelector(`.group-card[data-group="${groupId}"]`);
+        if (!card) return;
+
+        const block = document.createElement('div');
+        block.className = 'group-fairplay-block';
+
+        const title = document.createElement('h3');
+        title.textContent = `Fair-play – Groupe ${groupId}`;
+        block.appendChild(title);
+
+        const p = document.createElement('p');
+        p.textContent = 'Ces équipes sont à égalité parfaite : classe-les de la plus fair-play (en haut) à la moins fair-play (en bas).';
+        block.appendChild(p);
+
+        clusters.forEach(names => {
+            const list = document.createElement('div');
+            list.className = 'fairplay-inline-list';
+
+            const sortedNames = [...names].sort((a, b) => {
+                const fa = FAIR_PLAY_SCORE[a];
+                const fb = FAIR_PLAY_SCORE[b];
+                if (fa != null && fb != null && fa !== fb) return fa - fb;
+                return a.localeCompare(b);
+            });
+
+            sortedNames.forEach(name => createFairPlayRow(list, name));
+            block.appendChild(list);
+        });
+
+        // On place le bloc juste après la carte du groupe
+        card.insertAdjacentElement('afterend', block);
+    });
+}
+
+
+
+        function updateExpertThirdSummary(allThirds, bestThird) {
+    const container = document.getElementById('expert-third-summary');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.innerHTML = '';
+
+    const title = document.createElement('h3');
+    title.textContent = 'Classement des 3ᵉ (les 8 premiers sont qualifiés)';
+    const info = document.createElement('p');
+    info.textContent = 'Triés par points, différence de buts, buts marqués, puis ordre alphabétique.';
+
+    const table = document.createElement('table');
+    table.className = 'expert-third-summary-table';
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th>#</th>
+            <th>Groupe</th>
+            <th>Équipe</th>
+            <th>MJ</th>
+            <th>G</th>
+            <th>N</th>
+            <th>P</th>
+            <th>DB</th>
+            <th>Pts</th>
+        </tr>
+    `;
+    const tbody = document.createElement('tbody');
+
+    const bestSet = new Set(bestThird.map(t => t.groupId));
+
+    allThirds.forEach((t, idx) => {
+        const tr = document.createElement('tr');
+        tr.classList.add(bestSet.has(t.groupId) ? 'qualified-third' : 'eliminated-third');
+
+        const tdRank = document.createElement('td');
+        tdRank.textContent = idx + 1;
+
+        const tdGroup = document.createElement('td');
+        tdGroup.textContent = t.groupId;
+
+        const tdTeam = document.createElement('td');
+        appendFlagAndName(tdTeam, t.name);
+
+        const tdMj = document.createElement('td');
+        tdMj.textContent = t.played;
+
+        const tdG = document.createElement('td');
+        tdG.textContent = t.wins;
+
+        const tdN = document.createElement('td');
+        tdN.textContent = t.draws;
+
+        const tdP = document.createElement('td');
+        tdP.textContent = t.losses;
+
+        const tdDb = document.createElement('td');
+        tdDb.textContent = t.gd >= 0 ? '+' + t.gd : t.gd;
+
+        const tdPts = document.createElement('td');
+        tdPts.textContent = t.pts;
+
+        tr.appendChild(tdRank);
+        tr.appendChild(tdGroup);
+        tr.appendChild(tdTeam);
+        tr.appendChild(tdMj);
+        tr.appendChild(tdG);
+        tr.appendChild(tdN);
+        tr.appendChild(tdP);
+        tr.appendChild(tdDb);
+        tr.appendChild(tdPts);
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    container.appendChild(title);
+    container.appendChild(info);
+    container.appendChild(table);
+
+    // Bloc fair-play juste en dessous : uniquement les équipes ex æquo
+    const clusters = findFairPlayClustersFromStats(allThirds);
+    if (clusters.length) {
+        const block = document.createElement('div');
+        block.className = 'third-fairplay-block';
+
+        const fpTitle = document.createElement('h3');
+        fpTitle.textContent = 'Fair-play – 3ᵉ à égalité';
+        block.appendChild(fpTitle);
+
+        const fpInfo = document.createElement('p');
+        fpInfo.textContent = 'Classe les équipes de la plus fair-play (en haut) à la moins fair-play (en bas).';
+        block.appendChild(fpInfo);
+
+        clusters.forEach(names => {
+            const list = document.createElement('div');
+            list.className = 'fairplay-inline-list';
+
+            const sortedNames = [...names].sort((a, b) => {
+                const fa = FAIR_PLAY_SCORE[a];
+                const fb = FAIR_PLAY_SCORE[b];
+                if (fa != null && fb != null && fa !== fb) return fa - fb;
+                return a.localeCompare(b);
+            });
+
+            sortedNames.forEach(name => createFairPlayRow(list, name));
+            block.appendChild(list);
+        });
+
+        container.appendChild(block);
+    }
+}
+
+
+        function applyHeadToHeadTiebreaker(statsArr, matches) {
+    let i = 0;
+    while (i < statsArr.length) {
+        let j = i + 1;
+        // Segment d'équipes ex æquo sur le bilan global
         while (
             j < statsArr.length &&
             statsArr[j].pts === statsArr[i].pts &&
@@ -3421,7 +3651,7 @@ function computeThirdAssignments(slot) {
             const tiedSlice = statsArr.slice(i, j);
             const nameSet = new Set(tiedSlice.map(t => t.name));
 
-            // Mini-ligue : stats uniquement sur les matches entre ces équipes-là
+            // Mini-ligue
             const miniMap = {};
             tiedSlice.forEach(t => {
                 miniMap[t.name] = { pts: 0, gd: 0, gf: 0 };
@@ -3455,47 +3685,20 @@ function computeThirdAssignments(slot) {
                 miniGf: miniMap[t.name].gf
             }));
 
-            // Tri mini-ligue : points -> diff buts -> buts marqués -> fair-play -> alphabétique
             miniArr.sort((a, b) => {
                 if (b.miniPts !== a.miniPts) return b.miniPts - a.miniPts;
                 if (b.miniGd !== a.miniGd) return b.miniGd - a.miniGd;
                 if (b.miniGf !== a.miniGf) return b.miniGf - a.miniGf;
 
+                // Fair-play global si disponible
                 const fa = FAIR_PLAY_SCORE[a.team.name];
                 const fb = FAIR_PLAY_SCORE[b.team.name];
                 if (fa != null && fb != null && fa !== fb) return fa - fb;
 
+                // Dernier recours : alphabétique
                 return a.team.name.localeCompare(b.team.name);
             });
 
-            // Si on est en mode "strict" (bouton "Utiliser ces scores…"), on marque les égalités
-            if (enableFairPlayPrompt) {
-                let u = 0;
-                while (u < miniArr.length) {
-                    let v = u + 1;
-                    while (
-                        v < miniArr.length &&
-                        miniArr[v].miniPts === miniArr[u].miniPts &&
-                        miniArr[v].miniGd === miniArr[u].miniGd &&
-                        miniArr[v].miniGf === miniArr[u].miniGf
-                    ) {
-                        v++;
-                    }
-                    if (v - u >= 2) {
-                        const names = miniArr.slice(u, v).map(e => e.team.name);
-                        const hasAllFairPlay = names.every(n => FAIR_PLAY_SCORE[n] != null);
-                        if (!hasAllFairPlay) {
-                            NEEDS_FAIR_PLAY_PROMPT = true;
-                            names.forEach(n => {
-                                if (FAIR_PLAY_SCORE[n] == null) pendingFairPlayTeams.add(n);
-                            });
-                        }
-                    }
-                    u = v;
-                }
-            }
-
-            // On réécrit l'ordre dans statsArr
             for (let k = 0; k < miniArr.length; k++) {
                 statsArr[i + k] = miniArr[k].team;
             }
@@ -3504,6 +3707,7 @@ function computeThirdAssignments(slot) {
         i = j;
     }
 }
+
 
         function checkThirdFairPlayNeeds(thirdArray, enableFairPlayPrompt) {
     if (!enableFairPlayPrompt) return;
@@ -3541,17 +3745,22 @@ function updateExpertStandingsLive() {
         containerThird.innerHTML = '';
     }
 
+    const expertWrapper = document.getElementById('expert-groups');
+    if (expertWrapper) {
+        expertWrapper.querySelectorAll('.group-fairplay-block').forEach(el => el.remove());
+    }
+
     const allThirds = [];
     let allComplete = true;
+    const groupFairPlayClusters = {};
 
     for (const groupId of GROUP_IDS) {
-        const res = computeGroupStats(groupId, false, false); // strict=false, pas de popup fair-play
+        const res = computeGroupStats(groupId, false);
         if (!res) continue;
 
         const { statsArr, third, complete } = res;
         if (!complete) allComplete = false;
 
-        // MAJ tableau du groupe
         const tbodyStand = expertStandingsBodies[groupId];
         if (tbodyStand) {
             tbodyStand.innerHTML = '';
@@ -3595,7 +3804,6 @@ function updateExpertStandingsLive() {
             });
         }
 
-        // On garde le classement pour l'arbre et les 3e
         groupRanks[groupId] = {
             first:  statsArr[0].name,
             second: statsArr[1].name,
@@ -3614,21 +3822,27 @@ function updateExpertStandingsLive() {
             draws:  third.draws,
             losses: third.losses
         });
+
+        const clusters = findFairPlayClustersFromStats(statsArr);
+        if (clusters.length) {
+            groupFairPlayClusters[groupId] = clusters;
+        }
     }
 
-    // Si tous les matchs de poule sont remplis, on affiche le tableau des 3e
-    if (allComplete && allThirds.length === GROUP_IDS.length && containerThird) {
+    // Affichage des blocs fair-play sous les groupes
+    renderGroupFairPlayBlocks(groupFairPlayClusters);
+
+    // Tableau des 3e (uniquement si tous les matchs ont un score)
+    if (allThirds.length === GROUP_IDS.length && allComplete && containerThird) {
         allThirds.sort((a, b) => {
             if (b.pts !== a.pts) return b.pts - a.pts;
             if (b.gd !== a.gd)   return b.gd - a.gd;
             if (b.gf !== a.gf)   return b.gf - a.gf;
 
-            // Fair-play : plus petit = plus fair-play
             const fa = FAIR_PLAY_SCORE[a.name];
             const fb = FAIR_PLAY_SCORE[b.name];
             if (fa != null && fb != null && fa !== fb) return fa - fb;
 
-            // Ultime secours : ordre alphabétique
             return a.name.localeCompare(b.name);
         });
 
@@ -4612,6 +4826,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
