@@ -1090,9 +1090,11 @@
             <div id="groups"></div>
 
             <div class="step-footer">
-    <button class="btn" id="back-from-expert-btn">Retour : mode simple</button>
-    <button class="btn primary" id="expert-apply-btn">Utiliser ces scores pour la phase finale expert</button>
+    <button class="btn primary" id="go-step2-btn">
+        Suivant : meilleurs 3ᵉ
+    </button>
 </div>
+
 
         </section>
 
@@ -1194,6 +1196,58 @@
                 <button class="btn" id="back-from-expert-ko-btn">Retour : poules expert</button>
             </div>
         </section>
+
+                <!-- Modale barragistes -->
+        <div id="playoff-modal-backdrop" class="modal-backdrop">
+            <section class="modal">
+                <h2>Choisir les vainqueurs de barrages</h2>
+                <p class="modal-subtitle">
+                    Sélectionne pour chaque voie de barrage l’équipe qualifiée à la Coupe du monde 2026.
+                </p>
+
+                <div id="playoff-slots-container"></div>
+
+                <div class="modal-footer">
+                    <button id="playoff-cancel" class="btn">Annuler</button>
+                    <button id="playoff-apply" class="btn primary">Valider</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Panneau fair-play global -->
+        <section id="fairplay-panel" class="fairplay-panel" style="display:none;">
+            <h3 style="margin:0 0 0.3rem;font-size:0.85rem;color:#9ea8ff;">
+                Classement fair-play des équipes
+            </h3>
+            <p style="margin:0 0 0.5rem;font-size:0.75rem;color:#c3cbff;">
+                Trie les équipes de la plus fair-play (en haut) à la moins fair-play (en bas).
+                Ce classement sert à départager les ex æquo en mode expert.
+            </p>
+
+            <div id="fairplay-list-container"></div>
+
+            <div class="fairplay-panel-footer">
+                <button id="fairplay-cancel" class="btn">Annuler</button>
+                <button id="fairplay-validate" class="btn primary">Valider le classement</button>
+            </div>
+        </section>
+
+        <!-- Popup du champion -->
+        <div id="winner-modal-backdrop" class="modal-backdrop">
+            <section class="modal">
+                <h2>Ton champion 2026</h2>
+                <p id="winner-modal-summary" class="winner-modal-summary"></p>
+
+                <div id="winner-modal-content" class="winner-modal-content">
+                    <!-- drapeau + nom ajoutés en JS -->
+                </div>
+
+                <div class="modal-footer">
+                    <button id="winner-modal-close" class="btn primary">Fermer</button>
+                </div>
+            </section>
+        </div>
+
     </main>
 
     <script>
@@ -4701,10 +4755,7 @@ if (fairplayOpenBtn) {
                 });
             }
 
-            document.getElementById('go-step2-btn').addEventListener('click', () => {
-                refreshThirdTable();
-                showStep(2);
-            });
+        
 
             document.getElementById('back-step1-btn').addEventListener('click', () => {
                 showStep(1);
@@ -4826,6 +4877,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
