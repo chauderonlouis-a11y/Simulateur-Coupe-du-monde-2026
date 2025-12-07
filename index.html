@@ -1331,8 +1331,76 @@
     if (newIndex < 0 || newIndex >= children.length) return;
     parent.insertBefore(row, direction < 0 ? children[newIndex] : children[newIndex].nextSibling);
 }
+function openFairPlayModal() {
+    const panel = document.getElementById('fairplay-panel');
+    const list  = document.getElementById('fairplay-list-container');
+    if (!panel || !list) return;
 
-openFairPlayModal
+    list.innerHTML = '';
+
+    // 1) Construire la liste de toutes les équipes à classer
+    const teamsSet = new Set();
+
+    // Toutes les équipes de poules
+    GROUP_IDS.forEach(gid => {
+        (GROUP_TEAMS[gid] || []).forEach(name => {
+            if (name) teamsSet.add(name);
+        });
+    });
+
+    // 2) On les met dans un tableau et on les trie :
+    //    - d’abord par score de fair-play s’il existe (0 = très fair-play)
+    //    - sinon par ordre alphabétique
+    const teams = Array.from(teamsSet).sort((a, b) => {
+        const fa = FAIR_PLAY_SCORE[a];
+        const fb = FAIR_PLAY_SCORE[b];
+
+        if (fa != null && fb != null && fa !== fb) return fa - fb;
+        if (fa != null && fb == null) return -1;
+        if (fa == null && fb != null) return 1;
+        return a.localeCompare(b);
+    });
+
+    // 3) Construction des lignes
+    teams.forEach(name => {
+        const row = document.createElement('div');
+        row.className = 'fairplay-item';
+        row.dataset.teamName = name;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'name';
+        appendFlagAndName(nameSpan, name);
+        row.appendChild(nameSpan);
+
+        const upBtn = document.createElement('button');
+        upBtn.type = 'button';
+        upBtn.className = 'btn';
+        upBtn.textContent = '▲';
+        upBtn.addEventListener('click', () => moveFairPlayRow(row, -1));
+        row.appendChild(upBtn);
+
+        const downBtn = document.createElement('button');
+        downBtn.type = 'button';
+        downBtn.className = 'btn';
+        downBtn.textContent = '▼';
+        downBtn.addEventListener('click', () => moveFairPlayRow(row, +1));
+        row.appendChild(downBtn);
+
+        list.appendChild(row);
+    });
+
+    // 4) Afficher le bloc en bas
+    panel.style.display = 'block';
+
+    // Optionnel : scroll pour bien le voir
+    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function closeFairPlayModal() {
+    const panel = document.getElementById('fairplay-panel');
+    if (panel) panel.style.display = 'none';
+}
+
 
 function applyFairPlayChoices() {
     const list = document.getElementById('fairplay-list-container');
@@ -4544,6 +4612,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
