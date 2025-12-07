@@ -3512,6 +3512,13 @@ function computeThirdAssignments(slot) {
 
         function findFairPlayClustersFromStats(statsArr) {
     const clusters = [];
+    if (!statsArr || !statsArr.length) return clusters;
+
+    // 🔴 NEW : si aucune équipe n'a encore joué (MJ = 0 partout),
+    // on ne montre PAS de bloc fair-play.
+    const anyPlayed = statsArr.some(s => typeof s.played === 'number' && s.played > 0);
+    if (!anyPlayed) return clusters;
+
     let i = 0;
     while (i < statsArr.length) {
         let j = i + 1;
@@ -3524,12 +3531,14 @@ function computeThirdAssignments(slot) {
             j++;
         }
         if (j - i >= 2) {
+            // groupe d'équipes vraiment à égalité (même pts, DB, buts marqués)
             clusters.push(statsArr.slice(i, j).map(s => s.name));
         }
         i = j;
     }
     return clusters;
 }
+
 
         function renderGroupFairPlayBlocks(groupClusters) {
     const wrapper = document.getElementById('expert-groups');
@@ -4896,6 +4905,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
