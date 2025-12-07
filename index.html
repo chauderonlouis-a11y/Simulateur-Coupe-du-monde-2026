@@ -3431,101 +3431,128 @@ function computeThirdAssignments(slot) {
         }
 
         function createKoMatchElementExpert(round, config) {
-            const matchId = config.id;
-            const matchEl = document.createElement('div');
-            matchEl.className = 'ko-match';
-            matchEl.dataset.matchId = matchId;
-            matchEl.dataset.round = round;
+    const matchId = config.id;
+    const matchEl = document.createElement('div');
+    matchEl.className = 'ko-match';
+    matchEl.dataset.matchId = matchId;
+    matchEl.dataset.round = round;
 
-            const header = document.createElement('div');
-            header.className = 'ko-match-header';
-            const titleEl = document.createElement('div');
-            titleEl.className = 'ko-match-title';
-            const info = OFFICIAL_MATCH_INFO[matchId];
-            if (info && info.number) {
-              titleEl.textContent = `Match ${info.number}`;
-            } else {
-              titleEl.textContent = matchId.replace('-', ' ');
-            }
-            const infoBtn = document.createElement('button');
-            infoBtn.type = 'button';
-            infoBtn.className = 'match-info-btn';
-            infoBtn.textContent = 'i';
-            infoBtn.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                toggleMatchInfoBubble(matchEl, matchId);
-            });
-            header.appendChild(titleEl);
-            header.appendChild(infoBtn);
-            matchEl.appendChild(header);
+    // --- Header (titre + bouton i) ---
+    const header = document.createElement('div');
+    header.className = 'ko-match-header';
 
-            const team1NameSpan = document.createElement('span');
-            team1NameSpan.className = 'name';
-            const team2NameSpan = document.createElement('span');
-            team2NameSpan.className = 'name';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'ko-match-title';
+    const info = OFFICIAL_MATCH_INFO[matchId];
+    if (info && info.number) {
+        titleEl.textContent = `Match ${info.number}`;
+    } else {
+        titleEl.textContent = matchId.replace('-', ' ');
+    }
 
-            let placeholder1, placeholder2;
-            if (round === 'R32') {
-                placeholder1 = 'Qualifié ' + (config.seed1 + 1);
-                placeholder2 = 'Qualifié ' + (config.seed2 + 1);
-            } else {
-                placeholder1 = 'Vainqueur ' + config.from1;
-                placeholder2 = 'Vainqueur ' + config.from2;
-            }
+    const infoBtn = document.createElement('button');
+    infoBtn.type = 'button';
+    infoBtn.className = 'match-info-btn';
+    infoBtn.textContent = 'i';
+    infoBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        toggleMatchInfoBubble(matchEl, matchId);
+    });
 
-            team1NameSpan.dataset.placeholder = placeholder1;
-            team2NameSpan.dataset.placeholder = placeholder2;
-            renderTeamLabelFlagsOnly(team1NameSpan, placeholder1);
-            renderTeamLabelFlagsOnly(team2NameSpan, placeholder2);
+    header.appendChild(titleEl);
+    header.appendChild(infoBtn);
+    matchEl.appendChild(header);
 
-            const team1Row = document.createElement('div');
-            team1Row.className = 'ko-team';
-            team1Row.appendChild(team1NameSpan);
+    // --- Noms d'équipes ---
+    const team1NameSpan = document.createElement('span');
+    team1NameSpan.className = 'name';
+    const team2NameSpan = document.createElement('span');
+    team2NameSpan.className = 'name';
 
-            const score1 = document.createElement('input');
-            score1.type = 'number';
-            score1.min = '0';
-            score1.className = 'score-input';
-            score1.setAttribute('inputmode', 'numeric');
-            team1Row.appendChild(score1);
+    let placeholder1, placeholder2;
 
-            const team2Row = document.createElement('div');
-            team2Row.className = 'ko-team';
-            team2Row.appendChild(team2NameSpan);
-
-            const score2 = document.createElement('input');
-            score2.type = 'number';
-            score2.min = '0';
-            score2.className = 'score-input';
-            score2.setAttribute('inputmode', 'numeric');
-            team2Row.appendChild(score2);
-
-            score1.addEventListener('input', () => handleExpertScoreChange(matchId));
-            score2.addEventListener('input', () => handleExpertScoreChange(matchId));
-
-            team1Row.addEventListener('click', (e) => {
-                if (e.target.closest('input')) return;
-                handleExpertRowClick(matchId, 1);
-            });
-            team2Row.addEventListener('click', (e) => {
-                if (e.target.closest('input')) return;
-                handleExpertRowClick(matchId, 2);
-            });
-
-            matchEl.appendChild(team1Row);
-            matchEl.appendChild(team2Row);
-
-            koDomExpert[round][matchId] = {
-                el: matchEl,
-                team1Row,
-                team2Row,
-                team1NameSpan,
-                team2NameSpan,
-                score1,
-                score2
-            };
-            return matchEl;
+    if (round === 'R32') {
+        // Côté "têtes de série" (1er / 2e de groupe)
+        if (config.slot1) {
+            placeholder1 = config.slot1;          // ex : "1E", "2A"
+        } else {
+            placeholder1 = '?';
         }
+
+        // Côté adversaire : autre 1er/2e ou 3e parmi une liste
+        if (config.slot2) {
+            placeholder2 = config.slot2;          // ex : "2C"
+        } else if (config.thirdGroups) {
+            placeholder2 = '3ᵉ ' + config.thirdGroups.join('/'); // ex : "3ᵉ C/D/F/G/H"
+        } else {
+            placeholder2 = '?';
+        }
+    } else {
+        // À partir des 8e : vainqueurs des matchs précédents
+        placeholder1 = 'Vainqueur ' + config.from1;
+        placeholder2 = 'Vainqueur ' + config.from2;
+    }
+
+    team1NameSpan.dataset.placeholder = placeholder1;
+    team2NameSpan.dataset.placeholder = placeholder2;
+
+    // En expert : on affiche surtout les drapeaux (texte en fallback)
+    renderTeamLabelFlagsOnly(team1NameSpan, placeholder1);
+    renderTeamLabelFlagsOnly(team2NameSpan, placeholder2);
+
+    // --- Ligne équipe 1 + score ---
+    const team1Row = document.createElement('div');
+    team1Row.className = 'ko-team';
+    team1Row.appendChild(team1NameSpan);
+
+    const score1 = document.createElement('input');
+    score1.type = 'number';
+    score1.min = '0';
+    score1.className = 'score-input';
+    score1.setAttribute('inputmode', 'numeric');
+    team1Row.appendChild(score1);
+
+    // --- Ligne équipe 2 + score ---
+    const team2Row = document.createElement('div');
+    team2Row.className = 'ko-team';
+    team2Row.appendChild(team2NameSpan);
+
+    const score2 = document.createElement('input');
+    score2.type = 'number';
+    score2.min = '0';
+    score2.className = 'score-input';
+    score2.setAttribute('inputmode', 'numeric');
+    team2Row.appendChild(score2);
+
+    // --- Listeners scores & clics gagnant ---
+    score1.addEventListener('input', () => handleExpertScoreChange(matchId));
+    score2.addEventListener('input', () => handleExpertScoreChange(matchId));
+
+    team1Row.addEventListener('click', (e) => {
+        if (e.target.closest('input')) return;
+        handleExpertRowClick(matchId, 1);
+    });
+    team2Row.addEventListener('click', (e) => {
+        if (e.target.closest('input')) return;
+        handleExpertRowClick(matchId, 2);
+    });
+
+    matchEl.appendChild(team1Row);
+    matchEl.appendChild(team2Row);
+
+    koDomExpert[round][matchId] = {
+        el: matchEl,
+        team1Row,
+        team2Row,
+        team1NameSpan,
+        team2NameSpan,
+        score1,
+        score2
+    };
+
+    return matchEl;
+}
+
 
         function createKnockoutExpert() {
   // Adapte l'id si ton conteneur expert a un autre id
@@ -4229,6 +4256,7 @@ function computeThirdAssignments(slot) {
     </script>
 </body>
 </html>
+
 
 
 
