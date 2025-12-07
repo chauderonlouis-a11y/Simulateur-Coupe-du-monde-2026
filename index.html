@@ -37,6 +37,22 @@
     background: rgba(10, 16, 40, 0.95);
     border: 1px solid rgba(129, 140, 248, 0.7);
 }
+.fairplay-panel {
+    margin-top: 1rem;
+    background: rgba(5, 12, 30, 0.95);
+    border-radius: 0.9rem;
+    border: 1px solid rgba(129, 140, 248, 0.7);
+    padding: 0.6rem 0.7rem 0.7rem;
+}
+
+.fairplay-panel-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    flex-wrap: wrap;
+}
+
 
 .fairplay-item span.name {
     display: inline-flex;
@@ -1111,11 +1127,28 @@
             <div id="expert-groups"></div>
 
             <div id="expert-third-summary" class="expert-third-summary" style="display:none;"></div>
+                <div id="fairplay-panel" class="fairplay-panel" style="display:none;">
+                <h3>Classement fair-play</h3>
+                <p class="modal-subtitle">
+                    Classe les équipes de la plus fair-play (en haut) à la moins fair-play (en bas).
+                    Ce classement sert à départager les égalités parfaites et tu peux le modifier à tout moment.
+                </p>
+            
+                <div id="fairplay-list-container"></div>
+            
+                <div class="fairplay-panel-footer">
+                    <button class="btn" id="fairplay-cancel">Fermer</button>
+                    <button class="btn primary" id="fairplay-validate">Valider ce classement</button>
+                </div>
+            </div>
+
 
             <div class="step-footer">
-                <button class="btn" id="back-from-expert-btn">Retour : mode simple</button>
-                <button class="btn primary" id="expert-apply-btn">Utiliser ces scores pour la phase finale expert</button>
-            </div>
+            <button class="btn" id="back-from-expert-btn">Retour : mode simple</button>
+            <button class="btn" id="open-fairplay-panel-btn">Voir / modifier le fair-play</button>
+            <button class="btn primary" id="expert-apply-btn">Utiliser ces scores pour la phase finale expert</button>
+        </div>
+
         </section>
 
         <!-- Étape 5 : phase finale – mode expert (scores) -->
@@ -1299,51 +1332,7 @@
     parent.insertBefore(row, direction < 0 ? children[newIndex] : children[newIndex].nextSibling);
 }
 
-function openFairPlayModal() {
-    const backdrop = document.getElementById('fairplay-modal-backdrop');
-    const list = document.getElementById('fairplay-list-container');
-    if (!backdrop || !list) return;
-    list.innerHTML = '';
-
-    const names = Array.from(pendingFairPlayTeams).sort((a, b) => a.localeCompare(b));
-
-    names.forEach(name => {
-        const row = document.createElement('div');
-        row.className = 'fairplay-item';
-        row.dataset.teamName = name;
-
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'name';
-        appendFlagAndName(nameSpan, name);
-
-        const upBtn = document.createElement('button');
-        upBtn.type = 'button';
-        upBtn.className = 'btn';
-        upBtn.textContent = '↑';
-        upBtn.addEventListener('click', () => moveFairPlayRow(row, -1));
-
-        const downBtn = document.createElement('button');
-        downBtn.type = 'button';
-        downBtn.className = 'btn';
-        downBtn.textContent = '↓';
-        downBtn.addEventListener('click', () => moveFairPlayRow(row, 1));
-
-        row.appendChild(nameSpan);
-        row.appendChild(upBtn);
-        row.appendChild(downBtn);
-        list.appendChild(row);
-    });
-
-    backdrop.style.display = 'flex';
-    backdrop.classList.add('show');
-}
-
-function closeFairPlayModal() {
-    const backdrop = document.getElementById('fairplay-modal-backdrop');
-    if (!backdrop) return;
-    backdrop.classList.remove('show');
-    backdrop.style.display = 'none';
-}
+openFairPlayModal
 
 function applyFairPlayChoices() {
     const list = document.getElementById('fairplay-list-container');
@@ -1353,16 +1342,18 @@ function applyFairPlayChoices() {
     let index = 0;
     rows.forEach(row => {
         const name = row.dataset.teamName;
-        FAIR_PLAY_SCORE[name] = index++; // plus petit = plus fair-play
+        // plus l’index est petit, plus l’équipe est fair-play
+        FAIR_PLAY_SCORE[name] = index++;
     });
 
-    pendingFairPlayTeams.clear();
+    // On NE vide PAS pendingFairPlayTeams, comme ça on peut rouvrir et rééditer
     NEEDS_FAIR_PLAY_PROMPT = false;
     closeFairPlayModal();
 
-    // On relance le calcul strict (qui nous enverra à l'étape 5 si tout va bien)
+    // On relance le calcul strict (classements + meilleurs 3e + tableau expert)
     applyExpertPredictions();
 }
+
 
 
         function appendFlagAndName(parentEl, teamName) {
@@ -3585,7 +3576,7 @@ function updateExpertStandingsLive() {
 
     // Reset détection fair-play
     NEEDS_FAIR_PLAY_PROMPT = false;
-    pendingFairPlayTeams = new Set();
+
 
     const thirdTableRaw = [];
 
@@ -4333,9 +4324,9 @@ function updateExpertStandingsLive() {
 
         function attachListeners() {
 
-            const fairplayBackdrop = document.getElementById('fairplay-modal-backdrop');
-const fairplayCancel = document.getElementById('fairplay-cancel');
+            const fairplayCancel = document.getElementById('fairplay-cancel');
 const fairplayValidate = document.getElementById('fairplay-validate');
+const fairplayOpenBtn = document.getElementById('open-fairplay-panel-btn');
 
 if (fairplayCancel) {
     fairplayCancel.addEventListener('click', () => {
@@ -4347,13 +4338,12 @@ if (fairplayValidate) {
         applyFairPlayChoices();
     });
 }
-if (fairplayBackdrop) {
-    fairplayBackdrop.addEventListener('click', (e) => {
-        if (e.target === fairplayBackdrop) {
-            closeFairPlayModal();
-        }
+if (fairplayOpenBtn) {
+    fairplayOpenBtn.addEventListener('click', () => {
+        openFairPlayModal();
     });
 }
+
 
             // --- Bouton barragistes + modale ---
             const openPlayoffBtn = document.getElementById('open-playoff-modal');
@@ -4535,25 +4525,6 @@ if (fairplayBackdrop) {
         </div>
     </div>
 
-    <!-- Modale fair-play pour départager les équipes totalement à égalité -->
-<div id="fairplay-modal-backdrop" class="modal-backdrop" style="display:none;">
-    <div class="modal">
-        <h2>Départager les équipes au fair-play</h2>
-        <p class="modal-subtitle">
-            Certaines équipes sont totalement à égalité (points, différence de buts, buts marqués
-            et confrontations directes). Classe-les de la plus fair-play (en haut) à la moins fair-play (en bas).
-        </p>
-
-        <div id="fairplay-list-container"></div>
-
-        <div class="modal-footer">
-            <button class="btn" id="fairplay-cancel">Annuler</button>
-            <button class="btn primary" id="fairplay-validate">Valider ce classement</button>
-        </div>
-    </div>
-</div>
-
-
     <script>
         // Ici, uniquement le code d'initialisation une fois le DOM chargé
         document.addEventListener('DOMContentLoaded', () => {
@@ -4573,6 +4544,7 @@ if (fairplayBackdrop) {
     </script>
 </body>
 </html>
+
 
 
 
