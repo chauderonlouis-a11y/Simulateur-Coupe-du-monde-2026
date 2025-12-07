@@ -1162,7 +1162,7 @@
             <div id="expert-groups"></div>
 
             <div id="expert-third-summary" class="expert-third-summary" style="display:none;"></div>
-            </div>
+           
 
 
             <div class="step-footer">
@@ -1396,6 +1396,15 @@
 
 
         const FLAG_BASE_URL = "https://flagcdn.com/w20/";
+
+        function allGroupScoresFilled() {
+  // Adapte le sélecteur à tes inputs de scores
+  const inputs = document.querySelectorAll('.score-input'); 
+  if (inputs.length === 0) return false;
+
+  return Array.from(inputs).every(input => input.value !== '');
+}
+
 
         function moveFairPlayRow(row, direction) {
     const parent = row.parentElement;
@@ -3575,7 +3584,17 @@ function computeThirdAssignments(slot) {
 
     container.style.display = 'block';
     container.innerHTML = '';
-
+    if (!allGroupScoresFilled()) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center; font-style:italic; opacity:0.7;">
+          Renseigne d'abord tous les scores de la phase de groupes pour afficher
+          le classement des meilleurs troisièmes.
+        </td>
+      </tr>
+    `;
+    return;
+  }
     const title = document.createElement('h3');
     title.textContent = 'Classement des 3ᵉ (les 8 premiers sont qualifiés)';
     const info = document.createElement('p');
@@ -4877,6 +4896,7 @@ if (fairplayOpenBtn) {
     </script>
 </body>
 </html>
+
 
 
 
