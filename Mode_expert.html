@@ -229,7 +229,7 @@
 
         /* Étapes 3 & 5 – phase finale (simple + expert) */
 
-        #knockout-section,
+        
         #knockout-section-expert {
             margin-top: 0.5rem;
             background: rgba(8, 17, 40, 0.95);
@@ -251,13 +251,13 @@
             margin-bottom: 0.75rem;
         }
 
-        #bracket,
+        
         #bracket-expert {
             position: relative;
             z-index: 1;
         }
 
-        #bracket-lines,
+        
         #bracket-lines-expert {
             position: absolute;
             inset: 0;
@@ -1270,80 +1270,13 @@
 
         const FLAG_BASE_URL = "https://flagcdn.com/w20/";
 
-        function moveFairPlayRow(row, direction) {
-            const parent = row.parentElement;
-            const children = Array.from(parent.children);
-            const index = children.indexOf(row);
-            const newIndex = index + direction;
-            if (newIndex < 0 || newIndex >= children.length) return;
-            parent.insertBefore(row, direction < 0 ? children[newIndex] : children[newIndex].nextSibling);
-        }
+        
 
-        function openFairPlayModal() {
-            const backdrop = document.getElementById('fairplay-modal-backdrop');
-            const list = document.getElementById('fairplay-list-container');
-            if (!backdrop || !list) return;
-            list.innerHTML = '';
+        
 
-            const names = Array.from(pendingFairPlayTeams).sort((a, b) => a.localeCompare(b));
+        
 
-            names.forEach(name => {
-                const row = document.createElement('div');
-                row.className = 'fairplay-item';
-                row.dataset.teamName = name;
-
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'name';
-                appendFlagAndName(nameSpan, name);
-
-                const upBtn = document.createElement('button');
-                upBtn.type = 'button';
-                upBtn.className = 'btn';
-                upBtn.textContent = '↑';
-                upBtn.addEventListener('click', () => moveFairPlayRow(row, -1));
-
-                const downBtn = document.createElement('button');
-                downBtn.type = 'button';
-                downBtn.className = 'btn';
-                downBtn.textContent = '↓';
-                downBtn.addEventListener('click', () => moveFairPlayRow(row, 1));
-
-                row.appendChild(nameSpan);
-                row.appendChild(upBtn);
-                row.appendChild(downBtn);
-                list.appendChild(row);
-            });
-
-            backdrop.style.display = 'flex';
-            backdrop.classList.add('show');
-        }
-
-        function closeFairPlayModal() {
-            const backdrop = document.getElementById('fairplay-modal-backdrop');
-            if (!backdrop) return;
-            backdrop.classList.remove('show');
-            backdrop.style.display = 'none';
-        }
-
-        function applyFairPlayChoices() {
-            const list = document.getElementById('fairplay-list-container');
-            if (!list) return;
-            const rows = list.querySelectorAll('.fairplay-item');
-
-            let index = 0;
-            rows.forEach(row => {
-                const name = row.dataset.teamName;
-                // 0 = équipe la plus fair-play
-                FAIR_PLAY_SCORE[name] = index++;
-            });
-
-            pendingFairPlayTeams.clear();
-            NEEDS_FAIR_PLAY_PROMPT = false;
-            closeFairPlayModal();
-
-            // On relance le calcul strict (qui nous renverra à l'étape 5 si tout va bien)
-            applyExpertPredictions();
-        }
+        
 
 
 
@@ -1552,8 +1485,8 @@
 
 
         const selectedThirdGroups = new Set();
-        const selectedThirdOrder = [];
         const groupRanks = {};
+
        
 
         const BRACKET_CONFIG = { R32: [], R16: [], QF: [], SF: [], F: [] };
@@ -1567,9 +1500,7 @@
 
         // Fair-play : score plus petit = plus fair-play
         const FAIR_PLAY_SCORE = {};          // "France" -> 0, "Italie" -> 1, etc.
-        let NEEDS_FAIR_PLAY_PROMPT = false;  // est-ce qu'on doit ouvrir la fenêtre ?
-        let pendingFairPlayTeams = new Set();// équipes à classer au fair-play
-        const groupFairPlayNeeds = {};
+
 
 
         /* Confettis */
@@ -1611,14 +1542,12 @@
 
         // --- Résumé des prédictions (champion, finale, demies, quarts) ---
 
-        function buildPredictionData(mode) {
-            const isExpert = (mode === 'expert');
-            const winners = isExpert ? expertKnockoutWinners : knockoutWinners;
-            const champion = winners['F-1'];
+        function buildPredictionData() {
+            const champion = expertKnockoutWinners['F-1'];
             if (!champion) return null;
 
             const data = {
-                mode,
+                mode: 'expert',
                 champion,
                 finalists: [],
                 semiFinalists: [],
@@ -1629,7 +1558,7 @@
             };
 
             // Finalistes : équipes présentes en finale
-            const finalDom = isExpert ? getMatchDomExpert('F-1') : getMatchDom('F-1');
+            const finalDom = getMatchDomExpert('F-1');
             if (finalDom) {
                 const n1 = getRealTeamName(finalDom.team1NameSpan);
                 const n2 = getRealTeamName(finalDom.team2NameSpan);
@@ -1637,9 +1566,9 @@
                 if (n2 && n2 !== n1) data.finalists.push(n2);
             }
 
-            // Demi-finalistes : équipes présentes en demi
+            // Demi-finalistes : SF
             BRACKET_CONFIG.SF.forEach(cfg => {
-                const dom = isExpert ? getMatchDomExpert(cfg.id) : getMatchDom(cfg.id);
+                const dom = getMatchDomExpert(cfg.id);
                 if (!dom) return;
                 const n1 = getRealTeamName(dom.team1NameSpan);
                 const n2 = getRealTeamName(dom.team2NameSpan);
@@ -1647,9 +1576,9 @@
                 if (n2 && !data.semiFinalists.includes(n2)) data.semiFinalists.push(n2);
             });
 
-            // Quart de finalistes : équipes présentes en quarts
+            // Quarts
             BRACKET_CONFIG.QF.forEach(cfg => {
-                const dom = isExpert ? getMatchDomExpert(cfg.id) : getMatchDom(cfg.id);
+                const dom = getMatchDomExpert(cfg.id);
                 if (!dom) return;
                 const n1 = getRealTeamName(dom.team1NameSpan);
                 const n2 = getRealTeamName(dom.team2NameSpan);
@@ -1657,9 +1586,9 @@
                 if (n2 && !data.quarterFinalists.includes(n2)) data.quarterFinalists.push(n2);
             });
 
-            // 8ᵉ de finale (R16) : équipes présentes en huitièmes
+            // Huitièmes (R16)
             BRACKET_CONFIG.R16.forEach(cfg => {
-                const dom = isExpert ? getMatchDomExpert(cfg.id) : getMatchDom(cfg.id);
+                const dom = getMatchDomExpert(cfg.id);
                 if (!dom) return;
                 const n1 = getRealTeamName(dom.team1NameSpan);
                 const n2 = getRealTeamName(dom.team2NameSpan);
@@ -1667,9 +1596,9 @@
                 if (n2 && !data.roundOf16.includes(n2)) data.roundOf16.push(n2);
             });
 
-            // 16ᵉ de finale (R32) : équipes présentes en seizièmes
+            // Seizièmes (R32)
             BRACKET_CONFIG.R32.forEach(cfg => {
-                const dom = isExpert ? getMatchDomExpert(cfg.id) : getMatchDom(cfg.id);
+                const dom = getMatchDomExpert(cfg.id);
                 if (!dom) return;
                 const n1 = getRealTeamName(dom.team1NameSpan);
                 const n2 = getRealTeamName(dom.team2NameSpan);
@@ -1681,8 +1610,9 @@
         }
 
 
-        function buildPredictionSummary(mode) {
-            const data = buildPredictionData(mode);
+
+        function buildPredictionSummary() {
+            const data = buildPredictionData();
             if (!data) return '';
 
             const parts = [];
@@ -1698,10 +1628,10 @@
             return parts.join(' | ');
         }
 
+
         // Sauvegarde locale + envoi vers Google Analytics
-        // Sauvegarde locale + envoi vers Google Analytics
-        async function savePrediction(mode) {
-            const data = buildPredictionData(mode);
+        async function savePrediction() {
+            const data = buildPredictionData();
             if (!data) return;
 
             // 1) Sauvegarde locale
@@ -1729,17 +1659,9 @@
                         round_of_32: data.roundOf32
                     };
 
-                    console.log('Row envoyé à Supabase :', row, 'clés =', Object.keys(row));
-
                     const { data: inserted, error } = await supabaseClient
                         .from('predictions')
-                        .insert([row]); // si tu n'as pas besoin de la ligne retournée
-
-                    // Si tu veux récupérer la ligne insérée :
-                    // const { data: inserted, error } = await supabaseClient
-                    //   .from('predictions')
-                    //   .insert([row])
-                    //   .select();
+                        .insert([row]);
 
                     if (error) {
                         console.error('Erreur Supabase insert', error);
@@ -1751,8 +1673,7 @@
                 console.error('Exception pendant l’insert Supabase', e);
             }
 
-
-            // 3) Event Google Analytics (inchangé)
+            // 3) Event Google Analytics
             if (window.gtag) {
                 const json = JSON.stringify(data);
                 const MAX_VALUE_LEN = 90;
@@ -1774,8 +1695,9 @@
         }
 
 
+
         // Popup du champion
-        function showChampionPopup(winnerName, mode) {
+        function showChampionPopup(winnerName) {
             if (!winnerName || winnerName === '?') return;
 
             const backdrop = document.getElementById('winner-modal-backdrop');
@@ -1787,9 +1709,9 @@
             content.innerHTML = '';
             appendFlagAndName(content, winnerName);
 
-            // Optionnel : résumé réel de ton prono (finale / demies / quarts)
+            // Résumé du prono
             if (summaryEl) {
-                const summary = buildPredictionSummary(mode);
+                const summary = buildPredictionSummary();
                 summaryEl.textContent = summary
                     ? summary + " • Merci d'avoir utilisé le simulateur ! ⚽"
                     : "Merci d'avoir utilisé le simulateur ! N'hésite pas à partager ton prono avec tes amis ⚽";
@@ -1798,9 +1720,10 @@
             backdrop.style.display = 'flex';
             backdrop.classList.add('show');
 
-            // Sauvegarde (localStorage + GA)
-            savePrediction(mode);
+            // Sauvegarde (localStorage + Supabase + GA)
+            savePrediction();
         }
+
 
 
 
@@ -2176,33 +2099,7 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
 
 
 
-        function getMatchInfoText(matchId) {
-            // Cas "infos de poule" : matchId = "GROUP-A", "GROUP-B", etc.
-            if (matchId.startsWith('GROUP-')) {
-                const groupId = matchId.split('-')[1];
-                return GROUP_MATCH_INFO[groupId] || `Calendrier du groupe ${groupId} à confirmer`;
-            }
-
-            // Cas phase finale (32e / 16e / quarts / demies / finale)
-            const info = OFFICIAL_MATCH_INFO[matchId];
-            const roundKey = matchId.split('-')[0];
-            const roundLabel = MATCH_ROUND_LABELS[roundKey] || 'Phase finale';
-
-            if (!info) {
-                return `${roundLabel}\nDétails à confirmer`;
-            }
-
-            const numLabel = info.number ? `Match ${info.number}` : matchId;
-            const dateLine = info.date || 'Date à confirmer';
-
-            const stadiumLine = info.stadium
-                ? `${info.stadium}`
-                + (info.city ? `, ${info.city}` : '')
-                + (info.country ? `, ${info.country}` : '')
-                : '';
-
-            return `${roundLabel} — ${numLabel}\n${dateLine}\n${stadiumLine}`;
-        }
+        
 
 
 
@@ -3587,7 +3484,7 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
             const thirdTableRaw = [];
 
             selectedThirdGroups.clear();
-            selectedThirdOrder.length = 0;
+            
 
             for (const groupId of GROUP_IDS) {
                 const res = computeGroupStats(groupId, true, true);
@@ -3707,7 +3604,6 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
 
             bestThird.forEach(t => {
                 selectedThirdGroups.add(t.groupId);
-                selectedThirdOrder.push(t.groupId);
             });
 
             updateKnockoutSeedsExpert();
@@ -4304,8 +4200,9 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
             team2Row.classList.toggle('winner', g2 > g1);
             if (matchId === 'F-1' && winnerName) {
                 launchConfetti();
-                showChampionPopup(winnerName, 'expert');
+                showChampionPopup(winnerName);
             }
+
             updateExpertKoFromWinners();
             setTimeout(layoutBracketExpert, 0);
 
@@ -4351,28 +4248,7 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
         /* Listeners */
 
         function attachListeners() {
-            // --- Modale fair-play (globale 3e) ---
-            const fairplayBackdrop = document.getElementById('fairplay-modal-backdrop');
-            const fairplayCancel = document.getElementById('fairplay-cancel');
-            const fairplayValidate = document.getElementById('fairplay-validate');
-
-            if (fairplayCancel) {
-                fairplayCancel.addEventListener('click', () => {
-                    closeFairPlayModal();
-                });
-            }
-            if (fairplayValidate) {
-                fairplayValidate.addEventListener('click', () => {
-                    applyFairPlayChoices();
-                });
-            }
-            if (fairplayBackdrop) {
-                fairplayBackdrop.addEventListener('click', (e) => {
-                    if (e.target === fairplayBackdrop) {
-                        closeFairPlayModal();
-                    }
-                });
-            }
+            
 
             // --- Barragistes ---
             const openPlayoffBtn = document.getElementById('open-playoff-modal');
@@ -4426,13 +4302,7 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
                 });
             }
 
-            // --- Boutons "Retour" dans les steps 4 et 5 ---
-            const backExpertBtn = document.getElementById('back-from-expert-btn');
-            if (backExpertBtn) {
-                backExpertBtn.addEventListener('click', () => {
-                    showStep(4);
-                });
-            }
+            
 
             const backExpertKoBtn = document.getElementById('back-from-expert-ko-btn');
             if (backExpertKoBtn) {
@@ -4503,23 +4373,7 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
         </div>
     </div>
 
-    <!-- Modale fair-play pour départager les équipes totalement à égalité -->
-    <div id="fairplay-modal-backdrop" class="modal-backdrop" style="display:none;">
-        <div class="modal">
-            <h2>Départager les équipes au fair-play</h2>
-            <p class="modal-subtitle">
-                Certaines équipes sont totalement à égalité (points, différence de buts, buts marqués
-                et confrontations directes). Classe-les de la plus fair-play (en haut) à la moins fair-play (en bas).
-            </p>
-
-            <div id="fairplay-list-container"></div>
-
-            <div class="modal-footer">
-                <button class="btn" id="fairplay-cancel">Annuler</button>
-                <button class="btn primary" id="fairplay-validate">Valider ce classement</button>
-            </div>
-        </div>
-    </div>
+    
 
 
     <script>
