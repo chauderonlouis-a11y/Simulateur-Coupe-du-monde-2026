@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -235,7 +235,21 @@
             margin-top: 0.5rem;
         }
 
+        .group-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+            .group-card-header h2 {
+                margin: 0;
+            }
+
+
         .group-card {
+            position: relative; /* 👈 AJOUTER ÇA */
             background: rgba(8, 17, 40, 0.95);
             border-radius: 1rem;
             padding: 0.9rem 0.9rem 1rem;
@@ -269,20 +283,41 @@
             border-radius: 0.55rem;
             background: rgba(10, 16, 40, 0.85);
             cursor: grab;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
         }
 
             .rank-row:active {
                 cursor: grabbing;
             }
 
+            /* La ligne qu'on est en train de drag devient un "placeholder" visuel */
             .rank-row.dragging {
-                opacity: 0.7;
-                background: rgba(79, 70, 229, 0.25);
+                background: transparent;
+                box-shadow: none;
+                transform: none;
+                border: 1px dashed rgba(129, 140, 248, 0.9);
             }
+
+                /* On cache le contenu (texte, drapeau, poignée) mais on garde la hauteur */
+                .rank-row.dragging .rank-label,
+                .rank-row.dragging .drag-handle,
+                .rank-row.dragging .team-block {
+                    opacity: 0;
+                }
+
 
             .rank-row.drag-over {
                 outline: 1px dashed rgba(129, 140, 248, 0.9);
             }
+
+        .rank-placeholder {
+            border-radius: 0.55rem;
+            border: 1px dashed rgba(129, 140, 248, 0.9);
+            background: transparent;
+            margin: 0.12rem 0;
+            box-sizing: border-box;
+        }
+
 
         .rank-label {
             width: 2.2rem;
@@ -536,6 +571,7 @@
             color: #9ea8ff;
         }
 
+        /* Bouton "i" */
         .match-info-btn {
             border: none;
             padding: 0;
@@ -558,24 +594,47 @@
                 background: rgba(55, 65, 194, 0.9);
             }
 
-        /* BULLES D'INFO LARGES */
-        .match-info-bubble {
-            position: absolute; /* <-- au lieu de fixed */
-            min-width: 260px;
-            max-width: 340px;
-            padding: 0.45rem 0.7rem;
-            border-radius: 0.6rem;
-            background: rgba(15, 23, 42, 0.98);
-            border: 1px solid rgba(129, 140, 248, 0.8);
+        /* (optionnel) Bouton de fermeture dans la bulle */
+        .match-info-close {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            border: none;
+            background: rgba(15,23,42,0.9);
             color: #e5e7ff;
-            font-size: 0.72rem;
-            line-height: 1.35;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            z-index: 999;
-            white-space: pre-line;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+            .match-info-close:hover {
+                opacity: 0.8;
+                background: rgba(55, 65, 194, 0.9);
+            }
 
+        /* Bulle */
+        .match-info-bubble {
+            position: absolute;
+            max-width: min(540px, calc(100vw - 2rem));
+            padding: 0.7rem 0.9rem;
+            border-radius: 0.9rem;
+            background: radial-gradient(circle at top left, rgba(37, 56, 145, 0.98), rgba(15, 23, 42, 0.98) );
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #e5e7ff;
+            font-size: 0.73rem;
+            line-height: 1.4;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.75);
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+            /* Flèche */
             .match-info-bubble::before {
                 content: "";
                 position: absolute;
@@ -584,8 +643,127 @@
                 transform: translateX(-50%);
                 border-width: 0 6px 6px 6px;
                 border-style: solid;
-                border-color: transparent transparent rgba(15, 23, 42, 0.98) transparent;
+                border-color: transparent transparent rgba(37, 56, 145, 0.98) transparent;
             }
+
+            .match-info-bubble.above::before {
+                top: auto;
+                bottom: -6px;
+                border-width: 6px 6px 0 6px;
+                border-color: rgba(37, 56, 145, 0.98) transparent transparent transparent;
+            }
+
+        /* Titre de la bulle */
+        .match-info-bubble-title {
+            font-weight: 600;
+            font-size: 0.78rem;
+            margin-bottom: 0.45rem;
+            color: #c7d2ff;
+        }
+
+        /* Grille 2 par 2 */
+        .match-info-matches {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 0.5rem 0.6rem;
+            margin-top: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+            .match-info-matches {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Carte match */
+        .match-info-match {
+            padding: 0.35rem 0.45rem;
+            border-radius: 0.6rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .match-info-match-header {
+            font-size: 0.72rem;
+            margin-bottom: 0.15rem;
+            color: #e5e7ff;
+        }
+
+        .match-info-match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.12rem;
+            font-size: 0.74rem;
+        }
+
+        .match-info-match-team {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+            .match-info-match-team .flag-icon {
+                width: 16px;
+                height: 12px;
+                border-radius: 2px;
+            }
+
+        .match-info-date,
+        .match-info-stadium {
+            font-size: 0.7rem;
+            color: #9ca3ff;
+        }
+
+        .match-info-stadium {
+            opacity: 0.9;
+        }
+
+
+
+        /* Lignes de matchs dans les bulles de poule */
+        .group-match-row {
+            padding: 0.35rem 0.15rem;
+            border-top: 1px solid rgba(148,163,255,0.18);
+        }
+
+            .group-match-row:first-child {
+                border-top: none;
+            }
+
+        .group-match-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #9ca3ff;
+            margin-bottom: 0.1rem;
+        }
+
+        .group-match-teams {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+
+            .group-match-teams .vs {
+                opacity: 0.7;
+            }
+
+        .group-match-meta {
+            margin-top: 0.08rem;
+            font-size: 0.7rem;
+            color: #e5e7ffcc;
+        }
+
+
+
+
+
+
 
         .ko-team {
             display: flex;
@@ -687,7 +865,7 @@
             }
         }
 
-        
+
 
         /* Récap des 3e */
 
@@ -767,6 +945,50 @@
         .playoff-cta-hint {
             opacity: 0.85;
         }
+
+        .playoff-btn {
+            background: #4f46e5; /* même couleur que le primaire */
+            border-radius: 999px;
+            border: 1px solid #6366f1;
+            color: #e5e7ff;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.78rem;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.85);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+            .playoff-btn::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.12), transparent 55%);
+                opacity: 0;
+                transition: opacity 0.18s ease;
+            }
+
+            .playoff-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 26px rgba(15, 23, 42, 0.95);
+                filter: brightness(1.05);
+            }
+
+                .playoff-btn:hover::after {
+                    opacity: 1;
+                }
+
+            .playoff-btn:active {
+                transform: translateY(0);
+                box-shadow: 0 6px 15px rgba(15, 23, 42, 0.9);
+            }
+
 
         /* Modale barragistes */
         .modal-backdrop {
@@ -918,7 +1140,10 @@
         </p>
         <!-- CTA barragistes -->
         <div class="playoff-cta">
-            <button class="btn" id="open-playoff-modal">+ Choisir les barragistes</button>
+            <button class="btn playoff-btn" id="open-playoff-modal">
+                ⚽ Choisir les barragistes
+            </button>
+
             <span class="playoff-cta-hint">
                 Remplace les “Vainqueur barrage …” par les équipes qualifiées (Ukraine, Suède, etc.).
             </span>
@@ -1386,7 +1611,7 @@
                     updateLabelElement(span, finalName);
                 });
 
-                
+
             });
 
             // 3) Recalcule les classements en mode expert (MJ, G, N, P, DB, Pts)
@@ -1755,51 +1980,362 @@
 
         const MATCH_TIMES = ['14:00', '18:00', '21:00'];
 
+        const GROUP_MATCH_INFO = {
+            A: `Groupe A — calendrier des matchs
+Match d'ouverture · Mexique – Afrique du Sud
+11 juin 2026, 14h00 (UTC−6)
+Stade Azteca, Mexico, Mexique
+
+Match 2 · Corée du Sud – A4
+11 juin 2026, 21h00 (UTC−6)
+Estadio Akron, Guadalajara, Mexique
+
+Match 25 · A4 – Afrique du Sud
+18 juin 2026, 12h00 (UTC−5)
+Mercedes-Benz Stadium, Atlanta, États-Unis
+
+Match 28 · Mexique – Corée du Sud
+18 juin 2026, 20h00 (UTC−6)
+Estadio Akron, Guadalajara, Mexique
+
+Match 53 · A4 – Mexique
+24 juin 2026, 20h00 (UTC−6)
+Stade Azteca, Mexico, Mexique
+
+Match 54 · Afrique du Sud – Corée du Sud
+24 juin 2026, 20h00 (UTC−6)
+Stade BBVA, Monterrey, Mexique`,
+
+            B: `Groupe B — calendrier des matchs
+Match 3 · Canada – B2
+12 juin 2026, 15h00 (UTC−5)
+BMO Field, Toronto, Canada
+
+Match 8 · Qatar – Suisse
+13 juin 2026, 15h00 (UTC−8)
+Levi's Stadium, Santa Clara, États-Unis
+
+Match 26 · Suisse – B2
+18 juin 2026, 15h00 (UTC−8)
+SoFi Stadium, Los Angeles, États-Unis
+
+Match 27 · Canada – Qatar
+18 juin 2026, 18h00 (UTC−8)
+BC Place, Vancouver, Canada
+
+Match 51 · Suisse – Canada
+24 juin 2026, 15h00 (UTC−8)
+BC Place, Vancouver, Canada
+
+Match 52 · B2 – Qatar
+24 juin 2026, 15h00 (UTC−8)
+Lumen Field, Seattle, États-Unis`,
+
+            C: `Groupe C — calendrier des matchs
+Match 5 · Brésil – Maroc
+13 juin 2026, 18h00 (UTC−4)
+MetLife Stadium, New York, États-Unis
+
+Match 7 · Haïti – Écosse
+13 juin 2026, 21h00 (UTC−4)
+Gillette Stadium, Boston, États-Unis
+
+Match 29 · Écosse – Maroc
+19 juin 2026, 18h00 (UTC−5)
+Gillette Stadium, Boston, États-Unis
+
+Match 30 · Brésil – Haïti
+19 juin 2026, 21h00 (UTC−4)
+Lincoln Financial Field, Philadelphie, États-Unis
+
+Match 49 · Écosse – Brésil
+24 juin 2026, 18h00 (UTC−4)
+Hard Rock Stadium, Miami, États-Unis
+
+Match 50 · Maroc – Haïti
+24 juin 2026, 18h00 (UTC−5)
+Mercedes-Benz Stadium, Atlanta, États-Unis`,
+
+            D: `Groupe D — calendrier des matchs
+Match 4 · États-Unis – Paraguay
+12 juin 2026, 15h00 (UTC−8)
+SoFi Stadium, Los Angeles, États-Unis
+
+Match 6 · Australie – D4
+13 juin 2026, 20h00 (UTC−8)
+BC Place, Vancouver, Canada
+
+Match 31 · D4 – Paraguay
+19 juin 2026, 20h00 (UTC−8)
+Levi's Stadium, Santa Clara, États-Unis
+
+Match 32 · États-Unis – Australie
+19 juin 2026, 11h00 (UTC−8)
+Lumen Field, Seattle, États-Unis
+
+Match 59 · D4 – États-Unis
+25 juin 2026, 18h00 (UTC−8)
+SoFi Stadium, Los Angeles, États-Unis
+
+Match 60 · Paraguay – Australie
+25 juin 2026, 18h00 (UTC−8)
+Levi's Stadium, Santa Clara, États-Unis`,
+
+            E: `Groupe E — calendrier des matchs
+Match 9 · Allemagne – Curaçao
+14 juin 2026, 11h00 (UTC−6)
+NRG Stadium, Houston, États-Unis
+
+Match 10 · Côte d'Ivoire – Équateur
+14 juin 2026, 18h00 (UTC−5)
+Lincoln Financial Field, Philadelphie, États-Unis
+
+Match 33 · Allemagne – Côte d'Ivoire
+20 juin 2026, 15h00 (UTC−5)
+BMO Field, Toronto, Canada
+
+Match 34 · Équateur – Curaçao
+20 juin 2026, 18h00 (UTC−6)
+Arrowhead Stadium, Kansas City, États-Unis
+
+Match 55 · Équateur – Allemagne
+25 juin 2026, 16h00 (UTC−4)
+MetLife Stadium, New York, États-Unis
+
+Match 56 · Curaçao – Côte d'Ivoire
+25 juin 2026, 15h00 (UTC−5)
+Lincoln Financial Field, Philadelphie, États-Unis`,
+
+            F: `Groupe F — calendrier des matchs
+Match 11 · Pays-Bas – Japon
+14 juin 2026, 14h00 (UTC−6)
+AT&T Stadium, Arlington, États-Unis
+
+Match 12 · F3 – Tunisie
+14 juin 2026, 20h00 (UTC−6)
+Estadio BBVA, Monterrey, Mexique
+
+Match 35 · Pays-Bas – F3
+20 juin 2026, 11h00 (UTC−6)
+NRG Stadium, Houston, États-Unis
+
+Match 36 · Tunisie – Japon
+20 juin 2026, 22h00 (UTC−6)
+Estadio BBVA, Monterrey, Mexique
+
+Match 57 · Japon – F3
+25 juin 2026, 17h00 (UTC−6)
+AT&T Stadium, Arlington, États-Unis
+
+Match 58 · Tunisie – Pays-Bas
+25 juin 2026, 17h00 (UTC−6)
+Arrowhead Stadium, Kansas City, États-Unis`,
+
+            G: `Groupe G — calendrier des matchs
+Match 15 · Iran – Nouvelle-Zélande
+15 juin 2026, 13h00 (UTC−8)
+SoFi Stadium, Los Angeles, États-Unis
+
+Match 16 · Belgique – Égypte
+15 juin 2026, 17h00 (UTC−8)
+Lumen Field, Seattle, États-Unis
+
+Match 39 · Belgique – Iran
+21 juin 2026, 11h00 (UTC−8)
+SoFi Stadium, Los Angeles, États-Unis
+
+Match 40 · Nouvelle-Zélande – Égypte
+21 juin 2026, 17h00 (UTC−8)
+BC Place, Vancouver, Canada
+
+Match 63 · Égypte – Iran
+26 juin 2026, 19h00 (UTC−8)
+Lumen Field, Seattle, États-Unis
+
+Match 64 · Nouvelle-Zélande – Belgique
+26 juin 2026, 19h00 (UTC−8)
+BC Place, Vancouver, Canada`,
+
+            H: `Groupe H — calendrier des matchs
+Match 13 · Espagne – Cap-Vert
+15 juin 2026, 11h00 (UTC−5)
+Mercedes-Benz Stadium, Atlanta, États-Unis
+
+Match 14 · Arabie saoudite – Uruguay
+15 juin 2026, 18h00 (UTC−4)
+Hard Rock Stadium, Miami, États-Unis
+
+Match 37 · Espagne – Arabie saoudite
+21 juin 2026, 11h00 (UTC−5)
+Mercedes-Benz Stadium, Atlanta, États-Unis
+
+Match 38 · Uruguay – Cap-Vert
+21 juin 2026, 17h00 (UTC−4)
+Hard Rock Stadium, Miami, États-Unis
+
+Match 65 · Cap-Vert – Arabie saoudite
+26 juin 2026, 18h00 (UTC−6)
+NRG Stadium, Houston, États-Unis
+
+Match 66 · Uruguay – Espagne
+26 juin 2026, 18h00 (UTC−6)
+Estadio Akron, Guadalajara, Mexique`,
+
+            I: `Groupe I — calendrier des matchs
+Match 17 · France – Sénégal
+16 juin 2026, 15h00 (UTC−4)
+MetLife Stadium, New York, États-Unis
+
+Match 18 · I3 – Norvège
+16 juin 2026, 18h00 (UTC−4)
+Gillette Stadium, Boston, États-Unis
+
+Match 41 · France – I3
+22 juin 2026, 17h00 (UTC−4)
+Lincoln Financial Field, Philadelphie, États-Unis
+
+Match 42 · Norvège – Sénégal
+22 juin 2026, 20h00 (UTC−4)
+MetLife Stadium, New York, États-Unis
+
+Match 61 · Norvège – France
+26 juin 2026, 15h00 (UTC−4)
+Gillette Stadium, Boston, États-Unis
+
+Match 62 · Sénégal – I3
+26 juin 2026, 14h00 (UTC−5)
+BMO Field, Toronto, Canada`,
+
+            J: `Groupe J — calendrier des matchs
+Match 19 · Argentine – Algérie
+16 juin 2026, 19h00 (UTC−6)
+Arrowhead Stadium, Kansas City, États-Unis
+
+Match 20 · Autriche – Jordanie
+16 juin 2026, 20h00 (UTC−8)
+Levi's Stadium, Santa Clara, États-Unis
+
+Match 43 · Argentine – Autriche
+22 juin 2026, 11h00 (UTC−6)
+AT&T Stadium, Arlington, États-Unis
+
+Match 44 · Jordanie – Algérie
+22 juin 2026, 19h00 (UTC−8)
+Levi's Stadium, Santa Clara, États-Unis
+
+Match 69 · Algérie – Autriche
+27 juin 2026, 20h00 (UTC−6)
+Arrowhead Stadium, Kansas City, États-Unis
+
+Match 70 · Jordanie – Argentine
+27 juin 2026, 20h00 (UTC−6)
+AT&T Stadium, Arlington, États-Unis`,
+
+            K: `Groupe K — calendrier des matchs
+Match 23 · Portugal – K2
+17 juin 2026, 11h00 (UTC−6)
+NRG Stadium, Houston, États-Unis
+
+Match 24 · Ouzbékistan – Colombie
+17 juin 2026, 20h00 (UTC−6)
+Estadio Azteca, Mexico, Mexique
+
+Match 47 · Portugal – Ouzbékistan
+23 juin 2026, 11h00 (UTC−6)
+NRG Stadium, Houston, États-Unis
+
+Match 48 · Colombie – K2
+23 juin 2026, 20h00 (UTC−6)
+Estadio Akron, Guadalajara, Mexique
+
+Match 71 · Colombie – Portugal
+27 juin 2026, 19h30 (UTC−4)
+Hard Rock Stadium, Miami, États-Unis
+
+Match 72 · K2 – Ouzbékistan
+27 juin 2026, 18h30 (UTC−5)
+Mercedes-Benz Stadium, Atlanta, États-Unis`,
+
+            L: `Groupe L — calendrier des matchs
+Match 21 · Angleterre – Croatie
+17 juin 2026, 14h00 (UTC−6)
+AT&T Stadium, Arlington, États-Unis
+
+Match 22 · Ghana – Panama
+17 juin 2026, 18h00 (UTC−5)
+BMO Field, Toronto, Canada
+
+Match 45 · Angleterre – Ghana
+23 juin 2026, 16h00 (UTC−4)
+Gillette Stadium, Boston, États-Unis
+
+Match 46 · Panama – Croatie
+23 juin 2026, 17h00 (UTC−6)
+BMO Field, Toronto, Canada
+
+Match 67 · Panama – Angleterre
+27 juin 2026, 17h00 (UTC−4)
+MetLife Stadium, New York, États-Unis
+
+Match 68 · Croatie – Ghana
+27 juin 2026, 16h00 (UTC−5)
+Lincoln Financial Field, Philadelphie, États-Unis`,
+        };
+
+
+
         const OFFICIAL_MATCH_INFO = {
             // Seizièmes (R32)
-            'R32-1': { number: 73, round: 'R32', date: '28 juin 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
-            'R32-2': { number: 74, round: 'R32', date: '29 juin 2026', stadium: 'Gillette Stadium', city: 'Boston' },
-            'R32-3': { number: 75, round: 'R32', date: '29 juin 2026', stadium: 'Stade BBVA', city: 'Monterrey' },
-            'R32-4': { number: 76, round: 'R32', date: '29 juin 2026', stadium: 'NRG Stadium', city: 'Houston' },
-            'R32-5': { number: 77, round: 'R32', date: '30 juin 2026', stadium: 'MetLife Stadium', city: 'New York' },
-            'R32-6': { number: 78, round: 'R32', date: '30 juin 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
-            'R32-7': { number: 79, round: 'R32', date: '30 juin 2026', stadium: 'Estadio Azteca', city: 'Mexico' },
-            'R32-8': { number: 80, round: 'R32', date: '1er juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
-            'R32-9': { number: 81, round: 'R32', date: '1er juillet 2026', stadium: "Levi's Stadium", city: 'San Francisco' },
-            'R32-10': { number: 82, round: 'R32', date: '1er juillet 2026', stadium: 'Lumen Field', city: 'Seattle' },
-            'R32-11': { number: 83, round: 'R32', date: '2 juillet 2026', stadium: 'BMO Field', city: 'Toronto' },
-            'R32-12': { number: 84, round: 'R32', date: '2 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
-            'R32-13': { number: 85, round: 'R32', date: '2 juillet 2026', stadium: 'BC Place', city: 'Vancouver' },
-            'R32-14': { number: 86, round: 'R32', date: '3 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami' },
-            'R32-15': { number: 87, round: 'R32', date: '3 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City' },
-            'R32-16': { number: 88, round: 'R32', date: '3 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
+            'R32-1': { number: 73, round: 'R32', date: '28 juin 2026', stadium: 'SoFi Stadium', city: 'Los Angeles', country: 'États-Unis' },
+            'R32-2': { number: 74, round: 'R32', date: '29 juin 2026', stadium: 'Gillette Stadium', city: 'Boston', country: 'États-Unis' },
+            'R32-3': { number: 75, round: 'R32', date: '29 juin 2026', stadium: 'Stade BBVA', city: 'Monterrey', country: 'Mexique' },
+            'R32-4': { number: 76, round: 'R32', date: '29 juin 2026', stadium: 'NRG Stadium', city: 'Houston', country: 'États-Unis' },
+            'R32-5': { number: 77, round: 'R32', date: '30 juin 2026', stadium: 'MetLife Stadium', city: 'New York', country: 'États-Unis' },
+            'R32-6': { number: 78, round: 'R32', date: '30 juin 2026', stadium: 'AT&T Stadium', city: 'Arlington', country: 'États-Unis' },
+            'R32-7': { number: 79, round: 'R32', date: '30 juin 2026', stadium: 'Estadio Azteca', city: 'Mexico', country: 'Mexique' },
+            'R32-8': { number: 80, round: 'R32', date: '1er juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta', country: 'États-Unis' },
+            'R32-9': { number: 81, round: 'R32', date: '1er juillet 2026', stadium: "Levi's Stadium", city: 'San Francisco', country: 'États-Unis' },
+            'R32-10': { number: 82, round: 'R32', date: '1er juillet 2026', stadium: 'Lumen Field', city: 'Seattle', country: 'États-Unis' },
+            'R32-11': { number: 83, round: 'R32', date: '2 juillet 2026', stadium: 'BMO Field', city: 'Toronto', country: 'Canada' },
+            'R32-12': { number: 84, round: 'R32', date: '2 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles', country: 'États-Unis' },
+            'R32-13': { number: 85, round: 'R32', date: '2 juillet 2026', stadium: 'BC Place', city: 'Vancouver', country: 'Canada' },
+            'R32-14': { number: 86, round: 'R32', date: '3 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami', country: 'États-Unis' },
+            'R32-15': { number: 87, round: 'R32', date: '3 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City', country: 'États-Unis' },
+            'R32-16': { number: 88, round: 'R32', date: '3 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington', country: 'États-Unis' },
 
             // Huitièmes (R16)
-            'R16-1': { number: 89, round: 'R16', date: '4 juillet 2026', stadium: 'Lincoln Financial Field', city: 'Philadelphie' },
-            'R16-2': { number: 90, round: 'R16', date: '4 juillet 2026', stadium: 'NRG Stadium', city: 'Houston' },
-            'R16-3': { number: 91, round: 'R16', date: '5 juillet 2026', stadium: 'MetLife Stadium', city: 'New York' },
-            'R16-4': { number: 92, round: 'R16', date: '5 juillet 2026', stadium: 'Estadio Azteca', city: 'Mexico' },
-            'R16-5': { number: 93, round: 'R16', date: '6 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
-            'R16-6': { number: 94, round: 'R16', date: '6 juillet 2026', stadium: 'Lumen Field', city: 'Seattle' },
-            'R16-7': { number: 95, round: 'R16', date: '7 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
-            'R16-8': { number: 96, round: 'R16', date: '7 juillet 2026', stadium: 'BC Place', city: 'Vancouver' },
+            'R16-1': { number: 89, round: 'R16', date: '4 juillet 2026', stadium: 'Lincoln Financial Field', city: 'Philadelphie', country: 'États-Unis' },
+            'R16-2': { number: 90, round: 'R16', date: '4 juillet 2026', stadium: 'NRG Stadium', city: 'Houston', country: 'États-Unis' },
+            'R16-3': { number: 91, round: 'R16', date: '5 juillet 2026', stadium: 'MetLife Stadium', city: 'New York', country: 'États-Unis' },
+            'R16-4': { number: 92, round: 'R16', date: '5 juillet 2026', stadium: 'Estadio Azteca', city: 'Mexico', country: 'Mexique' },
+            'R16-5': { number: 93, round: 'R16', date: '6 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington', country: 'États-Unis' },
+            'R16-6': { number: 94, round: 'R16', date: '6 juillet 2026', stadium: 'Lumen Field', city: 'Seattle', country: 'États-Unis' },
+            'R16-7': { number: 95, round: 'R16', date: '7 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta', country: 'États-Unis' },
+            'R16-8': { number: 96, round: 'R16', date: '7 juillet 2026', stadium: 'BC Place', city: 'Vancouver', country: 'Canada' },
 
             // Quarts (QF)
-            'QF-1': { number: 97, round: 'QF', date: '9 juillet 2026', stadium: 'Gillette Stadium', city: 'Boston' },
-            'QF-2': { number: 98, round: 'QF', date: '10 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles' },
-            'QF-3': { number: 99, round: 'QF', date: '11 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami' },
-            'QF-4': { number: 100, round: 'QF', date: '11 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City' },
+            'QF-1': { number: 97, round: 'QF', date: '9 juillet 2026', stadium: 'Gillette Stadium', city: 'Boston', country: 'États-Unis' },
+            'QF-2': { number: 98, round: 'QF', date: '10 juillet 2026', stadium: 'SoFi Stadium', city: 'Los Angeles', country: 'États-Unis' },
+            'QF-3': { number: 99, round: 'QF', date: '11 juillet 2026', stadium: 'Hard Rock Stadium', city: 'Miami', country: 'États-Unis' },
+            'QF-4': { number: 100, round: 'QF', date: '11 juillet 2026', stadium: 'Arrowhead Stadium', city: 'Kansas City', country: 'États-Unis' },
 
             // Demi-finales (SF)
-            'SF-1': { number: 101, round: 'SF', date: '14 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington' },
-            'SF-2': { number: 102, round: 'SF', date: '15 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },
+            'SF-1': { number: 101, round: 'SF', date: '14 juillet 2026', stadium: 'AT&T Stadium', city: 'Arlington', country: 'États-Unis' },
+            'SF-2': { number: 102, round: 'SF', date: '15 juillet 2026', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta', country: 'États-Unis' },
 
             // Finale (F)
-            'F-1': { number: 104, round: 'F', date: '19 juillet 2026', stadium: 'MetLife Stadium', city: 'New York' },
+            'F-1': { number: 104, round: 'F', date: '19 juillet 2026', stadium: 'MetLife Stadium', city: 'New York', country: 'États-Unis' },
         };
 
 
         function getMatchInfoText(matchId) {
+            // Cas "infos de poule" : matchId = "GROUP-A", "GROUP-B", etc.
+            if (matchId.startsWith('GROUP-')) {
+                const groupId = matchId.split('-')[1];
+                return GROUP_MATCH_INFO[groupId] || `Calendrier du groupe ${groupId} à confirmer`;
+            }
+
+            // Cas phase finale (32e / 16e / quarts / demies / finale)
             const info = OFFICIAL_MATCH_INFO[matchId];
             const roundKey = matchId.split('-')[0];
             const roundLabel = MATCH_ROUND_LABELS[roundKey] || 'Phase finale';
@@ -1810,8 +2346,11 @@
 
             const numLabel = info.number ? `Match ${info.number}` : matchId;
             const dateLine = info.date || 'Date à confirmer';
+
             const stadiumLine = info.stadium
-                ? `${info.stadium}${info.city ? ', ' + info.city : ''}`
+                ? `${info.stadium}`
+                + (info.city ? `, ${info.city}` : '')
+                + (info.country ? `, ${info.country}` : '')
                 : '';
 
             return `${roundLabel} — ${numLabel}\n${dateLine}\n${stadiumLine}`;
@@ -1822,7 +2361,7 @@
         let currentInfoBubbleMatchId = null;
 
         function toggleMatchInfoBubble(matchEl, matchId) {
-            // Si on reclique sur le même match : on ferme
+            // Si on reclique sur le même : on ferme
             if (currentInfoBubble && currentInfoBubbleMatchId === matchId) {
                 currentInfoBubble.remove();
                 currentInfoBubble = null;
@@ -1830,7 +2369,7 @@
                 return;
             }
 
-            // On ferme une éventuelle bulle déjà ouverte
+            // On ferme la bulle précédente éventuelle
             if (currentInfoBubble) {
                 currentInfoBubble.remove();
                 currentInfoBubble = null;
@@ -1839,42 +2378,255 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'match-info-bubble';
-            bubble.textContent = getMatchInfoText(matchId);
 
-            // On accroche la bulle au wrapper correspondant (simple ou expert)
-            const wrapper = matchEl.closest('#bracket-wrapper, #bracket-wrapper-expert');
+            if (matchId.startsWith('GROUP-')) {
+                const groupId = matchId.split('-')[1];
+                buildGroupInfoBubbleContent(bubble, groupId);
+            } else {
+                buildKnockoutMatchBubbleContent(bubble, matchEl, matchId);
+            }
+
+            // Phase finale : wrapper = #bracket-wrapper / #bracket-wrapper-expert
+            // Poules (simple + expert) : wrapper = .group-card
+            const wrapper = matchEl.closest('#bracket-wrapper, #bracket-wrapper-expert, .group-card');
             if (!wrapper) return;
             wrapper.appendChild(bubble);
 
-            // Rectangles pour calculer une position relative au wrapper
-            const wrapperRect = wrapper.getBoundingClientRect();
             const matchRect = matchEl.getBoundingClientRect();
-            const bubbleRect = bubble.getBoundingClientRect();
+            const wrapperRect = wrapper.getBoundingClientRect();
 
-            // Centre horizontal du match, ramené dans le repère du wrapper
             const centerX = (matchRect.left + matchRect.right) / 2 - wrapperRect.left;
+            let top = matchRect.bottom - wrapperRect.top + 8;
 
-            let top = matchRect.bottom - wrapperRect.top + 6; // par défaut : sous le match
-            let left = centerX - bubbleRect.width / 2;
-
-            const margin = 8;
-
-            // On borne horizontalement à l'intérieur du wrapper
-            if (left < margin) left = margin;
-            const maxLeft = wrapperRect.width - bubbleRect.width - margin;
-            if (left > maxLeft) left = maxLeft;
-
-            // Si ça sort en bas du wrapper, on la met au-dessus du match
-            if (top + bubbleRect.height > wrapperRect.height - margin) {
-                top = matchRect.top - wrapperRect.top - bubbleRect.height - 6;
-            }
-
+            // Position par défaut sous le match
+            bubble.style.left = `${centerX}px`;
             bubble.style.top = `${top}px`;
-            bubble.style.left = `${left}px`;
+            bubble.style.transform = 'translateX(-50%)';
+
+            // Si ça déborde en bas, on remonte la bulle au-dessus
+            const bubbleRect = bubble.getBoundingClientRect();
+            if (bubbleRect.bottom > wrapperRect.bottom + 8) {
+                top = matchRect.top - wrapperRect.top - bubbleRect.height - 8;
+                bubble.style.top = `${top}px`;
+                bubble.classList.add('above');
+            } else {
+                bubble.classList.remove('above');
+            }
 
             currentInfoBubble = bubble;
             currentInfoBubbleMatchId = matchId;
         }
+
+        // "A4" -> 4ᵉ équipe du groupe A dans GROUP_TEAMS (donc barragiste choisi si appliqué)
+        function resolveGroupSlotName(rawName) {
+            const name = (rawName || '').trim();
+            const m = name.match(/^([A-L])([1-4])$/); // A1..L4
+            if (!m) return name;
+
+            const groupId = m[1];               // "A"
+            const index = parseInt(m[2], 10) - 1; // 0..3
+            const teams = GROUP_TEAMS[groupId];
+            if (!teams || !teams[index]) return name;
+
+            return teams[index]; // ex: "Danemark" au lieu de "A4"
+        }
+
+        function buildGroupInfoBubbleContent(bubble, groupId) {
+            const raw = GROUP_MATCH_INFO[groupId];
+            if (!raw) {
+                bubble.textContent = `Calendrier du groupe ${groupId} à confirmer`;
+                return;
+            }
+
+            const lines = raw.split('\n');
+            if (!lines.length) {
+                bubble.textContent = `Calendrier du groupe ${groupId} à confirmer`;
+                return;
+            }
+
+            const titleText = lines[0].trim() || `Groupe ${groupId} — calendrier des matchs`;
+            const titleEl = document.createElement('div');
+            titleEl.className = 'match-info-bubble-title';
+            titleEl.textContent = titleText;
+            bubble.appendChild(titleEl);
+
+            const listContainer = document.createElement('div');
+            listContainer.className = 'match-info-matches';
+            bubble.appendChild(listContainer);
+
+            let i = 1;
+            while (i < lines.length) {
+                // sauter les lignes vides
+                while (i < lines.length && !lines[i].trim()) i++;
+                if (i >= lines.length) break;
+
+                const headerLine = lines[i++].trim(); // ex: "Match 25 · A4 – Afrique du Sud"
+                let dateLine = '';
+                let stadiumLine = '';
+
+                if (i < lines.length && lines[i].trim()) {
+                    dateLine = lines[i++].trim();
+                }
+                if (i < lines.length && lines[i].trim()) {
+                    stadiumLine = lines[i++].trim();
+                }
+
+                const matchBlock = document.createElement('div');
+                matchBlock.className = 'match-info-match';
+
+                let label = headerLine;
+                let team1 = '';
+                let team2 = '';
+
+                const dotIndex = headerLine.indexOf('·');
+                if (dotIndex !== -1) {
+                    label = headerLine.slice(0, dotIndex).trim();            // "Match 25"
+                    const teamsPart = headerLine.slice(dotIndex + 1).trim(); // "A4 – Afrique du Sud"
+                    const dashIndex = teamsPart.indexOf('–');
+                    if (dashIndex !== -1) {
+                        team1 = teamsPart.slice(0, dashIndex).trim();
+                        team2 = teamsPart.slice(dashIndex + 1).trim();
+
+                        // remplace A4 / B2 / F3... par l’équipe réelle du groupe
+                        team1 = resolveGroupSlotName(team1);
+                        team2 = resolveGroupSlotName(team2);
+                    }
+                }
+
+                const headerRow = document.createElement('div');
+                headerRow.className = 'match-info-match-header';
+                headerRow.textContent = label;
+                matchBlock.appendChild(headerRow);
+
+                if (team1 && team2) {
+                    const teamsRow = document.createElement('div');
+                    teamsRow.className = 'match-info-match-teams';
+
+                    const t1Span = document.createElement('span');
+                    t1Span.className = 'match-info-match-team';
+                    appendFlagAndName(t1Span, team1);
+
+                    const vsSpan = document.createElement('span');
+                    vsSpan.textContent = 'vs';
+
+                    const t2Span = document.createElement('span');
+                    t2Span.className = 'match-info-match-team';
+                    appendFlagAndName(t2Span, team2);
+
+                    teamsRow.appendChild(t1Span);
+                    teamsRow.appendChild(vsSpan);
+                    teamsRow.appendChild(t2Span);
+                    matchBlock.appendChild(teamsRow);
+                } else {
+                    // fallback si jamais le parsing foire
+                    headerRow.textContent = headerLine;
+                }
+
+                if (dateLine) {
+                    const dateRow = document.createElement('div');
+                    dateRow.className = 'match-info-date';
+                    dateRow.textContent = dateLine;
+                    matchBlock.appendChild(dateRow);
+                }
+
+                if (stadiumLine) {
+                    const stadiumRow = document.createElement('div');
+                    stadiumRow.className = 'match-info-stadium';
+                    stadiumRow.textContent = stadiumLine;
+                    matchBlock.appendChild(stadiumRow);
+                }
+
+                listContainer.appendChild(matchBlock);
+            }
+        }
+
+        function buildKnockoutMatchBubbleContent(bubble, matchEl, matchId) {
+            const roundKey = matchId.split('-')[0];
+            const roundLabel = MATCH_ROUND_LABELS[roundKey] || 'Phase finale';
+            const info = OFFICIAL_MATCH_INFO[matchId];
+
+            const matchNumber = info && info.number ? info.number : null;
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'match-info-bubble-title';
+            titleEl.textContent = matchNumber
+                ? `${roundLabel} — Match ${matchNumber}`
+                : `${roundLabel} — ${matchId}`;
+            bubble.appendChild(titleEl);
+
+            // drapeaux + noms des 2 équipes
+            const rows = matchEl.querySelectorAll('.ko-team');
+            if (rows.length >= 2) {
+                const teamsRow = document.createElement('div');
+                teamsRow.className = 'match-info-match-teams';
+
+                const span1 = rows[0].querySelector('.name');
+                const span2 = rows[1].querySelector('.name');
+
+                const name1 = span1 ? (span1.dataset.teamName || span1.textContent.trim()) : '';
+                const name2 = span2 ? (span2.dataset.teamName || span2.textContent.trim()) : '';
+
+                const t1Span = document.createElement('span');
+                t1Span.className = 'match-info-match-team';
+                if (name1) appendFlagAndName(t1Span, name1);
+
+                const vsSpan = document.createElement('span');
+                vsSpan.textContent = 'vs';
+
+                const t2Span = document.createElement('span');
+                t2Span.className = 'match-info-match-team';
+                if (name2) appendFlagAndName(t2Span, name2);
+
+                teamsRow.appendChild(t1Span);
+                teamsRow.appendChild(vsSpan);
+                teamsRow.appendChild(t2Span);
+
+                bubble.appendChild(teamsRow);
+            }
+
+            if (info) {
+                if (info.date) {
+                    const dateRow = document.createElement('div');
+                    dateRow.className = 'match-info-date';
+                    dateRow.textContent = info.date;
+                    bubble.appendChild(dateRow);
+                }
+
+                const stadiumParts = [];
+                if (info.stadium) stadiumParts.push(info.stadium);
+                if (info.city) stadiumParts.push(info.city);
+                if (info.country) stadiumParts.push(info.country);
+
+                if (stadiumParts.length) {
+                    const stadiumRow = document.createElement('div');
+                    stadiumRow.className = 'match-info-stadium';
+                    stadiumRow.textContent = stadiumParts.join(', ');
+                    bubble.appendChild(stadiumRow);
+                }
+            }
+        }
+
+
+
+        
+
+
+        
+
+
+        
+
+
+
+
+        
+
+
+
+
+        
+
+
 
         /* Steps */
 
@@ -1921,20 +2673,24 @@
                     const label = i === 0 ? '1er' : i === 1 ? '2ᵉ' : i === 2 ? '3ᵉ' : '4ᵉ';
                     const teamCode = `${groupId}${i + 1}`;
                     return `
-                                            <div class="rank-row" draggable="true" data-team-code="${teamCode}">
-                                                <span class="rank-label">${label}</span>
-                                                <span class="drag-handle">≡</span>
-                                                ${buildTeamBlockHTML(teamName)}
-                                            </div>`;
+                                                <div class="rank-row" draggable="true" data-team-code="${teamCode}">
+                                                    <span class="rank-label">${label}</span>
+                                                    <span class="drag-handle">≡</span>
+                                                    ${buildTeamBlockHTML(teamName)}
+                                                </div>`;
                 }).join('');
 
                 card.innerHTML = `
-                                        <h2>Groupe ${groupId}</h2>
-                                        <p>Réordonne les blocs pour définir le classement (haut = 1er).</p>
-                                        <div class="rank-list">
-                                            ${ranksHtml}
-                                        </div>
-                                    `;
+        <div class="group-card-header">
+            <h2>Groupe ${groupId}</h2>
+            <button type="button" class="match-info-btn group-info-btn" data-group-id="${groupId}">i</button>
+        </div>
+        <p>Réordonne les blocs pour définir le classement (haut = 1er).</p>
+        <div class="rank-list">
+            ${ranksHtml}
+        </div>
+`;
+
 
                 container.appendChild(card);
                 updateGroupRankLabels(card);
@@ -1961,50 +2717,171 @@
                 if (!list) return;
 
                 let dragEl = null;
+                let lastOver = null;
+
+                // Notre "case dans la main" 100% opaque
+                let dragImageEl = null;
+                // Petite div invisible utilisée pour le vrai dragImage natif
+                let hiddenDragImageEl = null;
+                // Décalage souris → haut/gauche de la case
+                let dragOffsetX = 0;
+                let dragOffsetY = 0;
+
+                function moveRow(targetRow) {
+                    if (!dragEl || !targetRow || dragEl === targetRow) return;
+
+                    const children = Array.from(list.children);
+                    const dragIndex = children.indexOf(dragEl);
+                    const targetIndex = children.indexOf(targetRow);
+                    if (dragIndex === -1 || targetIndex === -1) return;
+
+                    if (dragIndex < targetIndex) {
+                        list.insertBefore(dragEl, targetRow.nextSibling);
+                    } else {
+                        list.insertBefore(dragEl, targetRow);
+                    }
+
+                    updateGroupRankLabels(card);
+                }
+
+                // Met à jour la couleur du clone en fonction de sa position (1/2 = vert, 3 = orange, 4 = neutre)
+                function updateDragImageColor() {
+                    if (!dragImageEl || !dragEl) return;
+
+                    const children = Array.from(list.children);
+                    const dragIndex = children.indexOf(dragEl); // 0 = 1er, 1 = 2ᵉ, 2 = 3ᵉ, 3 = 4ᵉ
+
+                    dragImageEl.classList.remove('pos-1', 'pos-2', 'pos-3');
+
+                    if (dragIndex === 0) {
+                        dragImageEl.classList.add('pos-1'); // vert
+                    } else if (dragIndex === 1) {
+                        dragImageEl.classList.add('pos-2'); // vert
+                    } else if (dragIndex === 2) {
+                        dragImageEl.classList.add('pos-3'); // orange
+                    }
+                    // 4ᵉ place : aucune classe -> style neutre
+                }
 
                 list.addEventListener('dragstart', e => {
                     const row = e.target.closest('.rank-row');
                     if (!row) return;
+
                     dragEl = row;
+
+                    if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', row.dataset.teamCode || '');
+
+                        const rect = row.getBoundingClientRect();
+                        dragOffsetX = e.clientX - rect.left;
+                        dragOffsetY = e.clientY - rect.top;
+
+                        // --- CLONE VISUEL 100% OPAQUE QUI SUIT LA SOURIS ---
+                        dragImageEl = row.cloneNode(true);
+                        dragImageEl.style.position = 'fixed';
+                        dragImageEl.style.pointerEvents = 'none';
+                        dragImageEl.style.zIndex = '9999';
+                        dragImageEl.style.width = rect.width + 'px';
+                        dragImageEl.style.left = rect.left + 'px';
+                        dragImageEl.style.top = rect.top + 'px';
+                        dragImageEl.style.boxShadow = '0 10px 22px rgba(15, 23, 42, 0.9)';
+                        dragImageEl.style.transform = 'scale(1.02)';
+
+                        // On s'assure qu'il n'a pas l'état "placeholder" ni une couleur de position initiale
+                        dragImageEl.classList.remove('dragging', 'pos-1', 'pos-2', 'pos-3');
+
+                        document.body.appendChild(dragImageEl);
+
+                        // --- VRAIE dragImage NATIF : totalement invisible ---
+                        hiddenDragImageEl = document.createElement('div');
+                        hiddenDragImageEl.style.width = '1px';
+                        hiddenDragImageEl.style.height = '1px';
+                        hiddenDragImageEl.style.opacity = '0';
+                        hiddenDragImageEl.style.position = 'fixed';
+                        hiddenDragImageEl.style.top = '0';
+                        hiddenDragImageEl.style.left = '0';
+                        document.body.appendChild(hiddenDragImageEl);
+
+                        e.dataTransfer.setDragImage(hiddenDragImageEl, 0, 0);
+                    }
+
+                    // La vraie ligne dans la liste devient un placeholder (dashed)
                     row.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('text/plain', '');
                 });
 
                 list.addEventListener('dragover', e => {
+                    if (!dragEl) return;
                     e.preventDefault();
+
+                    // On déplace notre clone pour qu'il colle à la souris
+                    if (dragImageEl) {
+                        dragImageEl.style.left = (e.clientX - dragOffsetX) + 'px';
+                        dragImageEl.style.top = (e.clientY - dragOffsetY) + 'px';
+                    }
+
                     const row = e.target.closest('.rank-row');
                     if (!row || row === dragEl) return;
+
+                    if (lastOver && lastOver !== row) {
+                        lastOver.classList.remove('drag-over');
+                    }
                     row.classList.add('drag-over');
+                    lastOver = row;
+
+                    // On met à jour l'ordre dans la liste
+                    moveRow(row);
+
+                    // Puis on ajuste la couleur du clone selon sa nouvelle position
+                    updateDragImageColor();
                 });
 
                 list.addEventListener('dragleave', e => {
                     const row = e.target.closest('.rank-row');
-                    if (row) row.classList.remove('drag-over');
+                    if (!row) return;
+                    row.classList.remove('drag-over');
+                    if (row === lastOver) lastOver = null;
                 });
 
                 list.addEventListener('drop', e => {
+                    if (!dragEl) return;
                     e.preventDefault();
                     const row = e.target.closest('.rank-row');
-                    if (!row || row === dragEl) return;
-                    row.classList.remove('drag-over');
-
-                    const children = Array.from(list.children);
-                    const dragIndex = children.indexOf(dragEl);
-                    const targetIndex = children.indexOf(row);
-
-                    if (dragIndex < targetIndex) list.insertBefore(dragEl, row.nextSibling);
-                    else list.insertBefore(dragEl, row);
-
-                    updateGroupRankLabels(card);
+                    if (row) row.classList.remove('drag-over');
+                    // l'ordre est déjà bon grâce à dragover
                 });
 
                 list.addEventListener('dragend', () => {
-                    list.querySelectorAll('.rank-row').forEach(r => r.classList.remove('dragging', 'drag-over'));
+                    if (dragEl) {
+                        dragEl.classList.remove('dragging');
+                    }
+                    if (lastOver) {
+                        lastOver.classList.remove('drag-over');
+                    }
+
+                    // On enlève le clone visuel
+                    if (dragImageEl && dragImageEl.parentNode) {
+                        dragImageEl.parentNode.removeChild(dragImageEl);
+                    }
+                    dragImageEl = null;
+
+                    // On enlève aussi la petite div invisible
+                    if (hiddenDragImageEl && hiddenDragImageEl.parentNode) {
+                        hiddenDragImageEl.parentNode.removeChild(hiddenDragImageEl);
+                    }
+                    hiddenDragImageEl = null;
+
                     dragEl = null;
+                    lastOver = null;
                 });
             });
         }
+
+
+
+
+
+
 
         function readGroupRanksFromDOM() {
             GROUP_IDS.forEach(groupId => {
@@ -2906,9 +3783,9 @@
         }
 
 
-        
 
-        
+
+
 
 
         function updateExpertThirdSummary(allThirds, bestThird) {
@@ -2928,19 +3805,19 @@
 
             const thead = document.createElement('thead');
             thead.innerHTML = `
-                            <tr>
-                                <th>#</th>
-                                <th>Groupe</th>
-                                <th>Équipe</th>
-                                <th>MJ</th>
-                                <th>G</th>
-                                <th>N</th>
-                                <th>P</th>
-                                <th>BP</th>
-                                <th>DB</th>
-                                <th>Pts</th>
-                            </tr>
-                        `;
+                                <tr>
+                                    <th>#</th>
+                                    <th>Groupe</th>
+                                    <th>Équipe</th>
+                                    <th>MJ</th>
+                                    <th>G</th>
+                                    <th>N</th>
+                                    <th>P</th>
+                                    <th>BP</th>
+                                    <th>DB</th>
+                                    <th>Pts</th>
+                                </tr>
+                            `;
 
             const tbody = document.createElement('tbody');
 
@@ -3132,7 +4009,7 @@
                 i = j;
             }
         }
-      
+
 
         function updateKnockoutSeedsExpert() {
             if (!bracketInitializedExpert) return;
@@ -3409,6 +4286,20 @@
                 });
             });
 
+            // Boutons "i" sur les cartes de groupes (calendrier des poules)
+            document.querySelectorAll('.group-info-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const groupId = btn.dataset.groupId;
+                    if (!groupId) return;
+
+                    // On ancre directement sur le bouton i
+                    toggleMatchInfoBubble(btn, `GROUP-${groupId}`);
+                });
+            });
+
+
+
             // CTA simple -> expert
             const toExpertBtn = document.getElementById('switch-to-expert-btn');
             if (toExpertBtn) {
@@ -3473,8 +4364,11 @@
 
             window.addEventListener('resize', () => {
                 setTimeout(layoutBracket, 0);
-                setTimeout(layoutBracketExpert, 0);
+                if (typeof layoutBracketExpert === 'function') {
+                    setTimeout(layoutBracketExpert, 0);
+                }
             });
+
 
             document.addEventListener('click', (e) => {
                 if (!currentInfoBubble) return;
@@ -3486,6 +4380,17 @@
                     currentInfoBubbleMatchId = null;
                 }
             });
+
+
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && currentInfoBubble) {
+                    currentInfoBubble.remove();
+                    currentInfoBubble = null;
+                    currentInfoBubbleMatchId = null;
+                }
+            });
+
         }
 
 
