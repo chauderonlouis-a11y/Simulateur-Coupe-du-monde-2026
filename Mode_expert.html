@@ -1660,14 +1660,16 @@
                     };
 
                     const { data: inserted, error } = await supabaseClient
-                        .from('predictions')
-                        .insert([row]);
+  .from('predictions')
+  .insert([row])
+  .select();   // 👈 obligé en v2 pour récupérer les données
 
-                    if (error) {
-                        console.error('Erreur Supabase insert', error);
-                    } else {
-                        console.log('Insert Supabase OK :', inserted);
-                    }
+if (error) {
+  console.error('Erreur Supabase insert', error);
+} else {
+  console.log('Insert Supabase OK :', inserted); // ici tu verras le/les row(s)
+}
+
                 }
             } catch (e) {
                 console.error('Exception pendant l’insert Supabase', e);
@@ -4393,3 +4395,4 @@ Lincoln Financial Field, Philadelphie, États-Unis`,
     </script>
 </body>
 </html>
+
