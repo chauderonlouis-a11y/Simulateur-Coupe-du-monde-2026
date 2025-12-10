@@ -1,0 +1,547 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Icono para Android / PWA -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+
+    <!-- Icono para iOS (pantalla de inicio) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Manifest (para el modo "app") -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Color de tema del navegador (barra superior en móvil) -->
+    <meta name="theme-color" content="#050816">
+
+    <meta charset="UTF-8">
+    <title>Simulador Copa del Mundo 2026</title>
+    <meta name="description" content="¡Es la herramienta para simular quién ganará el trofeo! 🏆 Simula toda la Copa del Mundo 2026,
+    desde el sorteo de la fase de grupos hasta el campeón final: ordena a las selecciones en cada grupo, elige a los mejores terceros,
+    gestiona los equipos de repesca y juega la fase final en modo clásico o experto.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <style>
+        .lang-dropdown {
+            margin-left: auto; /* empuja el menú de idioma completamente a la derecha */
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+        /* Menú desplegable */
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 160px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+            .lang-menu a {
+                display: block;
+                padding: 0.35rem 0.9rem;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+            }
+
+                .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.8);
+                    opacity: 1;
+                }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+        .top-nav {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+            .top-nav a {
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.7rem;
+                border-radius: 999px;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    text-decoration: underline;
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100%);
+            color: #f5f7ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        /* HERO */
+
+        .hero {
+            margin-top: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.75rem;
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+        }
+
+            .hero-pill span.emoji {
+                font-size: 0.9rem;
+            }
+
+        h1 {
+            font-size: 2.1rem;
+            margin: 0 0 0.4rem;
+        }
+
+        .subtitle {
+            color: #c3cbff;
+            font-size: 0.95rem;
+            margin: 0 0 1rem;
+        }
+
+        .small-link {
+            font-size: 0.8rem;
+            color: #9ca3ff;
+        }
+
+        /* DISEÑO DE LOS BLOQUES */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .info-card {
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.35);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+            .info-card h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.1rem;
+            }
+
+            .info-card h3 {
+                margin: 0.6rem 0 0.3rem;
+                font-size: 0.96rem;
+                color: #c7d2fe;
+            }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 0.4rem;
+            color: #e5e7ff;
+        }
+
+        ul {
+            margin: 0.2rem 0 0.4rem 1.1rem;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d0d4ff;
+        }
+
+        li + li {
+            margin-top: 0.18rem;
+        }
+
+        .badge-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        /* CTA */
+
+        .cta-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: #c3cbff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #f9fafb;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.9);
+            transform: translateY(0);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+            .btn-primary span.icon {
+                font-size: 1.1rem;
+            }
+
+            .btn-primary:hover {
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+                opacity: 0.9;
+            }
+
+        .footer-note {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: #9ca3ff;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html" class="active">Explicaciones</a>
+            <a href="classic.html">Modo clásico</a>
+            <a href="expert.html">Modo experto</a>
+
+            <div class="lang-dropdown">
+                <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">ES</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+
+                <div class="lang-menu">
+                    <a href="../fr/index.html">Français</a>
+                    <a href="../en/index.html">English</a>
+                    <a href="index.html">Español</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="emoji">⚽</span>
+                <span>Guía del simulador del Mundial 2026</span>
+            </div>
+
+            <h1>¿Cómo funciona el simulador?</h1>
+            <p class="subtitle">
+                En esta página se explica el funcionamiento del sitio, las reglas usadas para las clasificaciones
+                de los grupos, los mejores terceros y la fase eliminatoria.
+            </p>
+
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Ir directamente al simulador</span>
+            </a>
+        </header>
+
+        <!-- BLOQUE 1: Qué hace el sitio + Modo clásico -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Presentación</div>
+                <h2>Lo que permite hacer el simulador</h2>
+                <p>
+                    🏆 ¡Es la herramienta para simular quién levantará el trofeo!
+                </p>
+                <ul>
+                    <li>clasificar a los equipos de cada grupo en <strong>modo clásico</strong> (drag &amp; drop);</li>
+                    <li>elegir o dejar que se calculen automáticamente los <span class="highlight">8 mejores terceros</span>;</li>
+                    <li>generar un cuadro de 32 equipos para la fase eliminatoria;</li>
+                    <li>
+                        pasar al <strong>modo experto</strong> para pronosticar los marcadores exactos de todos los
+                        partidos de la fase de grupos y rellenar la fase eliminatoria usando los resultados;
+                    </li>
+                    <li>simular cada ronda de eliminación directa hasta el título.</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Modo clásico</div>
+                <h2>Clasificación sencilla de los grupos</h2>
+                <p>
+                    En modo clásico, reordenas los equipos de cada grupo con
+                    <strong>arrastrar y soltar</strong>:
+                </p>
+                <ul>
+                    <li>se clasifican los 12 primeros de grupo;</li>
+                    <li>también se clasifican los 12 segundos;</li>
+                    <li>después seleccionas manualmente los 8 terceros que se clasifican.</li>
+                </ul>
+                <p>
+                    A continuación se genera el cuadro de 32 equipos y puedes hacer clic en cada equipo
+                    para elegir el ganador de cada partido.
+                </p>
+            </article>
+        </section>
+
+        <!-- BLOQUE 2: Modo experto + Mejores terceros -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Modo experto</div>
+                <h2>Pronosticar todos los resultados</h2>
+                <p>
+                    En modo experto, introduces los marcadores de <strong>todos los partidos de la fase de grupos</strong>.
+                    El sitio calcula automáticamente para cada equipo:
+                </p>
+                <ul>
+                    <li>partidos jugados;</li>
+                    <li>victorias, empates, derrotas;</li>
+                    <li>goles a favor / en contra y diferencia de goles;</li>
+                    <li>puntos en la clasificación.</li>
+                </ul>
+                <p>
+                    La clasificación de cada grupo se actualiza en tiempo real según los resultados
+                    que vayas introduciendo.
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Mejores terceros</div>
+                <h2>¿Cómo se eligen los 8 mejores terceros?</h2>
+                <p>
+                    En modo experto, una vez rellenados todos los marcadores, los 12 equipos que terminaron terceros
+                    se ordenan automáticamente según:
+                </p>
+                <ul>
+                    <li>los puntos;</li>
+                    <li>la diferencia de goles;</li>
+                    <li>los goles marcados;</li>
+                </ul>
+                <p>
+                    Si varios equipos siguen <strong>totalmente empatados</strong>, el simulador muestra
+                    una pequeña ventana para que los diferencies según el <strong>fair play</strong>
+                    (los ordenas del más al menos limpio).
+                </p>
+                <p>
+                    Los <span class="highlight">8 primeros</span> de esta tabla se clasifican para la fase eliminatoria.
+                </p>
+            </article>
+        </section>
+
+        <!-- BLOQUE 3: Repechajes + limitaciones -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Repechajes</div>
+                <h2>Gestión de los equipos de repesca</h2>
+                <p>
+                    Algunas plazas del Mundial todavía no se conocen (etiquetas como “Ganador repesca UEFA …”,
+                    “Ganador repesca interconf …”).
+                </p>
+                <p>
+                    Puedes abrir la ventana <strong>“Elegir los equipos de repesca”</strong> y sustituir esos
+                    marcadores de posición por los equipos que crees que se clasificarán (Italia, Ucrania, Suecia, etc.).
+                </p>
+                <p>
+                    El nombre y la bandera se actualizan en todas partes:
+                </p>
+                <ul>
+                    <li>en los grupos (modo clásico);</li>
+                    <li>en los partidos del modo experto;</li>
+                    <li>en el cuadro de la fase eliminatoria.</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Nota</div>
+                <h2>Limitaciones y aviso importante</h2>
+                <p>
+                    Este simulador es una herramienta <strong>no oficial</strong>, creada por diversión y para
+                    facilitar los pronósticos entre amigos.
+                </p>
+                <p>
+                    Intenta ser lo más fiel posible (sorteos, criterios de desempate extremos, etc.),
+                    pero si quieres estar <strong>100&nbsp;% seguro</strong> de las reglas, deberías consultar siempre
+                    el reglamento oficial en la web oficial de la competición.
+                </p>
+            </article>
+        </section>
+
+        <!-- GRAN BOTÓN CTA -->
+        <section class="cta-wrapper">
+            <p class="cta-text">
+                ¿Listo para hacer tus pronósticos y elegir a tu campeón del mundo?
+            </p>
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Acceder al simulador</span>
+            </a>
+            <p class="footer-note">
+                Puedes volver a esta página de explicaciones en cualquier momento desde el sitio.
+            </p>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdowns = document.querySelectorAll('.lang-dropdown');
+
+            dropdowns.forEach(function (dropdown) {
+                const btn = dropdown.querySelector('.lang-btn');
+
+                if (!btn) return;
+
+                // Clic en el botón: abrir / cerrar
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    const isOpen = dropdown.classList.contains('open');
+
+                    // Cerrar todos los demás menús desplegables
+                    document.querySelectorAll('.lang-dropdown.open').forEach(function (d) {
+                        d.classList.remove('open');
+                        const b = d.querySelector('.lang-btn');
+                        if (b) b.setAttribute('aria-expanded', 'false');
+                    });
+
+                    // Abrir este si estaba cerrado
+                    if (!isOpen) {
+                        dropdown.classList.add('open');
+                        btn.setAttribute('aria-expanded', 'true');
+                    } else {
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // Accesibilidad: Enter o Espacio en el botón
+                btn.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        btn.click();
+                    }
+                });
+            });
+
+            // Clic en cualquier otro lugar: cerrar todos los menús
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.lang-dropdown.open').forEach(function (d) {
+                    d.classList.remove('open');
+                    const b = d.querySelector('.lang-btn');
+                    if (b) b.setAttribute('aria-expanded', 'false');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
