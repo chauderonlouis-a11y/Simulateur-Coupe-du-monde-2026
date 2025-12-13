@@ -1,0 +1,645 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Ícone para Android / PWA -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+
+    <!-- Ícone para iOS (ecrã inicial) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Manifesto (para o modo "app") -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Cor do tema do navegador (barra superior no telemóvel) -->
+    <meta name="theme-color" content="#050816">
+
+    <meta charset="UTF-8">
+
+    <!-- 🔹 Título PT -->
+    <title>Simulador do Mundial 2026</title>
+
+    <meta name="description" content="A ferramenta para simular quem vai levantar o troféu! 🏆 Simula todo o Mundial 2026,
+    desde o sorteio da fase de grupos até ao campeão: ordena as equipas em cada grupo, escolhe os melhores 3.ºs,
+    gere os vencedores dos playoffs e joga a fase a eliminar em modo clássico ou especialista.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 🔹 Canonical : a versão PT aponta para ela própria -->
+    <link rel="canonical" href="https://worldcup2026-simulator.com/pt/">
+
+    <!-- 🔹 Hreflang : ligação entre as línguas + versão por defeito -->
+    <link rel="alternate" hreflang="fr" href="https://worldcup2026-simulator.com/fr/">
+    <link rel="alternate" hreflang="en" href="https://worldcup2026-simulator.com/en/">
+    <link rel="alternate" hreflang="es" href="https://worldcup2026-simulator.com/es/">
+    <link rel="alternate" hreflang="pt" href="https://worldcup2026-simulator.com/pt/">
+    <link rel="alternate" hreflang="de" href="https://worldcup2026-simulator.com/de/">
+    <link rel="alternate" hreflang="it" href="https://worldcup2026-simulator.com/it/">
+    <link rel="alternate" hreflang="tr" href="https://worldcup2026-simulator.com/tr/">
+    <link rel="alternate" hreflang="ar" href="https://worldcup2026-simulator.com/ar/">
+    <link rel="alternate" hreflang="zh" href="https://worldcup2026-simulator.com/zh/">
+    <link rel="alternate" hreflang="ja" href="https://worldcup2026-simulator.com/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://worldcup2026-simulator.com/">
+
+    <style>
+
+        /* ---------- Seletor de idioma ---------- */
+
+        .lang-dropdown {
+            margin-left: auto; /* empurra o botão de idioma para a direita */
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+        /* Base do menu suspenso */
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 180px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+        /* Itens do menu de idioma: estilo diferente dos separadores grandes */
+
+        .top-nav .lang-menu {
+            padding: 0.35rem 0.35rem 0.45rem;
+        }
+
+            .top-nav .lang-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.4rem;
+                width: 100%;
+                box-sizing: border-box;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                padding: 0.3rem 0.65rem;
+                margin: 0.04rem 0;
+                border-radius: 0.55rem;
+                border: none;
+                background: transparent;
+                opacity: 0.9;
+            }
+
+                .top-nav .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.75);
+                    opacity: 1;
+                }
+
+                /* Idioma atual */
+
+                .top-nav .lang-menu a.current-lang {
+                    background: rgba(79, 70, 229, 0.35);
+                    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                    font-weight: 600;
+                }
+
+                    .top-nav .lang-menu a.current-lang::after {
+                        content: "✓";
+                        font-size: 0.7rem;
+                        opacity: 0.9;
+                    }
+
+        /* ---------- Barra principal ---------- */
+
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 1.5rem; /* podes colocar 0 se quiseres colado ao topo */
+            z-index: 50;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            /* Separadores "Explicações / Modo clássico / Modo especialista" em bolhas azuis */
+
+            .top-nav a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 64, 175, 0.35);
+                border: 1px solid rgba(129, 140, 248, 0.7);
+                white-space: nowrap;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    background: rgba(30, 64, 175, 0.6);
+                    text-decoration: none;
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    border-color: #6366f1;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0; /* sem padding no topo */
+            background: radial-gradient(circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100%);
+            color: #f5f7ff;
+        }
+
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem; /* ← mais padding no fundo */
+        }
+
+        a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        /* HERO */
+
+        .hero {
+            margin-top: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.75rem;
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+        }
+
+            .hero-pill span.emoji {
+                font-size: 0.9rem;
+            }
+
+        h1 {
+            font-size: 2.1rem;
+            margin: 0 0 0.4rem;
+        }
+
+        .subtitle {
+            color: #c3cbff;
+            font-size: 0.95rem;
+            margin: 0 0 1rem;
+        }
+
+        .small-link {
+            font-size: 0.8rem;
+            color: #9ca3ff;
+        }
+
+        /* LAYOUT DOS BLOCOS */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .info-card {
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.35);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+            .info-card h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.1rem;
+            }
+
+            .info-card h3 {
+                margin: 0.6rem 0 0.3rem;
+                font-size: 0.96rem;
+                color: #c7d2fe;
+            }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 0.4rem;
+            color: #e5e7ff;
+        }
+
+        ul {
+            margin: 0.2rem 0 0.4rem 1.1rem;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d0d4ff;
+        }
+
+        li + li {
+            margin-top: 0.18rem;
+        }
+
+        .badge-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        /* CTA */
+
+        .cta-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: #c3cbff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #f9fafb;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.9);
+            transform: translateY(0);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+            .btn-primary span.icon {
+                font-size: 1.1rem;
+            }
+
+            .btn-primary:hover {
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+                opacity: 0.9;
+            }
+
+        .footer-note {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: #9ca3ff;
+        }
+
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+            }
+
+                .top-nav a {
+                    font-size: 0.8rem;
+                    padding: 0.2rem 0.6rem;
+                }
+
+            /* o botão de idioma continua empurrado para a direita na sua linha */
+            .lang-dropdown {
+                margin-left: auto;
+            }
+
+            /* o menu de idioma não sai do ecrã e pode fazer scroll se for muito longo */
+            .lang-menu {
+                right: 0;
+                left: auto;
+                transform: none;
+                max-width: min(260px, 90vw);
+                max-height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html" class="active">Explicações</a>
+            <a href="classic.html">Modo clássico</a>
+            <a href="expert.html">Modo especialista</a>
+
+            <div class="lang-dropdown">
+                <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">PT</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+
+                <div class="lang-menu">
+                    <!-- Estamos na página PT -->
+                    <a href="expert.html" class="current-lang">Português</a>
+                    <a href="../fr/expert.html">Français</a>
+                    <a href="../en/expert.html">English</a>
+                    <a href="../es/expert.html">Español</a>
+                    <a href="../de/expert.html">Deutsch</a>
+                    <a href="../it/expert.html">Italiano</a>
+                    <a href="../tr/expert.html">Türkçe</a>
+                    <a href="../ar/expert.html">العربية</a>
+                    <a href="../zh/expert.html">简体中文</a>
+                    <a href="../ja/expert.html">日本語</a>
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="emoji">⚽</span>
+                <span>Guia do simulador do Mundial 2026</span>
+            </div>
+
+            <h1>Como funciona o simulador?</h1>
+            <p class="subtitle">
+                Esta página explica o princípio do site, as regras usadas para as classificações,
+                os melhores 3.ºs e a fase a eliminar.
+            </p>
+
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Ir diretamente para o simulador</span>
+            </a>
+
+        </header>
+
+        <!-- BLOCO 1 : O que o site faz + Modo clássico -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Apresentação</div>
+                <h2>O que o simulador permite</h2>
+                <p>
+                    🏆 A ferramenta para simular quem vai levantar o troféu!
+                </p>
+                <ul>
+                    <li>ordenar as equipas em cada grupo em <strong>modo clássico</strong> (arrastar e largar);</li>
+                    <li>selecionar ou deixar calcular automaticamente os <span class="highlight">8 melhores 3.ºs</span>;</li>
+                    <li>gerar um quadro de 32 equipas para a fase a eliminar;</li>
+                    <li>
+                        mudar para o <strong>modo especialista</strong> para prever os resultados exatos de todos os jogos da fase de grupos
+                        e preencher a fase a eliminar na versão “com marcadores”;
+                    </li>
+                    <li>simular cada ronda a eliminar até ao título.</li>
+                </ul>
+            </article>
+
+
+            <article class="info-card">
+                <div class="badge-title">Modo clássico</div>
+                <h2>Classificação simples dos grupos</h2>
+                <p>
+                    No modo clássico, reordenas as equipas de cada grupo por
+                    <strong>arrastar e largar</strong>:
+                </p>
+                <ul>
+                    <li>os 12 primeiros de cada grupo apuram-se;</li>
+                    <li>os 12 segundos também;</li>
+                    <li>depois selecionas manualmente os 8 terceiros apurados.</li>
+                </ul>
+                <p>
+                    Em seguida, é gerado o quadro de 32 equipas, e podes clicar em cada equipa
+                    para escolher a vencedora de cada jogo.
+                </p>
+            </article>
+        </section>
+
+        <!-- BLOCO 2 : Modo especialista + 3.ºs -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Modo especialista</div>
+                <h2>Prever todos os marcadores</h2>
+                <p>
+                    No modo especialista, introduces os marcadores de <strong>todos os jogos da fase de grupos</strong>. O site calcula
+                    automaticamente para cada equipa:
+                </p>
+                <ul>
+                    <li>jogos disputados;</li>
+                    <li>vitórias, empates, derrotas;</li>
+                    <li>golos marcados / sofridos e diferença de golos;</li>
+                    <li>pontos na classificação.</li>
+                </ul>
+                <p>
+                    A classificação de cada grupo é atualizada em tempo real com base nos resultados
+                    que introduzes.
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Melhores 3.ºs</div>
+                <h2>Como são escolhidos os 8 melhores 3.ºs?</h2>
+                <p>
+                    No modo especialista, quando todos os marcadores estiverem preenchidos, as 12 equipas que terminam em 3.º lugar são ordenadas
+                    automaticamente de acordo com:
+                </p>
+                <ul>
+                    <li>pontos;</li>
+                    <li>diferença de golos;</li>
+                    <li>golos marcados;</li>
+                </ul>
+                <p>
+                    Se várias equipas continuarem <strong>completamente empatadas</strong>, o simulador mostra
+                    uma pequena janela para as desempatar pelo <strong>fair-play</strong> (ordenas da mais
+                    para a menos fair-play).
+                </p>
+                <p>
+                    As <span class="highlight">8 primeiras</span> deste quadro apuram-se para a fase a eliminar.
+                </p>
+            </article>
+
+        </section>
+
+        <!-- BLOCO 3 : Playoffs + limitações -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Playoffs</div>
+                <h2>Gestão dos vencedores dos playoffs</h2>
+                <p>
+                    Algumas vagas do Mundial ainda são desconhecidas (formatos “Vencedor do playoff UEFA …”,
+                    “Vencedor do playoff interconfederação …”).
+                </p>
+                <p>
+                    Podes abrir a janela <strong>“Escolher vencedores dos playoffs”</strong> e substituir estes placeholders
+                    pelas equipas que imaginas apuradas (Itália, Ucrânia, Suécia, etc.).
+                </p>
+                <p>
+                    O nome e a bandeira são atualizados em todo o lado:
+                </p>
+                <ul>
+                    <li>nos grupos (modo clássico);</li>
+                    <li>nos jogos do modo especialista;</li>
+                    <li>no quadro da fase a eliminar.</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Nota</div>
+                <h2>Limites e nota importante</h2>
+                <p>
+                    Este simulador é uma ferramenta <strong>não oficial</strong>, criada por diversão e para facilitar
+                    os prognósticos entre amigos.
+                </p>
+                <p>
+                    Tenta ser o mais fiel possível (sorteios, critérios de desempate extremos, etc.), mas se quiseres ter 100% de certeza,
+                    consulta o site oficial para ver todas as regras.
+                </p>
+            </article>
+        </section>
+
+        <!-- GRANDE BOTÃO CTA -->
+        <section class="cta-wrapper">
+            <p class="cta-text">
+                Pronto para fazer os teus prognósticos e escolher o campeão do mundo?
+            </p>
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Aceder ao simulador</span>
+            </a>
+            <p class="footer-note">
+                Podes voltar a esta página de explicações a qualquer momento a partir do site.
+            </p>
+        </section>
+    </main>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.querySelector('.lang-dropdown');
+            if (!dropdown) return;
+
+            const btn = dropdown.querySelector('.lang-btn');
+            if (!btn) return;
+
+            const setOpen = (open) => {
+                dropdown.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            // Alternar ao clicar no botão
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setOpen(!dropdown.classList.contains('open'));
+            });
+
+            // Acessibilidade: Enter / Espaço
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+                if (e.key === 'Escape') {
+                    setOpen(false);
+                }
+            });
+
+            // Clique fora: fechar
+            document.addEventListener('click', () => setOpen(false));
+        });
+    </script>
+
+
+</body>
+</html>

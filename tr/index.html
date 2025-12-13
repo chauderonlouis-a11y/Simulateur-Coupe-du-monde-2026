@@ -1,0 +1,644 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Android / PWA ikonu -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+
+    <!-- iOS ikonu (Ana ekran) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Manifest ("uygulama" modu için) -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Tarayıcı tema rengi (mobilde üst çubuk) -->
+    <meta name="theme-color" content="#050816">
+
+    <meta charset="UTF-8">
+
+    <!-- 🔹 Başlık TR -->
+    <title>2026 Dünya Kupası Simülatörü</title>
+
+    <meta name="description" content="Kupayı kimin kazanacağını simüle etmek için araç! 🏆 2026 Dünya Kupası’nın tamamını simüle et:
+    grup kura çekiminden final şampiyonuna kadar; her grupta takımları sırala, en iyi 3.’leri seç,
+    play-off takımlarını yönet ve eleme aşamasını klasik veya uzman modunda oyna.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 🔹 Canonical : TR sürümü kendisine işaret eder -->
+    <link rel="canonical" href="https://worldcup2026-simulator.com/tr/">
+
+    <!-- 🔹 Hreflang : diller arası bağlantı + varsayılan sürüm -->
+    <link rel="alternate" hreflang="fr" href="https://worldcup2026-simulator.com/fr/">
+    <link rel="alternate" hreflang="en" href="https://worldcup2026-simulator.com/en/">
+    <link rel="alternate" hreflang="es" href="https://worldcup2026-simulator.com/es/">
+    <link rel="alternate" hreflang="pt" href="https://worldcup2026-simulator.com/pt/">
+    <link rel="alternate" hreflang="de" href="https://worldcup2026-simulator.com/de/">
+    <link rel="alternate" hreflang="it" href="https://worldcup2026-simulator.com/it/">
+    <link rel="alternate" hreflang="tr" href="https://worldcup2026-simulator.com/tr/">
+    <link rel="alternate" hreflang="ar" href="https://worldcup2026-simulator.com/ar/">
+    <link rel="alternate" hreflang="zh" href="https://worldcup2026-simulator.com/zh/">
+    <link rel="alternate" hreflang="ja" href="https://worldcup2026-simulator.com/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://worldcup2026-simulator.com/">
+
+    <style>
+
+        /* ---------- Dil seçici ---------- */
+
+        .lang-dropdown {
+            margin-left: auto; /* dil butonunu sağa iter */
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+        /* Açılır menü tabanı */
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 180px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+        /* Dil menüsü öğeleri: büyük sekmelerden farklı stil */
+
+        .top-nav .lang-menu {
+            padding: 0.35rem 0.35rem 0.45rem;
+        }
+
+            .top-nav .lang-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.4rem;
+                width: 100%;
+                box-sizing: border-box;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                padding: 0.3rem 0.65rem;
+                margin: 0.04rem 0;
+                border-radius: 0.55rem;
+                border: none;
+                background: transparent;
+                opacity: 0.9;
+            }
+
+                .top-nav .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.75);
+                    opacity: 1;
+                }
+
+                /* Mevcut dil */
+
+                .top-nav .lang-menu a.current-lang {
+                    background: rgba(79, 70, 229, 0.35);
+                    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                    font-weight: 600;
+                }
+
+                    .top-nav .lang-menu a.current-lang::after {
+                        content: "✓";
+                        font-size: 0.7rem;
+                        opacity: 0.9;
+                    }
+
+        /* ---------- Üst şerit ---------- */
+
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 1.5rem; /* en üste yapışsın istersen 0 yapabilirsin */
+            z-index: 50;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            /* "Açıklamalar / Klasik mod / Uzman mod" sekmeleri */
+
+            .top-nav a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 64, 175, 0.35);
+                border: 1px solid rgba(129, 140, 248, 0.7);
+                white-space: nowrap;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    background: rgba(30, 64, 175, 0.6);
+                    text-decoration: none;
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    border-color: #6366f1;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0; /* üstte ekstra padding yok */
+            background: radial-gradient(circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100%);
+            color: #f5f7ff;
+        }
+
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem; /* ← burada daha fazla üst boşluk */
+        }
+
+        a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        /* HERO */
+
+        .hero {
+            margin-top: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.75rem;
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+        }
+
+            .hero-pill span.emoji {
+                font-size: 0.9rem;
+            }
+
+        h1 {
+            font-size: 2.1rem;
+            margin: 0 0 0.4rem;
+        }
+
+        .subtitle {
+            color: #c3cbff;
+            font-size: 0.95rem;
+            margin: 0 0 1rem;
+        }
+
+        .small-link {
+            font-size: 0.8rem;
+            color: #9ca3ff;
+        }
+
+        /* BLOK YERLEŞİMİ */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .info-card {
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.35);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+            .info-card h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.1rem;
+            }
+
+            .info-card h3 {
+                margin: 0.6rem 0 0.3rem;
+                font-size: 0.96rem;
+                color: #c7d2fe;
+            }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 0.4rem;
+            color: #e5e7ff;
+        }
+
+        ul {
+            margin: 0.2rem 0 0.4rem 1.1rem;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d0d4ff;
+        }
+
+        li + li {
+            margin-top: 0.18rem;
+        }
+
+        .badge-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        /* CTA */
+
+        .cta-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: #c3cbff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #f9fafb;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.9);
+            transform: translateY(0);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+            .btn-primary span.icon {
+                font-size: 1.1rem;
+            }
+
+            .btn-primary:hover {
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+                opacity: 0.9;
+            }
+
+        .footer-note {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: #9ca3ff;
+        }
+
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+            }
+
+                .top-nav a {
+                    font-size: 0.8rem;
+                    padding: 0.2rem 0.6rem;
+                }
+
+            /* dil butonu satırında sağa itili kalsın */
+            .lang-dropdown {
+                margin-left: auto;
+            }
+
+            /* dil menüsü taşmasın, uzunsa kaydırılabilsin */
+            .lang-menu {
+                right: 0;
+                left: auto;
+                transform: none;
+                max-width: min(260px, 90vw);
+                max-height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html" class="active">Açıklamalar</a>
+            <a href="classic.html">Klasik mod</a>
+            <a href="expert.html">Uzman mod</a>
+
+            <div class="lang-dropdown">
+                <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">TR</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+
+                <div class="lang-menu">
+                    <!-- TR sayfasındayız -->
+                    <a href="../fr/expert.html">Français</a>
+                    <a href="../en/expert.html">English</a>
+                    <a href="../es/expert.html">Español</a>
+                    <a href="../pt/expert.html">Português</a>
+                    <a href="../de/expert.html">Deutsch</a>
+                    <a href="../it/expert.html">Italiano</a>
+                    <a href="expert.html" class="current-lang">Türkçe</a>
+                    <a href="../ar/expert.html">العربية</a>
+                    <a href="../zh/expert.html">简体中文</a>
+                    <a href="../ja/expert.html">日本語</a>
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="emoji">⚽</span>
+                <span>2026 Dünya Kupası simülatörü rehberi</span>
+            </div>
+
+            <h1>Simülatör nasıl çalışır&nbsp;?</h1>
+            <p class="subtitle">
+                Bu sayfa sitenin mantığını, sıralamalar için kullanılan kuralları,
+                en iyi 3.’leri ve eleme aşamasını açıklar.
+            </p>
+
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Doğrudan simülatöre git</span>
+            </a>
+
+        </header>
+
+        <!-- BLOK 1 : Site ne yapar + Klasik mod -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Tanıtım</div>
+                <h2>Simülatör ne sağlar?</h2>
+                <p>
+                    🏆 Kupayı kimin kazanacağını simüle etmek için araç!
+                </p>
+                <ul>
+                    <li>her grupta takımları <strong>klasik modda</strong> (sürükle-bırak) sıralamak;</li>
+                    <li><span class="highlight">en iyi 8 üçüncü</span> takımı seçmek veya otomatik hesaplatmak;</li>
+                    <li>eleme aşaması için 32 takımlık bir tablo oluşturmak;</li>
+                    <li>
+                        <strong>uzman moda</strong> geçerek tüm grup maçlarının net skorlarını tahmin etmek
+                        ve eleme aşamasını “skor” versiyonunda doldurmak;
+                    </li>
+                    <li>şampiyonluğa kadar her eleme turunu simüle etmek.</li>
+                </ul>
+            </article>
+
+
+            <article class="info-card">
+                <div class="badge-title">Klasik mod</div>
+                <h2>Grupları basitçe sıralama</h2>
+                <p>
+                    Klasik modda, her gruptaki takımları
+                    <strong>sürükle-bırak</strong> ile yeniden sıralarsın:
+                </p>
+                <ul>
+                    <li>grup birincileri (12 takım) çıkar;</li>
+                    <li>grup ikincileri (12 takım) de çıkar;</li>
+                    <li>sonra 8 üçüncü takımı manuel olarak seçersin.</li>
+                </ul>
+                <p>
+                    Ardından 32 takımlık tablo oluşturulur ve her maçta kazananı belirlemek için
+                    takımların üzerine tıklayabilirsin.
+                </p>
+            </article>
+        </section>
+
+        <!-- BLOK 2 : Uzman mod + 3.’ler -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Uzman mod</div>
+                <h2>Tüm skorları tahmin et</h2>
+                <p>
+                    Uzman modda, <strong>tüm grup maçlarının</strong> skorlarını girersin. Site her takım için
+                    otomatik olarak şunları hesaplar:
+                </p>
+                <ul>
+                    <li>oynanan maç sayısı;</li>
+                    <li>galibiyet, beraberlik, mağlubiyet;</li>
+                    <li>atılan / yenilen gol ve averaj;</li>
+                    <li>puan.</li>
+                </ul>
+                <p>
+                    Girdiğin sonuçlara göre her grubun sıralaması anlık olarak güncellenir.
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">En iyi 3.’ler</div>
+                <h2>En iyi 8 üçüncü nasıl seçilir?</h2>
+                <p>
+                    Uzman modda tüm skorlar girildikten sonra, gruplarda 3. olan 12 takım
+                    otomatik olarak şu kriterlere göre sıralanır:
+                </p>
+                <ul>
+                    <li>puan;</li>
+                    <li>averaj;</li>
+                    <li>atılan gol;</li>
+                </ul>
+                <p>
+                    Birden fazla takım <strong>tamamen eşit</strong> kalırsa, simülatör
+                    onları <strong>fair-play</strong> ile ayırman için küçük bir pencere gösterir
+                    (en fair-play olandan en aza doğru sıralarsın).
+                </p>
+                <p>
+                    Bu tablonun <span class="highlight">ilk 8</span> takımı eleme aşamasına kalır.
+                </p>
+            </article>
+
+        </section>
+
+        <!-- BLOK 3 : Play-off + sınırlamalar -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">Play-off</div>
+                <h2>Play-off takımlarını yönetme</h2>
+                <p>
+                    Dünya Kupası’ndaki bazı kontenjanlar hâlâ belli değil (“UEFA play-off galibi …”,
+                    “Kıtalararası play-off galibi …” gibi).
+                </p>
+                <p>
+                    <strong>“Play-off takımlarını seç”</strong> penceresini açıp bu yer tutucuları,
+                    senin kalacağını düşündüğün takımlarla değiştirebilirsin (İtalya, Ukrayna, İsveç vb.).
+                </p>
+                <p>
+                    Ardından isim ve bayrak her yerde güncellenir:
+                </p>
+                <ul>
+                    <li>gruplarda (klasik mod);</li>
+                    <li>uzman mod maçlarında;</li>
+                    <li>eleme aşaması tablosunda.</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">Not</div>
+                <h2>Sınırlar & önemli not</h2>
+                <p>
+                    Bu simülatör <strong>resmî olmayan</strong> bir araçtır; eğlence için ve arkadaşlar arasında
+                    tahminleri kolaylaştırmak amacıyla yapılmıştır.
+                </p>
+                <p>
+                    Mümkün olduğunca gerçeğe yakın olmaya çalışır (kura, aşırı eşitlik bozma kriterleri vb.),
+                    ama %100 emin olmak istiyorsanız tüm kurallar için resmî siteye bakın.
+                </p>
+            </article>
+        </section>
+
+        <!-- BÜYÜK CTA BUTONU -->
+        <section class="cta-wrapper">
+            <p class="cta-text">
+                Tahminlerini yapmaya ve dünya şampiyonunu seçmeye hazır mısın&nbsp;?
+            </p>
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>Simülatöre git</span>
+            </a>
+            <p class="footer-note">
+                Bu açıklama sayfasına siteden istediğin zaman geri dönebilirsin.
+            </p>
+        </section>
+    </main>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.querySelector('.lang-dropdown');
+            if (!dropdown) return;
+
+            const btn = dropdown.querySelector('.lang-btn');
+            if (!btn) return;
+
+            const setOpen = (open) => {
+                dropdown.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            // Butona tıklayınca aç/kapat
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setOpen(!dropdown.classList.contains('open'));
+            });
+
+            // Erişilebilirlik : Enter / Boşluk
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+                if (e.key === 'Escape') {
+                    setOpen(false);
+                }
+            });
+
+            // Dışarı tıklama : kapat
+            document.addEventListener('click', () => setOpen(false));
+        });
+    </script>
+
+
+</body>
+</html>

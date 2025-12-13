@@ -1,0 +1,639 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+    <!-- ファビコン -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Android / PWA 用アイコン -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+
+    <!-- iOS（ホーム画面）用アイコン -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- マニフェスト（「アプリ」モード用） -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- ブラウザのテーマカラー（モバイル上部バー） -->
+    <meta name="theme-color" content="#050816">
+
+    <meta charset="UTF-8">
+
+    <!-- 🔹 タイトル（日本語） -->
+    <title>ワールドカップ2026 シミュレーター</title>
+
+    <meta name="description" content="🏆 優勝トロフィーを手にするのはどこだ？ワールドカップ2026をまるごとシミュレーション！
+    グループ抽選から最終的な優勝国まで：各組の順位を決め、ベスト3位（8枠）を選択／自動計算し、
+    プレーオフ枠のチームを置き換え、クラシック／エキスパートの両モードで決勝トーナメントを楽しめます。">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 🔹 Canonical：日本語版は日本語ページを指す -->
+    <link rel="canonical" href="https://worldcup2026-simulator.com/ja/">
+
+    <!-- 🔹 Hreflang：各言語版 + デフォルト版へのリンク -->
+    <link rel="alternate" hreflang="fr" href="https://worldcup2026-simulator.com/fr/">
+    <link rel="alternate" hreflang="en" href="https://worldcup2026-simulator.com/en/">
+    <link rel="alternate" hreflang="es" href="https://worldcup2026-simulator.com/es/">
+    <link rel="alternate" hreflang="pt" href="https://worldcup2026-simulator.com/pt/">
+    <link rel="alternate" hreflang="de" href="https://worldcup2026-simulator.com/de/">
+    <link rel="alternate" hreflang="it" href="https://worldcup2026-simulator.com/it/">
+    <link rel="alternate" hreflang="tr" href="https://worldcup2026-simulator.com/tr/">
+    <link rel="alternate" hreflang="ar" href="https://worldcup2026-simulator.com/ar/">
+    <link rel="alternate" hreflang="zh" href="https://worldcup2026-simulator.com/zh/">
+    <link rel="alternate" hreflang="ja" href="https://worldcup2026-simulator.com/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://worldcup2026-simulator.com/">
+
+    <style>
+
+        /* ---------- 言語セレクター ---------- */
+
+        .lang-dropdown {
+            margin-left: auto; /* 言語ボタンを右側へ */
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+        /* ドロップダウンメニューのベース */
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 180px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+        /* 言語メニュー項目：大きいタブとは別の見た目 */
+
+        .top-nav .lang-menu {
+            padding: 0.35rem 0.35rem 0.45rem;
+        }
+
+            .top-nav .lang-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.4rem;
+                width: 100%;
+                box-sizing: border-box;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                padding: 0.3rem 0.65rem;
+                margin: 0.04rem 0;
+                border-radius: 0.55rem;
+                border: none;
+                background: transparent;
+                opacity: 0.9;
+            }
+
+                .top-nav .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.75);
+                    opacity: 1;
+                }
+
+                /* 現在の言語 */
+
+                .top-nav .lang-menu a.current-lang {
+                    background: rgba(79, 70, 229, 0.35);
+                    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                    font-weight: 600;
+                }
+
+                    .top-nav .lang-menu a.current-lang::after {
+                        content: "✓";
+                        font-size: 0.7rem;
+                        opacity: 0.9;
+                    }
+
+        /* ---------- トップナビ ---------- */
+
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 1.5rem; /* 必要なら 0 にして最上部に固定 */
+            z-index: 50;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            /* 「説明 / クラシック / エキスパート」を青いバッジ風に */
+
+            .top-nav a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 64, 175, 0.35);
+                border: 1px solid rgba(129, 140, 248, 0.7);
+                white-space: nowrap;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    background: rgba(30, 64, 175, 0.6);
+                    text-decoration: none;
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    border-color: #6366f1;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0; /* 上の余白なし */
+            background: radial-gradient(circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100%);
+            color: #f5f7ff;
+        }
+
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem; /* ← ここで上の padding を増やさない */
+        }
+
+        a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        /* HERO */
+
+        .hero {
+            margin-top: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.75rem;
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+        }
+
+            .hero-pill span.emoji {
+                font-size: 0.9rem;
+            }
+
+        h1 {
+            font-size: 2.1rem;
+            margin: 0 0 0.4rem;
+        }
+
+        .subtitle {
+            color: #c3cbff;
+            font-size: 0.95rem;
+            margin: 0 0 1rem;
+        }
+
+        .small-link {
+            font-size: 0.8rem;
+            color: #9ca3ff;
+        }
+
+        /* ブロックのレイアウト */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .info-card {
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.35);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+            .info-card h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.1rem;
+            }
+
+            .info-card h3 {
+                margin: 0.6rem 0 0.3rem;
+                font-size: 0.96rem;
+                color: #c7d2fe;
+            }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 0.4rem;
+            color: #e5e7ff;
+        }
+
+        ul {
+            margin: 0.2rem 0 0.4rem 1.1rem;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d0d4ff;
+        }
+
+        li + li {
+            margin-top: 0.18rem;
+        }
+
+        .badge-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        /* CTA */
+
+        .cta-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: #c3cbff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #f9fafb;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.9);
+            transform: translateY(0);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+            .btn-primary span.icon {
+                font-size: 1.1rem;
+            }
+
+            .btn-primary:hover {
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+                opacity: 0.9;
+            }
+
+        .footer-note {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: #9ca3ff;
+        }
+
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+            }
+
+                .top-nav a {
+                    font-size: 0.8rem;
+                    padding: 0.2rem 0.6rem;
+                }
+
+            /* 言語ボタンは同じ行の右端へ */
+            .lang-dropdown {
+                margin-left: auto;
+            }
+
+            /* 言語メニューがはみ出さず、長い場合はスクロール */
+            .lang-menu {
+                right: 0;
+                left: auto;
+                transform: none;
+                max-width: min(260px, 90vw);
+                max-height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html" class="active">説明</a>
+            <a href="classic.html">クラシックモード</a>
+            <a href="expert.html">エキスパートモード</a>
+
+            <div class="lang-dropdown">
+                <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">JA</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+
+                <div class="lang-menu">
+                    <!-- 現在は日本語ページ -->
+                    <a href="index.html" class="current-lang">日本語</a>
+                    <a href="../fr/index.html">フランス語</a>
+                    <a href="../en/index.html">英語</a>
+                    <a href="../es/index.html">スペイン語</a>
+                    <a href="../pt/index.html">ポルトガル語</a>
+                    <a href="../de/index.html">ドイツ語</a>
+                    <a href="../it/index.html">イタリア語</a>
+                    <a href="../tr/index.html">トルコ語</a>
+                    <a href="../ar/index.html">アラビア語</a>
+                    <a href="../zh/index.html">中国語（簡体）</a>
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="emoji">⚽</span>
+                <span>ワールドカップ2026 シミュレーターガイド</span>
+            </div>
+
+            <h1>このシミュレーターの使い方</h1>
+            <p class="subtitle">
+                このページでは、サイトの仕組み、順位決定に使うルール、
+                ベスト3位（8枠）の扱い、そして決勝トーナメントについて説明します。
+            </p>
+
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>シミュレーターへ移動</span>
+            </a>
+
+        </header>
+
+        <!-- ブロック1：サイトの機能 + クラシックモード -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">概要</div>
+                <h2>このシミュレーターでできること</h2>
+                <p>
+                    🏆 優勝トロフィーを手にするのはどこだ？それをシミュレーションできます！
+                </p>
+                <ul>
+                    <li><strong>クラシックモード</strong>で各グループの順位をドラッグ＆ドロップで並べ替え；</li>
+                    <li><span class="highlight">ベスト3位（8枠）</span>を手動で選ぶ、または自動計算；</li>
+                    <li>決勝トーナメント（32チーム）の組み合わせ表を生成；</li>
+                    <li>
+                        <strong>エキスパートモード</strong>では、グループ全試合の正確なスコアを予想し、
+                        “スコア付き”の決勝トーナメントを作成；
+                    </li>
+                    <li>各ラウンドの勝者を決めて、優勝までシミュレーション。</li>
+                </ul>
+            </article>
+
+
+            <article class="info-card">
+                <div class="badge-title">クラシックモード</div>
+                <h2>グループ順位を簡単に決定</h2>
+                <p>
+                    クラシックモードでは、各グループのチームを
+                    <strong>ドラッグ＆ドロップ</strong>で並べ替えます：
+                </p>
+                <ul>
+                    <li>各組1位（12チーム）が通過；</li>
+                    <li>各組2位（12チーム）も通過；</li>
+                    <li>その後、通過する3位（8チーム）を手動で選択します。</li>
+                </ul>
+                <p>
+                    すると32チームのトーナメント表が生成され、各カードをクリックして
+                    試合の勝者を決められます。
+                </p>
+            </article>
+        </section>
+
+        <!-- ブロック2：エキスパートモード + 3位比較 -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">エキスパートモード</div>
+                <h2>全試合のスコアを予想</h2>
+                <p>
+                    エキスパートモードでは、<strong>グループ全試合</strong>のスコアを入力します。サイトが各チームについて自動計算します：
+                </p>
+                <ul>
+                    <li>試合数；</li>
+                    <li>勝利数／引き分け数／敗戦数；</li>
+                    <li>得点／失点、および得失点差；</li>
+                    <li>勝点。</li>
+                </ul>
+                <p>
+                    入力した結果に応じて、各グループの順位がリアルタイムで更新されます。
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">ベスト3位</div>
+                <h2>ベスト3位（8枠）はどう選ばれる？</h2>
+                <p>
+                    エキスパートモードで全スコアを入力すると、各グループの3位（12チーム）は自動的に次の順で並び替えられます：
+                </p>
+                <ul>
+                    <li>勝点；</li>
+                    <li>得失点差；</li>
+                    <li>総得点；</li>
+                </ul>
+                <p>
+                    それでも<strong>完全に同率</strong>の場合は、シミュレーターが小さなウィンドウを表示し、
+                    <strong>フェアプレー</strong>（よりフェアな順）で順位付けしてもらいます。
+                </p>
+                <p>
+                    この表の<span class="highlight">上位8チーム</span>が決勝トーナメントへ進出します。
+                </p>
+            </article>
+
+        </section>
+
+        <!-- ブロック3：プレーオフ枠 + 注意 -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">プレーオフ</div>
+                <h2>プレーオフ枠のチーム設定</h2>
+                <p>
+                    ワールドカップ出場枠の一部はまだ未確定です（例：「UEFAプレーオフ勝者…」「大陸間プレーオフ勝者…」など）。
+                </p>
+                <p>
+                    <strong>「プレーオフ枠を選択」</strong>ウィンドウを開いて、これらのプレースホルダーを
+                    想定する出場国（イタリア、ウクライナ、スウェーデン…など）に置き換えられます。
+                </p>
+                <p>
+                    置き換え後は、名称と国旗がすべて更新されます：
+                </p>
+                <ul>
+                    <li>グループ（クラシックモード）</li>
+                    <li>エキスパートモードの試合</li>
+                    <li>決勝トーナメント表</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">注記</div>
+                <h2>制限事項と重要な注意</h2>
+                <p>
+                    このシミュレーターは<strong>非公式</strong>のツールで、遊びや友人同士の予想を楽しむ目的で作られています。
+                </p>
+                <p>
+                    抽選や同率時の細かな基準など、できるだけ忠実に再現することを目指していますが、
+                    ルールを<strong>100%正確に確認したい</strong>場合は公式サイトで最新の規定をご確認ください。
+                </p>
+            </article>
+        </section>
+
+        <!-- 大きなCTAボタン -->
+        <section class="cta-wrapper">
+            <p class="cta-text">
+                予想を立てて、あなたの世界王者を選ぶ準備はできましたか？
+            </p>
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>シミュレーターへ</span>
+            </a>
+            <p class="footer-note">
+                サイトからいつでもこの説明ページに戻れます。
+            </p>
+        </section>
+    </main>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.querySelector('.lang-dropdown');
+            if (!dropdown) return;
+
+            const btn = dropdown.querySelector('.lang-btn');
+            if (!btn) return;
+
+            const setOpen = (open) => {
+                dropdown.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            // ボタンをクリックしたら開閉
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setOpen(!dropdown.classList.contains('open'));
+            });
+
+            // アクセシビリティ：Enter / スペース
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+                if (e.key === 'Escape') {
+                    setOpen(false);
+                }
+            });
+
+            // 外側をクリック：閉じる
+            document.addEventListener('click', () => setOpen(false));
+        });
+    </script>
+
+
+</body>
+</html>

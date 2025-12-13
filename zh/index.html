@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Android / PWA 图标 -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+
+    <!-- iOS 图标（主屏幕） -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Manifest（“应用”模式） -->
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- 浏览器主题色（移动端顶部栏） -->
+    <meta name="theme-color" content="#050816">
+
+    <meta charset="UTF-8">
+
+    <!-- 🔹 标题 -->
+    <title>2026年世界杯模拟器</title>
+
+    <meta name="description" content="这是用来模拟谁将捧起奖杯的工具！🏆 模拟完整的2026年世界杯，
+    从小组抽签到最终冠军：为每个小组排序球队，选择最佳小组第三，
+    管理附加赛球队，并以经典模式或专家模式进行淘汰赛阶段。">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 🔹 Canonical：中文版本指向自身 -->
+    <link rel="canonical" href="https://worldcup2026-simulator.com/zh/">
+
+    <!-- 🔹 Hreflang：各语言互链 + 默认版本 -->
+    <link rel="alternate" hreflang="fr" href="https://worldcup2026-simulator.com/fr/">
+    <link rel="alternate" hreflang="en" href="https://worldcup2026-simulator.com/en/">
+    <link rel="alternate" hreflang="es" href="https://worldcup2026-simulator.com/es/">
+    <link rel="alternate" hreflang="pt" href="https://worldcup2026-simulator.com/pt/">
+    <link rel="alternate" hreflang="de" href="https://worldcup2026-simulator.com/de/">
+    <link rel="alternate" hreflang="it" href="https://worldcup2026-simulator.com/it/">
+    <link rel="alternate" hreflang="tr" href="https://worldcup2026-simulator.com/tr/">
+    <link rel="alternate" hreflang="ar" href="https://worldcup2026-simulator.com/ar/">
+    <link rel="alternate" hreflang="zh" href="https://worldcup2026-simulator.com/zh/">
+    <link rel="alternate" hreflang="ja" href="https://worldcup2026-simulator.com/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://worldcup2026-simulator.com/">
+
+    <style>
+
+        /* ---------- 语言选择器 ---------- */
+
+        .lang-dropdown {
+            margin-left: auto; /* pushes the language button to the right */
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+        /* 下拉菜单基础样式 */
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 180px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+        /* 语言菜单项：与上方大按钮不同 */
+
+        .top-nav .lang-menu {
+            padding: 0.35rem 0.35rem 0.45rem;
+        }
+
+            .top-nav .lang-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.4rem;
+                width: 100%;
+                box-sizing: border-box;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                padding: 0.3rem 0.65rem;
+                margin: 0.04rem 0;
+                border-radius: 0.55rem;
+                border: none;
+                background: transparent;
+                opacity: 0.9;
+            }
+
+                .top-nav .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.75);
+                    opacity: 1;
+                }
+
+                /* 当前语言 */
+
+                .top-nav .lang-menu a.current-lang {
+                    background: rgba(79, 70, 229, 0.35);
+                    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                    font-weight: 600;
+                }
+
+                    .top-nav .lang-menu a.current-lang::after {
+                        content: "✓";
+                        font-size: 0.7rem;
+                        opacity: 0.9;
+                    }
+
+        /* ---------- 顶部导航栏 ---------- */
+
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 1.5rem; /* 如果你想贴顶可以改成 0 */
+            z-index: 50;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            /* “说明 / 经典模式 / 专家模式”标签按钮 */
+
+            .top-nav a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 64, 175, 0.35);
+                border: 1px solid rgba(129, 140, 248, 0.7);
+                white-space: nowrap;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    background: rgba(30, 64, 175, 0.6);
+                    text-decoration: none;
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    border-color: #6366f1;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100%);
+            color: #f5f7ff;
+        }
+
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+        }
+
+        a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        /* HERO */
+
+        .hero {
+            margin-top: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            font-size: 0.75rem;
+            color: #c7d2fe;
+            margin-bottom: 0.7rem;
+        }
+
+            .hero-pill span.emoji {
+                font-size: 0.9rem;
+            }
+
+        h1 {
+            font-size: 2.1rem;
+            margin: 0 0 0.4rem;
+        }
+
+        .subtitle {
+            color: #c3cbff;
+            font-size: 0.95rem;
+            margin: 0 0 1rem;
+        }
+
+        .small-link {
+            font-size: 0.8rem;
+            color: #9ca3ff;
+        }
+
+        /* 内容区块布局 */
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .section-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .info-card {
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.35);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+            .info-card h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.1rem;
+            }
+
+            .info-card h3 {
+                margin: 0.6rem 0 0.3rem;
+                font-size: 0.96rem;
+                color: #c7d2fe;
+            }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 0 0 0.4rem;
+            color: #e5e7ff;
+        }
+
+        ul {
+            margin: 0.2rem 0 0.4rem 1.1rem;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d0d4ff;
+        }
+
+        li + li {
+            margin-top: 0.18rem;
+        }
+
+        .badge-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        /* CTA */
+
+        .cta-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: #c3cbff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #f9fafb;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.9);
+            transform: translateY(0);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+        }
+
+            .btn-primary span.icon {
+                font-size: 1.1rem;
+            }
+
+            .btn-primary:hover {
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0);
+                box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+                opacity: 0.9;
+            }
+
+        .footer-note {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: #9ca3ff;
+        }
+
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+            }
+
+                .top-nav a {
+                    font-size: 0.8rem;
+                    padding: 0.2rem 0.6rem;
+                }
+
+            .lang-dropdown {
+                margin-left: auto;
+            }
+
+            .lang-menu {
+                right: 0;
+                left: auto;
+                transform: none;
+                max-width: min(260px, 90vw);
+                max-height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html" class="active">说明</a>
+            <a href="classic.html">经典模式</a>
+            <a href="expert.html">专家模式</a>
+
+            <div class="lang-dropdown">
+                <button class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">ZH</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+
+                <div class="lang-menu">
+                    <!-- 当前为中文页面 -->
+                    <a href="../fr/expert.html">Français</a>
+                    <a href="../en/expert.html">English</a>
+                    <a href="../es/expert.html">Español</a>
+                    <a href="../pt/expert.html">Português</a>
+                    <a href="../de/expert.html">Deutsch</a>
+                    <a href="../it/expert.html">Italiano</a>
+                    <a href="../tr/expert.html">Türkçe</a>
+                    <a href="../ar/expert.html">العربية</a>
+                    <a href="expert.html" class="current-lang">简体中文</a>
+                    <a href="../ja/expert.html">日本語</a>
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-pill">
+                <span class="emoji">⚽</span>
+                <span>2026年世界杯模拟器指南</span>
+            </div>
+
+            <h1>模拟器如何运作？</h1>
+            <p class="subtitle">
+                本页介绍网站的基本原理、用于排名的规则、
+                “最佳小组第三”的选取方式以及淘汰赛阶段。
+            </p>
+
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>直接进入模拟器</span>
+            </a>
+
+        </header>
+
+        <!-- 区块 1：功能介绍 + 经典模式 -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">介绍</div>
+                <h2>模拟器能做什么</h2>
+                <p>
+                    🏆 这是用来模拟谁将捧起奖杯的工具！
+                </p>
+                <ul>
+                    <li>在 <strong>经典模式</strong> 中为每个小组对球队进行排序（拖拽）;</li>
+                    <li>手动选择或让系统自动计算 <span class="highlight">8 支最佳小组第三</span>；</li>
+                    <li>生成淘汰赛阶段的 32 支球队对阵表；</li>
+                    <li>
+                        切换到 <strong>专家模式</strong>，预测所有小组赛的具体比分，
+                        并用“比分版”填写淘汰赛阶段；
+                    </li>
+                    <li>一路模拟每一轮淘汰赛直到冠军诞生。</li>
+                </ul>
+            </article>
+
+
+            <article class="info-card">
+                <div class="badge-title">经典模式</div>
+                <h2>小组排名的简单排序</h2>
+                <p>
+                    在经典模式下，你可以通过
+                    <strong>拖拽</strong> 来重新排列每个小组的球队：
+                </p>
+                <ul>
+                    <li>12 个小组第一晋级；</li>
+                    <li>12 个小组第二也晋级；</li>
+                    <li>随后你再手动选出 8 支晋级的第三名球队。</li>
+                </ul>
+                <p>
+                    系统会生成 32 队淘汰赛对阵表，你可以点击每支球队
+                    来选择每场比赛的胜者。
+                </p>
+            </article>
+        </section>
+
+        <!-- 区块 2：专家模式 + 最佳第三 -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">专家模式</div>
+                <h2>预测所有比分</h2>
+                <p>
+                    在专家模式下，你需要输入 <strong>所有小组赛</strong> 的比分。网站会自动为每支球队计算：
+                </p>
+                <ul>
+                    <li>已赛场次；</li>
+                    <li>胜 / 平 / 负；</li>
+                    <li>进球 / 失球与净胜球；</li>
+                    <li>积分。</li>
+                </ul>
+                <p>
+                    每个小组的排名会根据你输入的结果实时更新。
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">最佳小组第三</div>
+                <h2>如何选出 8 支最佳小组第三？</h2>
+                <p>
+                    在专家模式下，当所有比分填写完成后，12 支小组第三会按以下规则自动排序：
+                </p>
+                <ul>
+                    <li>积分；</li>
+                    <li>净胜球；</li>
+                    <li>进球数；</li>
+                </ul>
+                <p>
+                    如果仍有多支球队 <strong>完全相同</strong>，模拟器会弹出一个小窗口，
+                    让你通过 <strong>公平竞赛（fair-play）</strong> 进行区分（从最公平到最不公平排序）。
+                </p>
+                <p>
+                    排名前 <span class="highlight">8</span> 的球队晋级淘汰赛阶段。
+                </p>
+            </article>
+
+        </section>
+
+        <!-- 区块 3：附加赛 + 说明 -->
+        <section class="section-grid">
+            <article class="info-card">
+                <div class="badge-title">附加赛</div>
+                <h2>附加赛球队管理</h2>
+                <p>
+                    世界杯的部分名额仍未确定（例如“欧足联附加赛胜者 …”
+                    或“洲际附加赛胜者 …”之类）。
+                </p>
+                <p>
+                    你可以打开 <strong>“选择附加赛球队”</strong> 窗口，把这些占位符替换成你认为会晋级的球队
+                    （意大利、乌克兰、瑞典等）。
+                </p>
+                <p>
+                    队名与旗帜会在所有位置同步更新：
+                </p>
+                <ul>
+                    <li>小组（经典模式）；</li>
+                    <li>专家模式的比赛；</li>
+                    <li>淘汰赛对阵表。</li>
+                </ul>
+            </article>
+
+            <article class="info-card">
+                <div class="badge-title">备注</div>
+                <h2>限制与重要说明</h2>
+                <p>
+                    本模拟器是一个 <strong>非官方</strong> 工具，仅供娱乐，方便朋友之间做预测。
+                </p>
+                <p>
+                    我们尽量保持规则真实（抽签、极端情况下的判定标准等），
+                    但如果你想 100% 确认，请前往官方网站查看完整规则。
+                </p>
+            </article>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-wrapper">
+            <p class="cta-text">
+                准备好做预测并选择你的世界冠军了吗？
+            </p>
+            <a href="classic.html" class="btn-primary">
+                <span class="icon">🚀</span>
+                <span>进入模拟器</span>
+            </a>
+            <p class="footer-note">
+                你可以随时从网站返回本说明页面。
+            </p>
+        </section>
+    </main>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.querySelector('.lang-dropdown');
+            if (!dropdown) return;
+
+            const btn = dropdown.querySelector('.lang-btn');
+            if (!btn) return;
+
+            const setOpen = (open) => {
+                dropdown.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            // 点击按钮切换
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setOpen(!dropdown.classList.contains('open'));
+            });
+
+            // 可访问性：Enter / Space
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+                if (e.key === 'Escape') {
+                    setOpen(false);
+                }
+            });
+
+            // 点击其他区域关闭
+            document.addEventListener('click', () => setOpen(false));
+        });
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,3968 @@
+﻿<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+
+    <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
+    <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
+    <link href="/favicon.ico" rel="shortcut icon" />
+
+    <link href="/android-chrome-192x192.png" rel="icon" sizes="192x192" type="image/png" />
+
+    <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+
+    <link href="/site.webmanifest" rel="manifest" />
+
+    <meta content="#050816" name="theme-color" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-HB4MT8KEDH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-HB4MT8KEDH');
+    </script>
+    <meta content="الأداة لمحاكاة من سيرفع الكأس! 🏆 حاكِ كأس العالم 2026 بالكامل، من قرعة المجموعات حتى البطل النهائي: رتّب المنتخبات في كل مجموعة، اختر أفضل أصحاب المركز الثالث، أدِر فرق الملحق، والعب الأدوار الإقصائية في الوضع الكلاسيكي أو وضع الخبير." name="description">
+    <meta charset="utf-8" />
+    <title>محاكي كأس العالم 2026</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy" />
+    <style>
+
+        .lang-dropdown {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            border-radius: 999px;
+            padding: 0.15rem 0.75rem;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .lang-btn:hover {
+                background: rgba(30, 64, 175, 0.85);
+            }
+
+            .lang-btn .lang-icon {
+                font-size: 0.9rem;
+            }
+
+            .lang-btn .lang-caret {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+
+
+
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            background: #020617;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 0.3rem 0;
+            min-width: 160px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+            display: none;
+            z-index: 60;
+        }
+
+            .lang-menu a {
+                display: block;
+                padding: 0.35rem 0.9rem;
+                font-size: 0.85rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+            }
+
+                .lang-menu a:hover {
+                    background: rgba(30, 64, 175, 0.8);
+                    opacity: 1;
+                }
+
+        .lang-dropdown.open .lang-menu {
+            display: block;
+        }
+
+
+
+
+        .top-nav {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            .top-nav a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                text-decoration: none;
+                color: #e5e7eb;
+                opacity: 0.9;
+                padding: 0.25rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 64, 175, 0.35);
+                border: 1px solid rgba(129, 140, 248, 0.7);
+                white-space: nowrap;
+            }
+
+                .top-nav a:hover {
+                    opacity: 1;
+                    background: rgba(30, 64, 175, 0.6);
+                }
+
+                .top-nav a.active {
+                    background: #4f46e5;
+                    border-color: #6366f1;
+                    color: #f9fafb;
+                    opacity: 1;
+                    font-weight: 600;
+                }
+
+            .top-nav .lang-menu {
+                padding: 0.35rem 0.35rem 0.45rem;
+            }
+
+
+                .top-nav .lang-menu a {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 0.4rem;
+                    width: 100%;
+                    box-sizing: border-box;
+                    font-size: 0.85rem;
+                    text-decoration: none;
+                    color: #e5e7eb;
+                    padding: 0.3rem 0.65rem;
+                    margin: 0.04rem 0;
+                    border-radius: 0.55rem;
+                    border: none;
+                    background: transparent;
+                    opacity: 0.9;
+                }
+
+
+                    .top-nav .lang-menu a:hover {
+                        background: rgba(30, 64, 175, 0.75);
+                        opacity: 1;
+                    }
+
+
+                    .top-nav .lang-menu a.current-lang {
+                        background: rgba(79, 70, 229, 0.35);
+                        box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                        font-weight: 600;
+                    }
+
+                        .top-nav .lang-menu a.current-lang::after {
+                            content: "✓";
+                            font-size: 0.7rem;
+                            opacity: 0.9;
+                        }
+
+
+
+
+
+
+
+
+
+
+
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient( circle at top, #18253b 0%, #141b2e 45%, #0a0f1d 100% );
+            color: #f5f7ff;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            color: #c3cbff;
+            font-size: 0.95rem;
+        }
+
+
+
+        .steps-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(124, 148, 255, 0.4);
+            background: rgba(8, 17, 40, 0.9);
+            color: #e5e7ff;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .step-btn.active {
+                background: #4f46e5;
+                border-color: #6366f1;
+                font-weight: 600;
+            }
+
+            .step-btn:disabled {
+                opacity: 0.4;
+                cursor: default;
+            }
+
+
+
+        .mode-cta {
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #c3cbff;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .mode-cta strong {
+                color: #e5e7ff;
+            }
+
+            .mode-cta .btn {
+                padding: 0.2rem 0.7rem;
+                font-size: 0.75rem;
+            }
+
+        #steps-nav-expert {
+            display: none;
+        }
+
+        .step {
+            display: none;
+        }
+
+            .step.active {
+                display: block;
+            }
+
+        .step-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: 1px solid rgba(124, 148, 255, 0.7);
+            background: #111827;
+            color: #e5e7ff;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+            .btn.primary {
+                background: #4f46e5;
+                border-color: #6366f1;
+            }
+
+            .btn:disabled {
+                opacity: 0.4;
+                cursor: default;
+            }
+
+
+
+        #groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .group-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+            .group-card-header h2 {
+                margin: 0;
+            }
+
+
+        .group-card {
+            position: relative;
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 1rem;
+            padding: 0.9rem 0.9rem 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(92, 117, 255, 0.25);
+        }
+
+            .group-card h2 {
+                font-size: 1.05rem;
+                margin: 0 0 0.3rem;
+            }
+
+            .group-card p {
+                margin: 0 0 0.4rem;
+                font-size: 0.75rem;
+                color: #c3cbff;
+            }
+
+        .rank-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.3rem;
+        }
+
+        .rank-row {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            padding: 0.12rem 0.25rem;
+            border-radius: 0.55rem;
+            background: rgba(10, 16, 40, 0.85);
+            cursor: grab;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+        }
+
+            .rank-row.selected {
+                box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
+                background: rgba(30, 64, 175, 0.4);
+            }
+
+
+            .rank-row:active {
+                cursor: grabbing;
+            }
+
+
+            .rank-row.dragging {
+                background: transparent;
+                box-shadow: none;
+                transform: none;
+                border: 1px dashed rgba(129, 140, 248, 0.9);
+            }
+
+
+                .rank-row.dragging .rank-label,
+                .rank-row.dragging .drag-handle,
+                .rank-row.dragging .team-block {
+                    opacity: 0;
+                }
+
+
+            .rank-row.drag-over {
+                outline: 1px dashed rgba(129, 140, 248, 0.9);
+            }
+
+        .rank-placeholder {
+            border-radius: 0.55rem;
+            border: 1px dashed rgba(129, 140, 248, 0.9);
+            background: transparent;
+            margin: 0.12rem 0;
+            box-sizing: border-box;
+        }
+
+
+        .rank-label {
+            width: 2.2rem;
+            text-align: right;
+            color: #cbd5ff;
+            flex-shrink: 0;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            user-select: none;
+            font-size: 0.9rem;
+            color: #9ca3ff;
+            flex-shrink: 0;
+        }
+
+        .team-block {
+            flex: 1;
+            background: #0b1120;
+            border-radius: 0.55rem;
+            border: 1px solid rgba(124,148,255,0.6);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            color: #e5e7ff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: grab;
+        }
+
+            .team-block:hover {
+                background: rgba(51, 65, 130, 0.7);
+                border-color: rgba(129, 140, 248, 0.9);
+            }
+
+
+        .rank-row.pos-1 .team-block,
+        .rank-row.pos-2 .team-block {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: rgba(74, 222, 128, 0.85);
+        }
+
+        .rank-row.pos-3 .team-block {
+            background: rgba(251, 191, 36, 0.12);
+            border-color: rgba(251, 191, 36, 0.9);
+        }
+
+        .rank-row.pos-1 .team-block:hover,
+        .rank-row.pos-2 .team-block:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(110, 231, 183, 1);
+        }
+
+        .rank-row.pos-3 .team-block:hover {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: rgba(252, 211, 77, 1);
+        }
+
+        .flag-icon {
+            width: 1.2rem;
+            height: 0.8rem;
+            object-fit: cover;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .team-label-text {
+            vertical-align: middle;
+        }
+
+
+
+        .step2-panel {
+            background: rgba(5, 12, 30, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.4);
+            padding: 0.75rem 0.8rem 0.85rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .third-count-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            background: rgba(30, 64, 175, 0.6);
+            border: 1px solid rgba(129, 140, 248, 0.8);
+            font-size: 0.78rem;
+        }
+
+            .third-count-pill #third-count {
+                color: #facc15;
+                font-weight: 600;
+            }
+
+        .table-wrapper {
+            margin-top: 0.45rem;
+            border-radius: 0.7rem;
+            overflow: hidden;
+            border: 1px solid rgba(55, 65, 194, 0.75);
+        }
+
+        #step2 table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            background: rgba(9, 16, 40, 0.9);
+        }
+
+        #step2 thead {
+            background: rgba(34, 48, 96, 0.95);
+        }
+
+        #step2 th, #step2 td {
+            padding: 0.22rem 0.3rem;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        #step2 tbody tr:nth-child(odd) {
+            background: rgba(9, 16, 40, 0.9);
+        }
+
+        #step2 tbody tr:nth-child(even) {
+            background: rgba(14, 22, 52, 0.9);
+        }
+
+        #step2 tbody tr {
+            cursor: pointer;
+            transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+        }
+
+            #step2 tbody tr:hover {
+                background: rgba(59, 84, 180, 0.4);
+            }
+
+            #step2 tbody tr.selected-third {
+                background: rgba(52, 199, 89, 0.16);
+                box-shadow: 0 0 0 1px rgba(52, 199, 89, 0.9);
+                transform: translateY(-1px);
+            }
+
+        #third-count {
+            font-weight: 600;
+        }
+
+
+
+        #knockout-section,
+        #knockout-section-expert {
+            margin-top: 0.5rem;
+            background: rgba(8, 17, 40, 0.95);
+            border-radius: 1rem;
+            padding: 0.8rem 0.9rem 1rem;
+            border: 1px solid rgba(92, 117, 255, 0.25);
+        }
+
+            #knockout-section p,
+            #knockout-section-expert p {
+                margin: 0 0 0.6rem;
+                font-size: 0.8rem;
+                color: #c3cbff;
+            }
+
+        #bracket-wrapper,
+        #bracket-wrapper-expert {
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        #bracket,
+        #bracket-expert {
+            position: relative;
+            z-index: 1;
+        }
+
+        #bracket-lines,
+        #bracket-lines-expert {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+
+        .bracket-grid {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+
+
+        @media (max-width: 1200px) {
+            #bracket-wrapper {
+                overflow-x: auto;
+                padding-bottom: 0.75rem;
+            }
+
+            .bracket-grid {
+                min-width: 1200px;
+                grid-template-columns: repeat(9, minmax(120px, 1fr));
+            }
+        }
+
+
+        .round-column {
+            background: rgba(5, 12, 30, 0.9);
+            border-radius: 0.8rem;
+            border: 1px solid rgba(92, 117, 255, 0.25);
+            padding: 0.45rem 0.5rem 0.55rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            position: relative;
+            overflow: visible;
+        }
+
+        .round-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #9ea8ff;
+            margin-bottom: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .ko-match {
+            border-radius: 0.6rem;
+            border: 1px solid rgba(124,148,255,0.35);
+            background: #050b1e;
+            padding: 0.35rem 0.4rem;
+            margin-bottom: 0.2rem;
+            position: relative;
+        }
+
+        .ko-match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.25rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .ko-match-title {
+            font-size: 0.7rem;
+            color: #9ea8ff;
+        }
+
+
+        .match-info-btn {
+            border: none;
+            padding: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            background: rgba(15, 23, 42, 0.95);
+            color: #c7d2fe;
+            font-size: 0.7rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+            .match-info-btn:hover {
+                background: rgba(55, 65, 194, 0.9);
+            }
+
+
+        .match-info-close {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            border: none;
+            background: rgba(15,23,42,0.9);
+            color: #e5e7ff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .match-info-close:hover {
+                opacity: 0.8;
+                background: rgba(55, 65, 194, 0.9);
+            }
+
+
+        .match-info-bubble {
+            position: absolute;
+            max-width: min(540px, calc(100vw - 2rem));
+            padding: 0.7rem 0.9rem;
+            border-radius: 0.9rem;
+            background: radial-gradient(circle at top left, rgba(37, 56, 145, 0.98), rgba(15, 23, 42, 0.98) );
+            border: 1px solid rgba(129, 140, 248, 0.9);
+            color: #e5e7ff;
+            font-size: 0.73rem;
+            line-height: 1.4;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.75);
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+
+        .match-info-bubble-mobile {
+            position: static;
+            max-width: 100%;
+        }
+
+            .match-info-bubble-mobile::before {
+                display: none;
+            }
+
+
+        @media (max-width: 768px) {
+            #match-info-mobile-backdrop {
+                padding: 0;
+                align-items: stretch;
+            }
+
+                #match-info-mobile-backdrop .modal {
+                    max-width: 100%;
+                    width: 100%;
+                    height: 100vh;
+                    max-height: 100vh;
+                    border-radius: 0;
+                    padding: 1rem 1.2rem 1.2rem;
+                }
+        }
+
+
+
+        .match-info-bubble::before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent rgba(37, 56, 145, 0.98) transparent;
+        }
+
+        .match-info-bubble.above::before {
+            top: auto;
+            bottom: -6px;
+            border-width: 6px 6px 0 6px;
+            border-color: rgba(37, 56, 145, 0.98) transparent transparent transparent;
+        }
+
+
+        .match-info-bubble-title {
+            font-weight: 600;
+            font-size: 0.78rem;
+            margin-bottom: 0.45rem;
+            color: #c7d2ff;
+        }
+
+
+        .match-info-matches {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 0.5rem 0.6rem;
+            margin-top: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+            .match-info-matches {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        .match-info-match {
+            padding: 0.35rem 0.45rem;
+            border-radius: 0.6rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .match-info-match-header {
+            font-size: 0.72rem;
+            margin-bottom: 0.15rem;
+            color: #e5e7ff;
+        }
+
+        .match-info-match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.12rem;
+            font-size: 0.74rem;
+        }
+
+        .match-info-match-team {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+            .match-info-match-team .flag-icon {
+                width: 16px;
+                height: 12px;
+                border-radius: 2px;
+            }
+
+        .match-info-date,
+        .match-info-stadium {
+            font-size: 0.7rem;
+            color: #9ca3ff;
+        }
+
+        .match-info-stadium {
+            opacity: 0.9;
+        }
+
+
+
+
+        .group-match-row {
+            padding: 0.35rem 0.15rem;
+            border-top: 1px solid rgba(148,163,255,0.18);
+        }
+
+            .group-match-row:first-child {
+                border-top: none;
+            }
+
+        .group-match-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #9ca3ff;
+            margin-bottom: 0.1rem;
+        }
+
+        .group-match-teams {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+
+            .group-match-teams .vs {
+                opacity: 0.7;
+            }
+
+        .group-match-meta {
+            margin-top: 0.08rem;
+            font-size: 0.7rem;
+            color: #e5e7ffcc;
+        }
+
+
+
+
+
+
+
+        .ko-team {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.35rem;
+            padding: 0.15rem 0.3rem;
+            border-radius: 0.5rem;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+
+            .ko-team span.name {
+                flex: 1;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 0.78rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+                .ko-team span.name.placeholder {
+                    opacity: 0.5;
+                    color: #e5e7ff;
+                    font-style: italic;
+                }
+
+            .ko-team:hover {
+                background: rgba(51, 65, 130, 0.5);
+            }
+
+            .ko-team.winner {
+                background: rgba(52, 199, 89, 0.2);
+                box-shadow: 0 0 0 1px rgba(52, 199, 89, 0.9);
+            }
+
+                .ko-team.winner span.name {
+                    font-weight: 600;
+                    color: #34c759;
+                }
+
+        #champion-box,
+        #champion-box-expert {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.65rem;
+            border-radius: 999px;
+            background: rgba(52,199,89,0.12);
+            border: 1px solid rgba(52,199,89,0.7);
+            font-size: 0.85rem;
+        }
+
+        #champion-name,
+        #champion-name-expert {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+            .confetti-container.fade-out {
+                opacity: 0;
+                transition: opacity 0.8s ease-out;
+            }
+
+        .confetti-piece {
+            position: absolute;
+            top: -10vh;
+            width: 8px;
+            height: 14px;
+            border-radius: 2px;
+            opacity: 0.9;
+            animation-name: confetti-fall;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translate3d(0, -10vh, 0) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate3d(0, 110vh, 0) rotateZ(360deg);
+            }
+        }
+
+
+
+
+
+        .expert-third-summary {
+            margin-top: 1rem;
+            background: rgba(5, 12, 30, 0.95);
+            border-radius: 0.9rem;
+            border: 1px solid rgba(92, 117, 255, 0.45);
+            padding: 0.6rem 0.7rem 0.7rem;
+        }
+
+            .expert-third-summary h3 {
+                margin: 0 0 0.3rem;
+                font-size: 0.82rem;
+                color: #9ea8ff;
+            }
+
+            .expert-third-summary p {
+                margin: 0 0 0.4rem;
+                font-size: 0.75rem;
+                color: #c3cbff;
+            }
+
+        .expert-third-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+
+            .expert-third-summary-table th,
+            .expert-third-summary-table td {
+                padding: 0.18rem 0.3rem;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+                .expert-third-summary-table th:nth-child(1),
+                .expert-third-summary-table td:nth-child(1) {
+                    width: 1.2rem;
+                    text-align: center;
+                }
+
+                .expert-third-summary-table th:nth-child(4),
+                .expert-third-summary-table td:nth-child(4),
+                .expert-third-summary-table th:nth-child(5),
+                .expert-third-summary-table td:nth-child(5),
+                .expert-third-summary-table th:nth-child(6),
+                .expert-third-summary-table td:nth-child(6),
+                .expert-third-summary-table th:nth-child(7),
+                .expert-third-summary-table td:nth-child(7),
+                .expert-third-summary-table th:nth-child(8),
+                .expert-third-summary-table td:nth-child(8),
+                .expert-third-summary-table th:nth-child(9),
+                .expert-third-summary-table td:nth-child(9) {
+                    text-align: right;
+                }
+
+            .expert-third-summary-table tbody tr.qualified-third {
+                background: rgba(34, 197, 94, 0.18);
+            }
+
+            .expert-third-summary-table tbody tr.eliminated-third {
+                opacity: 0.8;
+            }
+
+
+        .playoff-cta {
+            margin: 0.7rem 0 1.1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #c3cbff;
+        }
+
+        .playoff-cta-hint {
+            opacity: 0.85;
+        }
+
+        .playoff-btn {
+            background: #4f46e5;
+            border-radius: 999px;
+            border: 1px solid #6366f1;
+            color: #e5e7ff;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.78rem;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.85);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+            .playoff-btn::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.12), transparent 55%);
+                opacity: 0;
+                transition: opacity 0.18s ease;
+            }
+
+            .playoff-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 26px rgba(15, 23, 42, 0.95);
+                filter: brightness(1.05);
+            }
+
+                .playoff-btn:hover::after {
+                    opacity: 1;
+                }
+
+            .playoff-btn:active {
+                transform: translateY(0);
+                box-shadow: 0 6px 15px rgba(15, 23, 42, 0.9);
+            }
+
+
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.83);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 1500;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+            .modal-backdrop.show {
+                display: flex;
+            }
+
+        .modal {
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 0.9rem;
+            padding: 1rem 1.2rem 0.9rem;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(129, 140, 248, 0.7);
+            box-shadow: 0 22px 45px rgba(0, 0, 0, 0.7);
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+        }
+
+
+            .modal h2 {
+                margin: 0 0 0.25rem;
+                font-size: 1rem;
+            }
+
+        .modal-subtitle {
+            margin: 0 0 0.7rem;
+            font-size: 0.8rem;
+            color: #c3cbff;
+        }
+
+
+        #playoff-slots-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+
+        @media (max-width: 900px) {
+            #playoff-slots-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+
+
+
+
+        .playoff-slot-card {
+            background: rgba(5, 12, 30, 0.95);
+            border-radius: 0.7rem;
+            border: 1px solid rgba(92, 117, 255, 0.4);
+            padding: 0.5rem 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .playoff-slot-title {
+            font-size: 0.82rem;
+            margin: 0 0 0.3rem;
+            color: #9ea8ff;
+        }
+
+        .playoff-slot-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+
+        .playoff-option {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+
+            .playoff-option input[type="radio"] {
+                display: none;
+            }
+
+
+            .playoff-option span {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                padding: 0.2rem 0.5rem;
+                border-radius: 999px;
+                transition: background 0.15s ease, border-color 0.15s ease;
+            }
+
+
+            .playoff-option input[type="radio"]:checked + span {
+                background: rgba(59, 130, 246, 0.22);
+                border: 1px solid rgba(129, 140, 248, 0.95);
+            }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+        }
+
+        .winner-modal-content {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.8rem;
+            background: rgba(5, 12, 30, 0.95);
+            border: 1px solid rgba(52, 199, 89, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .winner-modal-summary {
+            font-size: 0.8rem;
+            color: #c3cbff;
+            margin-bottom: 0.2rem;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .mode-tabs {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 999px;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 0.5rem 0.75rem;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+                .top-nav a {
+                    font-size: 0.8rem;
+                    padding: 0.2rem 0.6rem;
+                }
+
+
+            .lang-dropdown {
+                margin-left: auto;
+            }
+
+
+            .lang-menu {
+                right: 0;
+                left: auto;
+                transform: none;
+                max-width: min(260px, 90vw);
+                max-height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+
+
+
+        html[dir="rtl"] body {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+    </meta>
+</head>
+<body>
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html">شرح</a>
+            <a class="active" href="classic.html">الوضع الكلاسيكي</a>
+            <a href="expert.html">وضع الخبير</a>
+            <div class="lang-dropdown">
+                <button aria-expanded="false" aria-haspopup="true" class="lang-btn" type="button">
+                    <span class="lang-icon">🌐</span>
+                    <span class="lang-current">AR</span>
+                    <span class="lang-caret">▾</span>
+                </button>
+                <div class="lang-menu">
+                    <!-- نحن على صفحة AR -->
+                    <a href="../fr/expert.html">Français</a>
+                    <a href="../en/expert.html">English</a>
+                    <a href="../es/expert.html">Español</a>
+                    <a href="../pt/expert.html">Português</a>
+                    <a href="../de/expert.html">Deutsch</a>
+                    <a href="../it/expert.html">Italiano</a>
+                    <a href="../tr/expert.html">Türkçe</a>
+                    <a href="expert.html" class="current-lang">العربية</a>
+                    <a href="../zh/expert.html">简体中文</a>
+                    <a href="../ja/expert.html">日本語</a>
+                </div>
+            </div>
+        </nav>
+        <h1>محاكي كأس العالم 2026</h1>
+        <p class="subtitle">
+            استخدم المحاكي <strong>الكلاسيكي</strong> لتسريع الأمر: المجموعات ← أفضل أصحاب المركز الثالث ← الأدوار الإقصائية.<br />
+            يمكنك أيضاً الانتقال إلى <strong>وضع الخبير</strong> لتوقّع نتيجة كل مباراة بدقة.
+        </p>
+
+        <div class="playoff-cta">
+            <button class="btn playoff-btn" id="open-playoff-modal">
+                ⚽ اختيار فرق الملحق
+            </button>
+            <span class="playoff-cta-hint">
+                استبدل «الفائز في الملحق …» بالمنتخبات المتأهلة (أوكرانيا، السويد، إلخ).
+            </span>
+        </div>
+
+        <div class="steps-nav" id="steps-nav-simple">
+            <button class="step-btn active" data-step="1">المجموعات</button>
+            <button class="step-btn" data-step="2">أفضل أصحاب المركز الثالث</button>
+            <button class="step-btn" data-step="3">الأدوار الإقصائية</button>
+        </div>
+
+        <section class="step active" id="step1">
+            <h2>الخطوة 1 – ترتيب المجموعات</h2>
+            <p style="font-size:0.8rem;color:#c3cbff;margin-bottom:0.4rem;">
+                لكل مجموعة، أعد ترتيب البطاقات عبر <strong>السحب والإفلات</strong> (الأعلى = الأول، الأسفل = الرابع).
+            </p>
+            <div id="groups"></div>
+            <div class="step-footer">
+                <button class="btn primary" id="go-step2-btn">التالي: أفضل أصحاب المركز الثالث</button>
+            </div>
+        </section>
+
+        <section class="step" id="step2">
+            <h2>الخطوة 2 – اختيار أفضل أصحاب المركز الثالث</h2>
+            <div class="step2-panel">
+                <p>
+                    انقر على الصفوف لاختيار <strong>8</strong> فرق احتلت المركز الثالث وتتأهل إلى دور الـ32.<br />
+                    الاختيار الحالي:
+                    <span class="third-count-pill"><span id="third-count">0</span> / 8</span>.
+                </p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المجموعة</th>
+                                <th>صاحب المركز الثالث في المجموعة (انقر للاختيار)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="third-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="step-footer">
+                <button class="btn" id="back-step1-btn">رجوع: المجموعات</button>
+                <button class="btn primary" id="go-step3-btn">التالي: الأدوار الإقصائية</button>
+            </div>
+        </section>
+
+        <section class="step" id="step3">
+            <h2>الخطوة 3 – الأدوار الإقصائية</h2>
+            <section id="knockout-section">
+                <p>
+                    يتم وضع الـ32 فريقاً المتأهلاً (12 أولاً، 12 ثانياً، و8 من أصحاب المركز الثالث المختارين) في الجدول.
+                    انقر على <strong>مربع</strong> لجعلها الفائزة في المباراة (أو لإلغاء الاختيار).
+                    انقر على الأيقونة الصغيرة <strong>i</strong> لمعرفة تاريخ المباراة والملعب.
+                </p>
+                <div id="bracket-wrapper">
+                    <div class="bracket-grid" id="bracket"></div>
+                    <svg id="bracket-lines"></svg>
+                </div>
+                <div id="champion-box">
+                    <span>البطل:</span>
+                    <span id="champion-name">?</span>
+                </div>
+            </section>
+            <div class="step-footer">
+                <button class="btn" id="back-step2-btn">رجوع: أفضل أصحاب المركز الثالث</button>
+            </div>
+        </section>
+    </main>
+    <script>
+
+        const SUPABASE_URL = 'https://vlsdgkzvszrtwvbhdzmr.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_polHQa6zV1T3l8sSfGrnsQ_0zIfNIAu';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const GROUP_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+
+
+
+        const GROUP_TEAMS = {
+            A: ['المكسيك', 'جنوب أفريقيا', 'كوريا الجنوبية', 'الفائز في ملحق UEFA D'],
+            B: ['كندا', 'الفائز في ملحق UEFA A', 'قطر', 'سويسرا'],
+            C: ['البرازيل', 'المغرب', 'هايتي', 'اسكتلندا'],
+            D: ['الولايات المتحدة', 'باراغواي', 'أستراليا', 'الفائز في ملحق UEFA C'],
+            E: ['ألمانيا', 'كوراساو', 'ساحل العاج', 'الإكوادور'],
+            F: ['هولندا', 'اليابان', 'الفائز في ملحق UEFA B', 'تونس'],
+            G: ['بلجيكا', 'مصر', 'إيران', 'نيوزيلندا'],
+            H: ['إسبانيا', 'الرأس الأخضر', 'السعودية', 'أوروغواي'],
+            I: ['فرنسا', 'السنغال', 'الفائز في ملحق ما بين القارات 2', 'النرويج'],
+            J: ['الأرجنتين', 'الجزائر', 'النمسا', 'الأردن'],
+            K: ['البرتغال', 'الفائز في ملحق ما بين القارات 1', 'أوزبكستان', 'كولومبيا'],
+            L: ['إنجلترا', 'كرواتيا', 'غانا', 'بنما']
+        };
+
+        const BASE_GROUP_TEAMS = JSON.parse(JSON.stringify(GROUP_TEAMS));
+
+        const TEAM_FLAG_CODES = {
+            "ويلز": "gb-wls",
+            "كوسوفو": "xk",
+            "بوليفيا": "bo",
+            "نيوزيلندا": "nz",
+            "الأرجنتين": "ar",
+            "البرازيل": "br",
+            "أوزبكستان": "uz",
+            "هايتي": "ht",
+            "كوريا الجنوبية": "kr",
+            "النمسا": "at",
+            "اسكتلندا": "gb-sct",
+            "الرأس الأخضر": "cv",
+            "أستراليا": "au",
+            "ألمانيا": "de",
+            "إيران": "ir",
+            "الدنمارك": "dk",
+            "الإكوادور": "ec",
+            "الجزائر": "dz",
+            "إنجلترا": "gb-eng",
+            "أوروغواي": "uy",
+            "سويسرا": "ch",
+            "جنوب أفريقيا": "za",
+            "بلجيكا": "be",
+            "جمهورية الكونغو الديمقراطية": "cd",
+            "كرواتيا": "hr",
+            "هولندا": "nl",
+            "كولومبيا": "co",
+            "كوراساو": "cw",
+            "بنما": "pa",
+            "جامايكا": "jm",
+            "تركيا": "tr",
+            "الولايات المتحدة": "us",
+            "تونس": "tn",
+            "المغرب": "ma",
+            "إيطاليا": "it",
+            "مصر": "eg",
+            "البرتغال": "pt",
+            "أوكرانيا": "ua",
+            "كندا": "ca",
+            "باراغواي": "py",
+            "النرويج": "no",
+            "اليابان": "jp",
+            "فرنسا": "fr",
+            "الأردن": "jo",
+            "السعودية": "sa",
+            "غانا": "gh",
+            "ساحل العاج": "ci",
+            "السنغال": "sn",
+            "المكسيك": "mx",
+            "قطر": "qa",
+            "إسبانيا": "es",
+            "إيطاليا": "it",
+            "أوكرانيا": "ua",
+            "السويد": "se",
+            "بولندا": "pl",
+            "ألبانيا": "al",
+            "البوسنة والهرسك": "ba",
+            "التشيك": "cz",
+            "سلوفاكيا": "sk",
+            "رومانيا": "ro",
+            "مقدونيا الشمالية": "mk",
+            "أيرلندا الشمالية": "gb-nir",
+            "جمهورية أيرلندا": "ie",
+            "كاليدونيا الجديدة": "nc",
+            "سورينام": "sr",
+            "العراق": "iq"
+
+
+        };
+
+
+        const PLAYOFF_SLOT_CONFIG = {
+            "UEFA A": {
+                placeholder: "الفائز في ملحق UEFA A",
+                label: "ملحق UEFA A",
+                teams: ["إيطاليا", "أيرلندا الشمالية", "ويلز", "البوسنة والهرسك"]
+            },
+            "UEFA B": {
+                placeholder: "الفائز في ملحق UEFA B",
+                label: "ملحق UEFA B",
+                teams: ["أوكرانيا", "السويد", "بولندا", "ألبانيا"]
+            },
+            "UEFA C": {
+                placeholder: "الفائز في ملحق UEFA C",
+                label: "ملحق UEFA C",
+                teams: ["تركيا", "رومانيا", "سلوفاكيا", "كوسوفو"]
+            },
+            "UEFA D": {
+                placeholder: "الفائز في ملحق UEFA D",
+                label: "ملحق UEFA D",
+                teams: ["الدنمارك", "مقدونيا الشمالية", "التشيك", "جمهورية أيرلندا"]
+            },
+            "INTER 1": {
+                placeholder: "الفائز في ملحق ما بين القارات 1",
+                label: "ملحق inter-conf 1",
+
+                teams: ["كاليدونيا الجديدة", "جامايكا", "جمهورية الكونغو الديمقراطية"]
+            },
+            "INTER 2": {
+                placeholder: "الفائز في ملحق ما بين القارات 2",
+                label: "ملحق inter-conf 2",
+
+                teams: ["بوليفيا", "سورينام", "العراق"]
+            }
+        };
+
+        const PLAYOFF_PLACEHOLDERS = {};
+        const playoffWinners = {};
+
+        Object.keys(PLAYOFF_SLOT_CONFIG).forEach(slotKey => {
+            const cfg = PLAYOFF_SLOT_CONFIG[slotKey];
+            PLAYOFF_PLACEHOLDERS[cfg.placeholder] = slotKey;
+            playoffWinners[slotKey] = null;
+        });
+
+
+
+        const FLAG_BASE_URL = "https://flagcdn.com/w20/";
+
+
+
+
+
+
+
+
+
+
+
+        function appendFlagAndName(parentEl, teamName) {
+            const code = TEAM_FLAG_CODES[teamName];
+            if (code) {
+                const img = document.createElement("img");
+                img.className = "flag-icon";
+                img.loading = "lazy";
+                img.src = FLAG_BASE_URL + code + ".png";
+                img.alt = teamName;
+                parentEl.appendChild(img);
+            }
+            const textSpan = document.createElement("span");
+            textSpan.className = "team-label-text";
+            textSpan.textContent = teamName;
+            parentEl.appendChild(textSpan);
+        }
+
+        function renderTeamLabel(span, teamName) {
+            span.dataset.teamName = teamName;
+            const placeholder = span.dataset.placeholder;
+            span.innerHTML = "";
+            appendFlagAndName(span, teamName);
+
+            if (placeholder && teamName === placeholder) {
+                span.classList.add("placeholder");
+            } else {
+                span.classList.remove("placeholder");
+            }
+        }
+
+
+        function updateLabelElement(el, teamName) {
+            el.dataset.teamName = teamName;
+            el.innerHTML = "";
+            appendFlagAndName(el, teamName);
+        }
+
+        function getRealTeamName(span) {
+            if (!span) return null;
+            const name = span.dataset.teamName || span.textContent.trim();
+            if (!name) return null;
+
+            const placeholder = span.dataset.placeholder;
+            if (placeholder && name === placeholder) return null;
+            if (name === '?' || name.startsWith('متأهل ') || name.startsWith('الفائز ')) return null;
+
+            return name;
+        }
+
+
+
+        function buildPlayoffModalUI() {
+            const container = document.getElementById('playoff-slots-container');
+            if (!container) return;
+            container.innerHTML = "";
+
+            Object.keys(PLAYOFF_SLOT_CONFIG).forEach(slotKey => {
+                const cfg = PLAYOFF_SLOT_CONFIG[slotKey];
+
+                const card = document.createElement('section');
+                card.className = 'playoff-slot-card';
+
+                const title = document.createElement('h3');
+                title.className = 'playoff-slot-title';
+                title.textContent = cfg.label;
+                card.appendChild(title);
+
+                const optionsBox = document.createElement('div');
+                optionsBox.className = 'playoff-slot-options';
+
+
+                const optNone = document.createElement('label');
+                optNone.className = 'playoff-option';
+                const radioNone = document.createElement('input');
+                radioNone.type = 'radio';
+                radioNone.name = 'slot-' + slotKey;
+                radioNone.value = '__placeholder__';
+                if (!playoffWinners[slotKey]) radioNone.checked = true;
+                const spanNone = document.createElement('span');
+                spanNone.textContent = `Laisser "${cfg.placeholder}"`;
+                optNone.appendChild(radioNone);
+                optNone.appendChild(spanNone);
+                optionsBox.appendChild(optNone);
+
+
+                cfg.teams.forEach(teamName => {
+                    const label = document.createElement('label');
+                    label.className = 'playoff-option';
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'slot-' + slotKey;
+                    radio.value = teamName;
+                    if (playoffWinners[slotKey] === teamName) radio.checked = true;
+
+                    const span = document.createElement('span');
+                    appendFlagAndName(span, teamName);
+
+                    label.appendChild(radio);
+                    label.appendChild(span);
+                    optionsBox.appendChild(label);
+                });
+
+                card.appendChild(optionsBox);
+                container.appendChild(card);
+            });
+        }
+
+        function openPlayoffModal() {
+            const backdrop = document.getElementById('playoff-modal-backdrop');
+            if (!backdrop) return;
+            buildPlayoffModalUI();
+            backdrop.style.display = 'flex';
+            backdrop.classList.add('show');
+        }
+
+        function closePlayoffModal() {
+            const backdrop = document.getElementById('playoff-modal-backdrop');
+            if (!backdrop) return;
+            backdrop.classList.remove('show');
+            backdrop.style.display = 'none';
+        }
+
+
+        function applyPlayoffSelections() {
+            Object.keys(PLAYOFF_SLOT_CONFIG).forEach(slotKey => {
+                const selected = document.querySelector(`input[name="slot-${slotKey}"]:checked`);
+                if (!selected) return;
+                playoffWinners[slotKey] = (selected.value === '__placeholder__') ? null : selected.value;
+            });
+
+            updateTeamsFromPlayoffs();
+            closePlayoffModal();
+        }
+
+        function recomputeGroupTeamsFromPlayoffs() {
+            Object.keys(GROUP_TEAMS).forEach(groupId => {
+                const originalList = BASE_GROUP_TEAMS[groupId];
+                GROUP_TEAMS[groupId] = originalList.map(teamName => {
+                    const slotKey = PLAYOFF_PLACEHOLDERS[teamName];
+                    if (!slotKey) return teamName;
+                    const winner = playoffWinners[slotKey];
+                    return winner || teamName;
+                });
+            });
+        }
+
+
+
+        function updateTeamsFromPlayoffs() {
+
+            recomputeGroupTeamsFromPlayoffs();
+
+
+            Object.keys(PLAYOFF_PLACEHOLDERS).forEach(placeholderName => {
+                const slotKey = PLAYOFF_PLACEHOLDERS[placeholderName];
+                const winner = playoffWinners[slotKey];
+                const finalName = winner || placeholderName;
+
+
+                document
+                    .querySelectorAll(`.team-block[data-placeholder="${placeholderName}"]`)
+                    .forEach(span => {
+                        updateLabelElement(span, finalName);
+                    });
+            });
+
+
+        }
+
+
+
+
+
+
+        function buildTeamBlockHTML(teamName) {
+            const code = TEAM_FLAG_CODES[teamName];
+            const imgHTML = code
+                ? `<img class="flag-icon" src="${FLAG_BASE_URL}${code}.png" alt="${teamName}" loading="lazy">`
+                : "";
+
+
+            const isPlaceholder = !!PLAYOFF_PLACEHOLDERS[teamName];
+            const placeholderAttr = isPlaceholder ? ` data-placeholder="${teamName}"` : "";
+
+            return `
+                    <div class="team-block"${placeholderAttr} data-team-name="${teamName}">
+                        ${imgHTML}
+                        <span class="team-label-text">${teamName}</span>
+                    </div>
+                `;
+        }
+
+
+
+        const selectedThirdGroups = new Set();
+        const selectedThirdOrder = [];
+        const groupRanks = {};
+        const groupResults = {};
+
+        const BRACKET_CONFIG = { R32: [], R16: [], QF: [], SF: [], F: [] };
+
+        const koDom = { R32: {}, R16: {}, QF: {}, SF: {}, F: {} };
+        const bracketColumns = {};
+        const knockoutWinners = {};
+        let bracketInitialized = false;
+
+
+
+
+
+
+
+
+        function launchConfetti() {
+            const existing = document.querySelector('.confetti-container');
+            if (existing) existing.remove();
+
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+
+            const colors = ['#fbbf24', '#34d399', '#60a5fa', '#f472b6', '#f97316', '#a855f7'];
+            const pieces = 160;
+
+            for (let i = 0; i < pieces; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (2.2 + Math.random() * 1.5) + 's';
+                piece.style.animationDelay = (Math.random() * 0.4) + 's';
+                piece.style.width = (4 + Math.random() * 4) + 'px';
+                piece.style.height = (10 + Math.random() * 8) + 'px';
+
+                container.appendChild(piece);
+            }
+
+            setTimeout(() => {
+                container.classList.add('fade-out');
+                setTimeout(() => {
+                    if (container.parentNode) {
+                        container.parentNode.removeChild(container);
+                    }
+                }, 900);
+            }, 3200);
+        }
+
+        function buildPredictionData() {
+            const champion = knockoutWinners['F-1'];
+            if (!champion) return null;
+
+            const data = {
+                mode: 'simple',
+                champion,
+                finalists: [],
+                semiFinalists: [],
+                quarterFinalists: [],
+                roundOf16: [],
+                roundOf32: [],
+                timestamp: new Date().toISOString()
+            };
+
+
+            const finalDom = getMatchDom('F-1');
+            if (finalDom) {
+                const n1 = getRealTeamName(finalDom.team1NameSpan);
+                const n2 = getRealTeamName(finalDom.team2NameSpan);
+                if (n1) data.finalists.push(n1);
+                if (n2 && n2 !== n1) data.finalists.push(n2);
+            }
+
+
+            BRACKET_CONFIG.SF.forEach(cfg => {
+                const dom = getMatchDom(cfg.id);
+                if (!dom) return;
+                const n1 = getRealTeamName(dom.team1NameSpan);
+                const n2 = getRealTeamName(dom.team2NameSpan);
+                if (n1 && !data.semiFinalists.includes(n1)) data.semiFinalists.push(n1);
+                if (n2 && !data.semiFinalists.includes(n2)) data.semiFinalists.push(n2);
+            });
+
+
+            BRACKET_CONFIG.QF.forEach(cfg => {
+                const dom = getMatchDom(cfg.id);
+                if (!dom) return;
+                const n1 = getRealTeamName(dom.team1NameSpan);
+                const n2 = getRealTeamName(dom.team2NameSpan);
+                if (n1 && !data.quarterFinalists.includes(n1)) data.quarterFinalists.push(n1);
+                if (n2 && !data.quarterFinalists.includes(n2)) data.quarterFinalists.push(n2);
+            });
+
+
+            BRACKET_CONFIG.R16.forEach(cfg => {
+                const dom = getMatchDom(cfg.id);
+                if (!dom) return;
+                const n1 = getRealTeamName(dom.team1NameSpan);
+                const n2 = getRealTeamName(dom.team2NameSpan);
+                if (n1 && !data.roundOf16.includes(n1)) data.roundOf16.push(n1);
+                if (n2 && !data.roundOf16.includes(n2)) data.roundOf16.push(n2);
+            });
+
+
+            BRACKET_CONFIG.R32.forEach(cfg => {
+                const dom = getMatchDom(cfg.id);
+                if (!dom) return;
+                const n1 = getRealTeamName(dom.team1NameSpan);
+                const n2 = getRealTeamName(dom.team2NameSpan);
+                if (n1 && !data.roundOf32.includes(n1)) data.roundOf32.push(n1);
+                if (n2 && !data.roundOf32.includes(n2)) data.roundOf32.push(n2);
+            });
+
+            return data;
+        }
+
+        function buildPredictionSummary() {
+            const data = buildPredictionData();
+            if (!data) return '';
+
+            const parts = [];
+            if (data.finalists.length) {
+                parts.push('النهائي : ' + data.finalists.join(' – '));
+            }
+            if (data.semiFinalists.length) {
+                parts.push('نصف النهائي: ' + data.semiFinalists.join(', '));
+            }
+            if (data.quarterFinalists.length) {
+                parts.push('ربع النهائي: ' + data.quarterFinalists.join(', '));
+            }
+            return parts.join(' | ');
+        }
+
+        async function savePrediction() {
+            const data = buildPredictionData();
+            if (!data) return;
+
+
+            try {
+                const rawLocal = localStorage.getItem('predictions') || '[]';
+                const arr = JSON.parse(rawLocal);
+                arr.push(data);
+                localStorage.setItem('predictions', JSON.stringify(arr));
+            } catch (e) {
+                console.warn('Impossible de sauvegarder la prediction en localStorage', e);
+            }
+
+
+            try {
+                if (typeof supabaseClient === 'undefined') {
+                    console.error('supabaseClient est undefined');
+                } else {
+                    const row = {
+                        mode: data.mode,
+                        champion: data.champion,
+                        finalists: data.finalists,
+                        semi_finalists: data.semiFinalists,
+                        quarter_finalists: data.quarterFinalists,
+                        round_of_16: data.roundOf16,
+                        round_of_32: data.roundOf32
+                    };
+
+                    const { data: inserted, error } = await supabaseClient
+                        .from('predictions')
+                        .insert([row])
+                        .select();
+
+                    if (error) {
+                        console.error('Erreur Supabase insert', error);
+                    } else {
+                        console.log('Insert Supabase OK :', inserted);
+                    }
+
+                }
+            } catch (e) {
+                console.error('Exception pendant l’insert Supabase', e);
+            }
+
+
+            if (window.gtag) {
+                const json = JSON.stringify(data);
+                const MAX_VALUE_LEN = 90;
+                const MAX_PARTS = 20;
+                const params = { mode: data.mode, debug_mode: true };
+
+                let partCount = 0;
+                for (let i = 0; i < MAX_PARTS && i * MAX_VALUE_LEN < json.length; i++) {
+                    const part = json.slice(i * MAX_VALUE_LEN, (i + 1) * MAX_VALUE_LEN);
+                    params['pred_part_' + i] = part;
+                    partCount++;
+                }
+                params.pred_parts = partCount;
+
+                gtag('event', 'prediction_submitted', params);
+            } else {
+                console.warn('gtag non disponible au moment de savePrediction');
+            }
+        }
+
+        function showChampionPopup(winnerName) {
+            if (!winnerName || winnerName === '?') return;
+
+            const backdrop = document.getElementById('winner-modal-backdrop');
+            const content = document.getElementById('winner-modal-content');
+            const summaryEl = document.getElementById('winner-modal-summary');
+            if (!backdrop || !content) return;
+
+
+            content.innerHTML = '';
+            appendFlagAndName(content, winnerName);
+
+
+            if (summaryEl) {
+                const summary = buildPredictionSummary();
+                summaryEl.textContent = summary
+                    ? summary + " • شكرًا لاستخدامك المحاكي! ⚽"
+                    : "شكرًا لاستخدامك المحاكي! لا تتردد في مشاركة توقعك مع أصدقائك ⚽";
+            }
+
+            backdrop.style.display = 'flex';
+            backdrop.classList.add('show');
+
+
+            savePrediction();
+        }
+
+
+
+
+        function closeWinnerModal() {
+            const backdrop = document.getElementById('winner-modal-backdrop');
+            if (!backdrop) return;
+            backdrop.classList.remove('show');
+            backdrop.style.display = 'none';
+        }
+
+
+
+
+
+        const MATCH_ROUND_LABELS = {
+            R32: 'دور الـ32',
+            R16: 'دور الـ16',
+            QF: 'ربع النهائي',
+            SF: 'نصف النهائي',
+            F: 'النهائي'
+        };
+
+
+
+        const GROUP_MATCH_INFO = {
+            A: `المجموعة A — جدول المباريات
+مباراة الافتتاح · المكسيك – جنوب أفريقيا
+11 يونيو 2026, 14:00 (UTC−6)
+ملعب Azteca, مدينة مكسيكو, المكسيك
+
+المباراة 2 · كوريا الجنوبية – A4
+11 يونيو 2026, 21:00 (UTC−6)
+Estadio Akron, غوادالاخارا, المكسيك
+
+المباراة 25 · A4 – جنوب أفريقيا
+18 يونيو 2026, 12:00 (UTC−5)
+Mercedes-Benz Stadium, أتلانتا, الولايات المتحدة
+
+المباراة 28 · المكسيك – كوريا الجنوبية
+18 يونيو 2026, 20:00 (UTC−6)
+Estadio Akron, غوادالاخارا, المكسيك
+
+المباراة 53 · A4 – المكسيك
+24 يونيو 2026, 20:00 (UTC−6)
+ملعب Azteca, مدينة مكسيكو, المكسيك
+
+المباراة 54 · جنوب أفريقيا – كوريا الجنوبية
+24 يونيو 2026, 20:00 (UTC−6)
+ملعب BBVA, مونتيري, المكسيك`,
+
+            B: `المجموعة B — جدول المباريات
+المباراة 3 · كندا – B2
+12 يونيو 2026, 15:00 (UTC−5)
+BMO Field, تورونتو, كندا
+
+المباراة 8 · قطر – سويسرا
+13 يونيو 2026, 15:00 (UTC−8)
+Levi's Stadium, سانتا كلارا, الولايات المتحدة
+
+المباراة 26 · سويسرا – B2
+18 يونيو 2026, 15:00 (UTC−8)
+SoFi Stadium, لوس أنجلوس, الولايات المتحدة
+
+المباراة 27 · كندا – قطر
+18 يونيو 2026, 18:00 (UTC−8)
+BC Place, فانكوفر, كندا
+
+المباراة 51 · سويسرا – كندا
+24 يونيو 2026, 15:00 (UTC−8)
+BC Place, فانكوفر, كندا
+
+المباراة 52 · B2 – قطر
+24 يونيو 2026, 15:00 (UTC−8)
+Lumen Field, سياتل, الولايات المتحدة`,
+
+            C: `المجموعة C — جدول المباريات
+المباراة 5 · البرازيل – المغرب
+13 يونيو 2026, 18:00 (UTC−4)
+MetLife Stadium, نيويورك, الولايات المتحدة
+
+المباراة 7 · هايتي – اسكتلندا
+13 يونيو 2026, 21:00 (UTC−4)
+Gillette Stadium, بوسطن, الولايات المتحدة
+
+المباراة 29 · اسكتلندا – المغرب
+19 يونيو 2026, 18:00 (UTC−5)
+Gillette Stadium, بوسطن, الولايات المتحدة
+
+المباراة 30 · البرازيل – هايتي
+19 يونيو 2026, 21:00 (UTC−4)
+Lincoln Financial Field, فيلادلفيا, الولايات المتحدة
+
+المباراة 49 · اسكتلندا – البرازيل
+24 يونيو 2026, 18:00 (UTC−4)
+Hard Rock Stadium, ميامي, الولايات المتحدة
+
+المباراة 50 · المغرب – هايتي
+24 يونيو 2026, 18:00 (UTC−5)
+Mercedes-Benz Stadium, أتلانتا, الولايات المتحدة`,
+
+            D: `المجموعة D — جدول المباريات
+المباراة 4 · الولايات المتحدة – باراغواي
+12 يونيو 2026, 15:00 (UTC−8)
+SoFi Stadium, لوس أنجلوس, الولايات المتحدة
+
+المباراة 6 · أستراليا – D4
+13 يونيو 2026, 20:00 (UTC−8)
+BC Place, فانكوفر, كندا
+
+المباراة 31 · D4 – باراغواي
+19 يونيو 2026, 20:00 (UTC−8)
+Levi's Stadium, سانتا كلارا, الولايات المتحدة
+
+المباراة 32 · الولايات المتحدة – أستراليا
+19 يونيو 2026, 11:00 (UTC−8)
+Lumen Field, سياتل, الولايات المتحدة
+
+المباراة 59 · D4 – الولايات المتحدة
+25 يونيو 2026, 18:00 (UTC−8)
+SoFi Stadium, لوس أنجلوس, الولايات المتحدة
+
+المباراة 60 · باراغواي – أستراليا
+25 يونيو 2026, 18:00 (UTC−8)
+Levi's Stadium, سانتا كلارا, الولايات المتحدة`,
+
+            E: `المجموعة E — جدول المباريات
+المباراة 9 · ألمانيا – كوراساو
+14 يونيو 2026, 11:00 (UTC−6)
+NRG Stadium, هيوستن, الولايات المتحدة
+
+المباراة 10 · ساحل العاج – الإكوادور
+14 يونيو 2026, 18:00 (UTC−5)
+Lincoln Financial Field, فيلادلفيا, الولايات المتحدة
+
+المباراة 33 · ألمانيا – ساحل العاج
+20 يونيو 2026, 15:00 (UTC−5)
+BMO Field, تورونتو, كندا
+
+المباراة 34 · الإكوادور – كوراساو
+20 يونيو 2026, 18:00 (UTC−6)
+Arrowhead Stadium, كانساس سيتي, الولايات المتحدة
+
+المباراة 55 · الإكوادور – ألمانيا
+25 يونيو 2026, 16:00 (UTC−4)
+MetLife Stadium, نيويورك, الولايات المتحدة
+
+المباراة 56 · كوراساو – ساحل العاج
+25 يونيو 2026, 15:00 (UTC−5)
+Lincoln Financial Field, فيلادلفيا, الولايات المتحدة`,
+
+            F: `المجموعة F — جدول المباريات
+المباراة 11 · هولندا – اليابان
+14 يونيو 2026, 14:00 (UTC−6)
+AT&T Stadium, أرلينغتون, الولايات المتحدة
+
+المباراة 12 · F3 – تونس
+14 يونيو 2026, 20:00 (UTC−6)
+Estadio BBVA, مونتيري, المكسيك
+
+المباراة 35 · هولندا – F3
+20 يونيو 2026, 11:00 (UTC−6)
+NRG Stadium, هيوستن, الولايات المتحدة
+
+المباراة 36 · تونس – اليابان
+20 يونيو 2026, 22:00 (UTC−6)
+Estadio BBVA, مونتيري, المكسيك
+
+المباراة 57 · اليابان – F3
+25 يونيو 2026, 17:00 (UTC−6)
+AT&T Stadium, أرلينغتون, الولايات المتحدة
+
+المباراة 58 · تونس – هولندا
+25 يونيو 2026, 17:00 (UTC−6)
+Arrowhead Stadium, كانساس سيتي, الولايات المتحدة`,
+
+            G: `المجموعة G — جدول المباريات
+المباراة 15 · إيران – نيوزيلندا
+15 يونيو 2026, 13:00 (UTC−8)
+SoFi Stadium, لوس أنجلوس, الولايات المتحدة
+
+المباراة 16 · بلجيكا – مصر
+15 يونيو 2026, 17:00 (UTC−8)
+Lumen Field, سياتل, الولايات المتحدة
+
+المباراة 39 · بلجيكا – إيران
+21 يونيو 2026, 11:00 (UTC−8)
+SoFi Stadium, لوس أنجلوس, الولايات المتحدة
+
+المباراة 40 · نيوزيلندا – مصر
+21 يونيو 2026, 17:00 (UTC−8)
+BC Place, فانكوفر, كندا
+
+المباراة 63 · مصر – إيران
+26 يونيو 2026, 19:00 (UTC−8)
+Lumen Field, سياتل, الولايات المتحدة
+
+المباراة 64 · نيوزيلندا – بلجيكا
+26 يونيو 2026, 19:00 (UTC−8)
+BC Place, فانكوفر, كندا`,
+
+            H: `المجموعة H — جدول المباريات
+المباراة 13 · إسبانيا – الرأس الأخضر
+15 يونيو 2026, 11:00 (UTC−5)
+Mercedes-Benz Stadium, أتلانتا, الولايات المتحدة
+
+المباراة 14 · السعودية – أوروغواي
+15 يونيو 2026, 18:00 (UTC−4)
+Hard Rock Stadium, ميامي, الولايات المتحدة
+
+المباراة 37 · إسبانيا – السعودية
+21 يونيو 2026, 11:00 (UTC−5)
+Mercedes-Benz Stadium, أتلانتا, الولايات المتحدة
+
+المباراة 38 · أوروغواي – الرأس الأخضر
+21 يونيو 2026, 17:00 (UTC−4)
+Hard Rock Stadium, ميامي, الولايات المتحدة
+
+المباراة 65 · الرأس الأخضر – السعودية
+26 يونيو 2026, 18:00 (UTC−6)
+NRG Stadium, هيوستن, الولايات المتحدة
+
+المباراة 66 · أوروغواي – إسبانيا
+26 يونيو 2026, 18:00 (UTC−6)
+Estadio Akron, غوادالاخارا, المكسيك`,
+
+            I: `المجموعة I — جدول المباريات
+المباراة 17 · فرنسا – السنغال
+16 يونيو 2026, 15:00 (UTC−4)
+MetLife Stadium, نيويورك, الولايات المتحدة
+
+المباراة 18 · I3 – النرويج
+16 يونيو 2026, 18:00 (UTC−4)
+Gillette Stadium, بوسطن, الولايات المتحدة
+
+المباراة 41 · فرنسا – I3
+22 يونيو 2026, 17:00 (UTC−4)
+Lincoln Financial Field, فيلادلفيا, الولايات المتحدة
+
+المباراة 42 · النرويج – السنغال
+22 يونيو 2026, 20:00 (UTC−4)
+MetLife Stadium, نيويورك, الولايات المتحدة
+
+المباراة 61 · النرويج – فرنسا
+26 يونيو 2026, 15:00 (UTC−4)
+Gillette Stadium, بوسطن, الولايات المتحدة
+
+المباراة 62 · السنغال – I3
+26 يونيو 2026, 14:00 (UTC−5)
+BMO Field, تورونتو, كندا`,
+
+            J: `المجموعة J — جدول المباريات
+المباراة 19 · الأرجنتين – الجزائر
+16 يونيو 2026, 19:00 (UTC−6)
+Arrowhead Stadium, كانساس سيتي, الولايات المتحدة
+
+المباراة 20 · النمسا – الأردن
+16 يونيو 2026, 20:00 (UTC−8)
+Levi's Stadium, سانتا كلارا, الولايات المتحدة
+
+المباراة 43 · الأرجنتين – النمسا
+22 يونيو 2026, 11:00 (UTC−6)
+AT&T Stadium, أرلينغتون, الولايات المتحدة
+
+المباراة 44 · الأردن – الجزائر
+22 يونيو 2026, 19:00 (UTC−8)
+Levi's Stadium, سانتا كلارا, الولايات المتحدة
+
+المباراة 69 · الجزائر – النمسا
+27 يونيو 2026, 20:00 (UTC−6)
+Arrowhead Stadium, كانساس سيتي, الولايات المتحدة
+
+المباراة 70 · الأردن – الأرجنتين
+27 يونيو 2026, 20:00 (UTC−6)
+AT&T Stadium, أرلينغتون, الولايات المتحدة`,
+
+            K: `المجموعة K — جدول المباريات
+المباراة 23 · البرتغال – K2
+17 يونيو 2026, 11:00 (UTC−6)
+NRG Stadium, هيوستن, الولايات المتحدة
+
+المباراة 24 · أوزبكستان – كولومبيا
+17 يونيو 2026, 20:00 (UTC−6)
+Estadio Azteca, مدينة مكسيكو, المكسيك
+
+المباراة 47 · البرتغال – أوزبكستان
+23 يونيو 2026, 11:00 (UTC−6)
+NRG Stadium, هيوستن, الولايات المتحدة
+
+المباراة 48 · كولومبيا – K2
+23 يونيو 2026, 20:00 (UTC−6)
+Estadio Akron, غوادالاخارا, المكسيك
+
+المباراة 71 · كولومبيا – البرتغال
+27 يونيو 2026, 19:30 (UTC−4)
+Hard Rock Stadium, ميامي, الولايات المتحدة
+
+المباراة 72 · K2 – أوزبكستان
+27 يونيو 2026, 18:30 (UTC−5)
+Mercedes-Benz Stadium, أتلانتا, الولايات المتحدة`,
+
+            L: `المجموعة L — جدول المباريات
+المباراة 21 · إنجلترا – كرواتيا
+17 يونيو 2026, 14:00 (UTC−6)
+AT&T Stadium, أرلينغتون, الولايات المتحدة
+
+المباراة 22 · غانا – بنما
+17 يونيو 2026, 18:00 (UTC−5)
+BMO Field, تورونتو, كندا
+
+المباراة 45 · إنجلترا – غانا
+23 يونيو 2026, 16:00 (UTC−4)
+Gillette Stadium, بوسطن, الولايات المتحدة
+
+المباراة 46 · بنما – كرواتيا
+23 يونيو 2026, 17:00 (UTC−6)
+BMO Field, تورونتو, كندا
+
+المباراة 67 · بنما – إنجلترا
+27 يونيو 2026, 17:00 (UTC−4)
+MetLife Stadium, نيويورك, الولايات المتحدة
+
+المباراة 68 · كرواتيا – غانا
+27 يونيو 2026, 16:00 (UTC−5)
+Lincoln Financial Field, فيلادلفيا, الولايات المتحدة`,
+        };
+
+
+
+        const OFFICIAL_MATCH_INFO = {
+
+            'R32-1': { number: 73, round: 'R32', date: '28 يونيو 2026', stadium: 'SoFi Stadium', city: 'لوس أنجلوس', country: 'الولايات المتحدة' },
+            'R32-2': { number: 74, round: 'R32', date: '29 يونيو 2026', stadium: 'Gillette Stadium', city: 'بوسطن', country: 'الولايات المتحدة' },
+            'R32-3': { number: 75, round: 'R32', date: '29 يونيو 2026', stadium: 'ملعب BBVA', city: 'مونتيري', country: 'المكسيك' },
+            'R32-4': { number: 76, round: 'R32', date: '29 يونيو 2026', stadium: 'NRG Stadium', city: 'هيوستن', country: 'الولايات المتحدة' },
+            'R32-5': { number: 77, round: 'R32', date: '30 يونيو 2026', stadium: 'MetLife Stadium', city: 'نيويورك', country: 'الولايات المتحدة' },
+            'R32-6': { number: 78, round: 'R32', date: '30 يونيو 2026', stadium: 'AT&T Stadium', city: 'أرلينغتون', country: 'الولايات المتحدة' },
+            'R32-7': { number: 79, round: 'R32', date: '30 يونيو 2026', stadium: 'Estadio Azteca', city: 'مدينة مكسيكو', country: 'المكسيك' },
+            'R32-8': { number: 80, round: 'R32', date: '1 يوليو 2026', stadium: 'Mercedes-Benz Stadium', city: 'أتلانتا', country: 'الولايات المتحدة' },
+            'R32-9': { number: 81, round: 'R32', date: '1 يوليو 2026', stadium: "Levi's Stadium", city: 'سان فرانسيسكو', country: 'الولايات المتحدة' },
+            'R32-10': { number: 82, round: 'R32', date: '1 يوليو 2026', stadium: 'Lumen Field', city: 'سياتل', country: 'الولايات المتحدة' },
+            'R32-11': { number: 83, round: 'R32', date: '2 يوليو 2026', stadium: 'BMO Field', city: 'تورونتو', country: 'كندا' },
+            'R32-12': { number: 84, round: 'R32', date: '2 يوليو 2026', stadium: 'SoFi Stadium', city: 'لوس أنجلوس', country: 'الولايات المتحدة' },
+            'R32-13': { number: 85, round: 'R32', date: '2 يوليو 2026', stadium: 'BC Place', city: 'فانكوفر', country: 'كندا' },
+            'R32-14': { number: 86, round: 'R32', date: '3 يوليو 2026', stadium: 'Hard Rock Stadium', city: 'ميامي', country: 'الولايات المتحدة' },
+            'R32-15': { number: 87, round: 'R32', date: '3 يوليو 2026', stadium: 'Arrowhead Stadium', city: 'كانساس سيتي', country: 'الولايات المتحدة' },
+            'R32-16': { number: 88, round: 'R32', date: '3 يوليو 2026', stadium: 'AT&T Stadium', city: 'أرلينغتون', country: 'الولايات المتحدة' },
+
+
+            'R16-1': { number: 89, round: 'R16', date: '4 يوليو 2026', stadium: 'Lincoln Financial Field', city: 'فيلادلفيا', country: 'الولايات المتحدة' },
+            'R16-2': { number: 90, round: 'R16', date: '4 يوليو 2026', stadium: 'NRG Stadium', city: 'هيوستن', country: 'الولايات المتحدة' },
+            'R16-3': { number: 91, round: 'R16', date: '5 يوليو 2026', stadium: 'MetLife Stadium', city: 'نيويورك', country: 'الولايات المتحدة' },
+            'R16-4': { number: 92, round: 'R16', date: '5 يوليو 2026', stadium: 'Estadio Azteca', city: 'مدينة مكسيكو', country: 'المكسيك' },
+            'R16-5': { number: 93, round: 'R16', date: '6 يوليو 2026', stadium: 'AT&T Stadium', city: 'أرلينغتون', country: 'الولايات المتحدة' },
+            'R16-6': { number: 94, round: 'R16', date: '6 يوليو 2026', stadium: 'Lumen Field', city: 'سياتل', country: 'الولايات المتحدة' },
+            'R16-7': { number: 95, round: 'R16', date: '7 يوليو 2026', stadium: 'Mercedes-Benz Stadium', city: 'أتلانتا', country: 'الولايات المتحدة' },
+            'R16-8': { number: 96, round: 'R16', date: '7 يوليو 2026', stadium: 'BC Place', city: 'فانكوفر', country: 'كندا' },
+
+
+            'QF-1': { number: 97, round: 'QF', date: '9 يوليو 2026', stadium: 'Gillette Stadium', city: 'بوسطن', country: 'الولايات المتحدة' },
+            'QF-2': { number: 98, round: 'QF', date: '10 يوليو 2026', stadium: 'SoFi Stadium', city: 'لوس أنجلوس', country: 'الولايات المتحدة' },
+            'QF-3': { number: 99, round: 'QF', date: '11 يوليو 2026', stadium: 'Hard Rock Stadium', city: 'ميامي', country: 'الولايات المتحدة' },
+            'QF-4': { number: 100, round: 'QF', date: '11 يوليو 2026', stadium: 'Arrowhead Stadium', city: 'كانساس سيتي', country: 'الولايات المتحدة' },
+
+
+            'SF-1': { number: 101, round: 'SF', date: '14 يوليو 2026', stadium: 'AT&T Stadium', city: 'أرلينغتون', country: 'الولايات المتحدة' },
+            'SF-2': { number: 102, round: 'SF', date: '15 يوليو 2026', stadium: 'Mercedes-Benz Stadium', city: 'أتلانتا', country: 'الولايات المتحدة' },
+
+
+            'F-1': { number: 104, round: 'F', date: '19 يوليو 2026', stadium: 'MetLife Stadium', city: 'نيويورك', country: 'الولايات المتحدة' },
+        };
+
+
+
+
+
+        let currentInfoBubble = null;
+        let currentInfoBubbleMatchId = null;
+
+        function isMobileViewport() {
+            return window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+        }
+
+
+        function toggleMatchInfoBubble(matchEl, matchId) {
+
+            if (isMobileViewport()) {
+                openMatchInfoMobileModal(matchEl, matchId);
+                return;
+            }
+
+
+
+            if (currentInfoBubble && currentInfoBubbleMatchId === matchId) {
+                currentInfoBubble.remove();
+                currentInfoBubble = null;
+                currentInfoBubbleMatchId = null;
+                return;
+            }
+
+
+            if (currentInfoBubble) {
+                currentInfoBubble.remove();
+                currentInfoBubble = null;
+                currentInfoBubbleMatchId = null;
+            }
+
+            const bubble = document.createElement('div');
+            bubble.className = 'match-info-bubble';
+
+            if (matchId.startsWith('GROUP-')) {
+                const groupId = matchId.split('-')[1];
+                buildGroupInfoBubbleContent(bubble, groupId);
+            } else {
+                buildKnockoutMatchBubbleContent(bubble, matchEl, matchId);
+            }
+
+            const wrapper = matchEl.closest('#bracket-wrapper, #bracket-wrapper-expert, .group-card');
+            if (!wrapper) return;
+            wrapper.appendChild(bubble);
+
+            const matchRect = matchEl.getBoundingClientRect();
+            const wrapperRect = wrapper.getBoundingClientRect();
+
+            const centerX = (matchRect.left + matchRect.right) / 2 - wrapperRect.left;
+            let top = matchRect.bottom - wrapperRect.top + 8;
+
+            bubble.style.left = `${centerX}px`;
+            bubble.style.top = `${top}px`;
+            bubble.style.transform = 'translateX(-50%)';
+
+            const bubbleRect = bubble.getBoundingClientRect();
+            if (bubbleRect.bottom > wrapperRect.bottom + 8) {
+                top = matchRect.top - wrapperRect.top - bubbleRect.height - 8;
+                bubble.style.top = `${top}px`;
+                bubble.classList.add('above');
+            } else {
+                bubble.classList.remove('above');
+            }
+
+            currentInfoBubble = bubble;
+            currentInfoBubbleMatchId = matchId;
+        }
+
+        function openMatchInfoMobileModal(matchEl, matchId) {
+            const backdrop = document.getElementById('match-info-mobile-backdrop');
+            const content = document.getElementById('match-info-mobile-content');
+            const titleEl = document.getElementById('match-info-mobile-title');
+            if (!backdrop || !content) return;
+
+
+            content.innerHTML = '';
+
+
+            const bubble = document.createElement('div');
+            bubble.className = 'match-info-bubble match-info-bubble-mobile';
+
+            if (matchId.startsWith('GROUP-')) {
+                const groupId = matchId.split('-')[1];
+                if (titleEl) titleEl.textContent = 'Calendrier du groupe ' + groupId;
+                buildGroupInfoBubbleContent(bubble, groupId);
+            } else {
+                if (titleEl) titleEl.textContent = 'Infos du match';
+                buildKnockoutMatchBubbleContent(bubble, matchEl, matchId);
+            }
+
+            content.appendChild(bubble);
+
+            backdrop.style.display = 'flex';
+            backdrop.classList.add('show');
+        }
+
+        function closeMatchInfoMobileModal() {
+            const backdrop = document.getElementById('match-info-mobile-backdrop');
+            if (!backdrop) return;
+            backdrop.classList.remove('show');
+            backdrop.style.display = 'none';
+        }
+
+
+
+        function resolveGroupSlotName(rawName) {
+            const name = (rawName || '').trim();
+            const m = name.match(/^([A-L])([1-4])$/);
+            if (!m) return name;
+
+            const groupId = m[1];
+            const index = parseInt(m[2], 10) - 1;
+            const teams = GROUP_TEAMS[groupId];
+            if (!teams || !teams[index]) return name;
+
+            return teams[index];
+        }
+
+        function buildGroupInfoBubbleContent(bubble, groupId) {
+            const raw = GROUP_MATCH_INFO[groupId];
+            if (!raw) {
+                bubble.textContent = `Calendrier du groupe ${groupId} à confirmer`;
+                return;
+            }
+
+            const lines = raw.split('\n');
+            if (!lines.length) {
+                bubble.textContent = `Calendrier du groupe ${groupId} à confirmer`;
+                return;
+            }
+
+            const titleText = lines[0].trim() || `المجموعة ${groupId} — جدول المباريات`;
+            const titleEl = document.createElement('div');
+            titleEl.className = 'match-info-bubble-title';
+            titleEl.textContent = titleText;
+            bubble.appendChild(titleEl);
+
+            const listContainer = document.createElement('div');
+            listContainer.className = 'match-info-matches';
+            bubble.appendChild(listContainer);
+
+            let i = 1;
+            while (i < lines.length) {
+
+                while (i < lines.length && !lines[i].trim()) i++;
+                if (i >= lines.length) break;
+
+                const headerLine = lines[i++].trim();
+                let dateLine = '';
+                let stadiumLine = '';
+
+                if (i < lines.length && lines[i].trim()) {
+                    dateLine = lines[i++].trim();
+                }
+                if (i < lines.length && lines[i].trim()) {
+                    stadiumLine = lines[i++].trim();
+                }
+
+                const matchBlock = document.createElement('div');
+                matchBlock.className = 'match-info-match';
+
+                let label = headerLine;
+                let team1 = '';
+                let team2 = '';
+
+                const dotIndex = headerLine.indexOf('·');
+                if (dotIndex !== -1) {
+                    label = headerLine.slice(0, dotIndex).trim();
+                    const teamsPart = headerLine.slice(dotIndex + 1).trim();
+                    const dashIndex = teamsPart.indexOf('–');
+                    if (dashIndex !== -1) {
+                        team1 = teamsPart.slice(0, dashIndex).trim();
+                        team2 = teamsPart.slice(dashIndex + 1).trim();
+
+
+                        team1 = resolveGroupSlotName(team1);
+                        team2 = resolveGroupSlotName(team2);
+                    }
+                }
+
+                const headerRow = document.createElement('div');
+                headerRow.className = 'match-info-match-header';
+                headerRow.textContent = label;
+                matchBlock.appendChild(headerRow);
+
+                if (team1 && team2) {
+                    const teamsRow = document.createElement('div');
+                    teamsRow.className = 'match-info-match-teams';
+
+                    const t1Span = document.createElement('span');
+                    t1Span.className = 'match-info-match-team';
+                    appendFlagAndName(t1Span, team1);
+
+                    const vsSpan = document.createElement('span');
+                    vsSpan.textContent = 'vs';
+
+                    const t2Span = document.createElement('span');
+                    t2Span.className = 'match-info-match-team';
+                    appendFlagAndName(t2Span, team2);
+
+                    teamsRow.appendChild(t1Span);
+                    teamsRow.appendChild(vsSpan);
+                    teamsRow.appendChild(t2Span);
+                    matchBlock.appendChild(teamsRow);
+                } else {
+
+                    headerRow.textContent = headerLine;
+                }
+
+                if (dateLine) {
+                    const dateRow = document.createElement('div');
+                    dateRow.className = 'match-info-date';
+                    dateRow.textContent = dateLine;
+                    matchBlock.appendChild(dateRow);
+                }
+
+                if (stadiumLine) {
+                    const stadiumRow = document.createElement('div');
+                    stadiumRow.className = 'match-info-stadium';
+                    stadiumRow.textContent = stadiumLine;
+                    matchBlock.appendChild(stadiumRow);
+                }
+
+                listContainer.appendChild(matchBlock);
+            }
+        }
+
+        function buildKnockoutMatchBubbleContent(bubble, matchEl, matchId) {
+            const roundKey = matchId.split('-')[0];
+            const roundLabel = MATCH_ROUND_LABELS[roundKey] || 'المرحلة النهائية';
+            const info = OFFICIAL_MATCH_INFO[matchId];
+
+            const matchNumber = info && info.number ? info.number : null;
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'match-info-bubble-title';
+            titleEl.textContent = matchNumber
+                ? `${roundLabel} — المباراة ${matchNumber}`
+                : `${roundLabel} — ${matchId}`;
+            bubble.appendChild(titleEl);
+
+
+            const rows = matchEl.querySelectorAll('.ko-team');
+            if (rows.length >= 2) {
+                const teamsRow = document.createElement('div');
+                teamsRow.className = 'match-info-match-teams';
+
+                const span1 = rows[0].querySelector('.name');
+                const span2 = rows[1].querySelector('.name');
+
+                const name1 = span1 ? (span1.dataset.teamName || span1.textContent.trim()) : '';
+                const name2 = span2 ? (span2.dataset.teamName || span2.textContent.trim()) : '';
+
+                const t1Span = document.createElement('span');
+                t1Span.className = 'match-info-match-team';
+                if (name1) appendFlagAndName(t1Span, name1);
+
+                const vsSpan = document.createElement('span');
+                vsSpan.textContent = 'vs';
+
+                const t2Span = document.createElement('span');
+                t2Span.className = 'match-info-match-team';
+                if (name2) appendFlagAndName(t2Span, name2);
+
+                teamsRow.appendChild(t1Span);
+                teamsRow.appendChild(vsSpan);
+                teamsRow.appendChild(t2Span);
+
+                bubble.appendChild(teamsRow);
+            }
+
+            if (info) {
+                if (info.date) {
+                    const dateRow = document.createElement('div');
+                    dateRow.className = 'match-info-date';
+                    dateRow.textContent = info.date;
+                    bubble.appendChild(dateRow);
+                }
+
+                const stadiumParts = [];
+                if (info.stadium) stadiumParts.push(info.stadium);
+                if (info.city) stadiumParts.push(info.city);
+                if (info.country) stadiumParts.push(info.country);
+
+                if (stadiumParts.length) {
+                    const stadiumRow = document.createElement('div');
+                    stadiumRow.className = 'match-info-stadium';
+                    stadiumRow.textContent = stadiumParts.join(', ');
+                    bubble.appendChild(stadiumRow);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function showStep(stepNumber) {
+
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.toggle('active', step.id === 'step' + stepNumber);
+            });
+
+
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.step === String(stepNumber));
+            });
+        }
+
+
+
+
+        function createGroups() {
+            const container = document.getElementById('groups');
+            GROUP_IDS.forEach(groupId => {
+                const card = document.createElement('section');
+                card.className = 'group-card';
+                card.dataset.group = groupId;
+
+                const teams = GROUP_TEAMS[groupId];
+
+                const ranksHtml = teams.map((teamName, i) => {
+                    const label = i === 0 ? 'الأول' : i === 1 ? 'الثاني' : i === 2 ? 'الثالث' : 'الرابع';
+                    const teamCode = `${groupId}${i + 1}`;
+                    return `
+                    <div class="rank-row" data-team-code="${teamCode}">
+                        <span class="rank-label">${label}</span>
+                        <span class="drag-handle">≡</span>
+                        ${buildTeamBlockHTML(teamName)}
+                    </div>`;
+                }).join('');
+
+
+                card.innerHTML = `
+                            <div class="group-card-header">
+                                <h2>المجموعة ${groupId}</h2>
+                                <button type="button" class="match-info-btn group-info-btn" data-group-id="${groupId}">i</button>
+                            </div>
+                            <p>أعد ترتيب البطاقات لتحديد الترتيب (الأعلى = الأول).</p>
+                            <div class="rank-list">
+                                ${ranksHtml}
+                            </div>
+`;
+
+
+                container.appendChild(card);
+                updateGroupRankLabels(card);
+            });
+        }
+
+        function updateGroupRankLabels(groupCard) {
+            const rows = groupCard.querySelectorAll('.rank-row');
+            rows.forEach((row, idx) => {
+                const labelSpan = row.querySelector('.rank-label');
+                if (labelSpan) {
+                    labelSpan.textContent = idx === 0 ? 'الأول' : idx === 1 ? 'الثاني' : idx === 2 ? 'الثالث' : 'الرابع';
+                }
+                row.classList.remove('pos-1', 'pos-2', 'pos-3');
+                if (idx === 0) row.classList.add('pos-1');
+                else if (idx === 1) row.classList.add('pos-2');
+                else if (idx === 2) row.classList.add('pos-3');
+            });
+        }
+
+
+        function setupTapToSwap(card, list) {
+            let selectedRow = null;
+
+            list.querySelectorAll('.rank-row').forEach(row => {
+                row.addEventListener('click', () => {
+
+                    if (!selectedRow) {
+                        selectedRow = row;
+                        row.classList.add('selected');
+                        return;
+                    }
+
+
+                    if (selectedRow === row) {
+                        row.classList.remove('selected');
+                        selectedRow = null;
+                        return;
+                    }
+
+
+                    const parent = list;
+                    const placeholder = document.createElement('div');
+
+                    parent.insertBefore(placeholder, selectedRow);
+                    parent.insertBefore(selectedRow, row);
+                    parent.insertBefore(row, placeholder);
+                    parent.removeChild(placeholder);
+
+
+                    selectedRow.classList.remove('selected');
+                    row.classList.remove('selected');
+                    selectedRow = null;
+
+
+                    updateGroupRankLabels(card);
+                });
+            });
+        }
+
+        function isMobileTouch() {
+            return window.matchMedia("(max-width: 768px)").matches &&
+                (("ontouchstart" in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
+        }
+
+
+
+        function setupDragAndDrop() {
+            const canUseSortable = (typeof Sortable !== 'undefined');
+
+            document.querySelectorAll('.group-card').forEach(card => {
+                const list = card.querySelector('.rank-list');
+                if (!list) return;
+
+
+                setupTapToSwap(card, list);
+
+
+                if (canUseSortable) {
+                    Sortable.create(list, {
+                        animation: 150,
+                        ghostClass: 'dragging',
+                        onEnd: function () {
+                            updateGroupRankLabels(card);
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        function readGroupRanksFromDOM() {
+            GROUP_IDS.forEach(groupId => {
+                const card = document.querySelector(`#step1 .group-card[data-group="${groupId}"]`);
+                if (!card) return;
+                const rows = card.querySelectorAll('.rank-row');
+                const names = [];
+
+                rows.forEach((row, idx) => {
+                    const span = row.querySelector('.team-block');
+                    let val = span ? (span.dataset.teamName || span.textContent.trim()) : '';
+                    if (!val) {
+                        const code = row.dataset.teamCode || `${groupId}${idx + 1}`;
+                        val = `المنتخب ${code}`;
+                    }
+                    names.push(val);
+                });
+
+                const ranks = {
+                    first: names[0] || `المنتخب ${groupId}1`,
+                    second: names[1] || `المنتخب ${groupId}2`,
+                    third: names[2] || `المنتخب ${groupId}3`,
+                    fourth: names[3] || `المنتخب ${groupId}4`
+                };
+
+                groupRanks[groupId] = ranks;
+                groupResults[groupId] = {
+                    teams: [
+                        { name: ranks.first, position: 1 },
+                        { name: ranks.second, position: 2 },
+                        { name: ranks.third, position: 3 },
+                        { name: ranks.fourth, position: 4 }
+                    ]
+                };
+            });
+        }
+
+
+
+        function refreshThirdTable() {
+            readGroupRanksFromDOM();
+            const tbody = document.getElementById('third-table-body');
+            const countSpan = document.getElementById('third-count');
+            tbody.innerHTML = '';
+
+            GROUP_IDS.forEach(groupId => {
+                const ranks = groupRanks[groupId] || {};
+                const thirdName = ranks.third || `المنتخب ${groupId}3`;
+
+                const tr = document.createElement('tr');
+                tr.dataset.groupId = groupId;
+                if (selectedThirdGroups.has(groupId)) tr.classList.add('selected-third');
+
+                const tdGroup = document.createElement('td');
+                const tdTeam = document.createElement('td');
+
+                tdGroup.textContent = 'المجموعة ' + groupId;
+                appendFlagAndName(tdTeam, thirdName);
+
+                tr.appendChild(tdGroup);
+                tr.appendChild(tdTeam);
+
+                tr.addEventListener('click', () => {
+                    const gid = tr.dataset.groupId;
+
+                    if (selectedThirdGroups.has(gid)) {
+                        selectedThirdGroups.delete(gid);
+                        const idx = selectedThirdOrder.indexOf(gid);
+                        if (idx !== -1) selectedThirdOrder.splice(idx, 1);
+                        tr.classList.remove('selected-third');
+                    } else {
+                        if (selectedThirdGroups.size >= 8) {
+                            const oldGid = selectedThirdOrder.shift();
+                            if (oldGid) {
+                                selectedThirdGroups.delete(oldGid);
+                                const oldRow = tbody.querySelector(`tr[data-group-id="${oldGid}"]`);
+                                if (oldRow) oldRow.classList.remove('selected-third');
+                            }
+                        }
+                        selectedThirdGroups.add(gid);
+                        selectedThirdOrder.push(gid);
+                        tr.classList.add('selected-third');
+                    }
+
+                    countSpan.textContent = selectedThirdGroups.size;
+                });
+
+                tbody.appendChild(tr);
+            });
+
+            countSpan.textContent = selectedThirdGroups.size;
+        }
+
+
+
+
+        function initBracketConfig() {
+
+            BRACKET_CONFIG.R32 = [
+
+                { id: 'R32-1', matchNumber: 73, slot1: '2A', slot2: '2B' },
+
+
+                {
+                    id: 'R32-2', matchNumber: 74, slot1: '1E',
+                    thirdGroups: ['A', 'B', 'C', 'D', 'F']
+                },
+
+
+                { id: 'R32-3', matchNumber: 75, slot1: '1F', slot2: '2C' },
+
+
+                { id: 'R32-4', matchNumber: 76, slot1: '1C', slot2: '2F' },
+
+
+                {
+                    id: 'R32-5', matchNumber: 77, slot1: '1I',
+                    thirdGroups: ['C', 'D', 'F', 'G', 'H']
+                },
+
+
+                { id: 'R32-6', matchNumber: 78, slot1: '2E', slot2: '2I' },
+
+
+                {
+                    id: 'R32-7', matchNumber: 79, slot1: '1A',
+                    thirdGroups: ['C', 'E', 'F', 'H', 'I']
+                },
+
+
+                {
+                    id: 'R32-8', matchNumber: 80, slot1: '1L',
+                    thirdGroups: ['E', 'H', 'I', 'J', 'K']
+                },
+
+
+                {
+                    id: 'R32-9', matchNumber: 81, slot1: '1D',
+                    thirdGroups: ['B', 'E', 'F', 'I', 'J']
+                },
+
+
+                {
+                    id: 'R32-10', matchNumber: 82, slot1: '1G',
+                    thirdGroups: ['A', 'E', 'H', 'I', 'J']
+                },
+
+
+                { id: 'R32-11', matchNumber: 83, slot1: '2K', slot2: '2L' },
+
+
+                { id: 'R32-12', matchNumber: 84, slot1: '1H', slot2: '2J' },
+
+
+                {
+                    id: 'R32-13', matchNumber: 85, slot1: '1B',
+                    thirdGroups: ['E', 'F', 'G', 'I', 'J']
+                },
+
+
+                { id: 'R32-14', matchNumber: 86, slot1: '1J', slot2: '2H' },
+
+
+                {
+                    id: 'R32-15', matchNumber: 87, slot1: '1K',
+                    thirdGroups: ['D', 'E', 'I', 'J', 'L']
+                },
+
+
+                { id: 'R32-16', matchNumber: 88, slot1: '2D', slot2: '2G' }
+            ];
+
+
+            BRACKET_CONFIG.R16 = [
+
+                { id: 'R16-1', matchNumber: 89, from1: 'R32-2', from2: 'R32-5' },
+
+
+                { id: 'R16-2', matchNumber: 90, from1: 'R32-1', from2: 'R32-3' },
+
+
+                { id: 'R16-3', matchNumber: 91, from1: 'R32-4', from2: 'R32-6' },
+
+
+                { id: 'R16-4', matchNumber: 92, from1: 'R32-7', from2: 'R32-8' },
+
+
+                { id: 'R16-5', matchNumber: 93, from1: 'R32-11', from2: 'R32-12' },
+
+
+                { id: 'R16-6', matchNumber: 94, from1: 'R32-9', from2: 'R32-10' },
+
+
+                { id: 'R16-7', matchNumber: 95, from1: 'R32-14', from2: 'R32-16' },
+
+
+                { id: 'R16-8', matchNumber: 96, from1: 'R32-13', from2: 'R32-15' },
+            ];
+
+
+            BRACKET_CONFIG.QF = [
+
+                { id: 'QF-1', matchNumber: 97, from1: 'R16-1', from2: 'R16-2' },
+
+
+                { id: 'QF-2', matchNumber: 98, from1: 'R16-5', from2: 'R16-6' },
+
+
+                { id: 'QF-3', matchNumber: 99, from1: 'R16-3', from2: 'R16-4' },
+
+
+                { id: 'QF-4', matchNumber: 100, from1: 'R16-7', from2: 'R16-8' },
+            ];
+
+
+            BRACKET_CONFIG.SF = [
+
+                { id: 'SF-1', matchNumber: 101, from1: 'QF-1', from2: 'QF-2' },
+
+
+                { id: 'SF-2', matchNumber: 102, from1: 'QF-3', from2: 'QF-4' },
+            ];
+
+
+            BRACKET_CONFIG.F = [
+
+                { id: 'F-1', matchNumber: 104, from1: 'SF-1', from2: 'SF-2' },
+            ];
+        }
+
+
+
+
+        function isPlaceholderSpan(span) {
+            return span &&
+                span.dataset.placeholder &&
+                span.dataset.teamName === span.dataset.placeholder;
+        }
+
+
+
+        function createKoMatchElement(round, config) {
+            const matchId = config.id;
+            const matchEl = document.createElement('div');
+            matchEl.className = 'ko-match';
+            matchEl.dataset.matchId = matchId;
+            matchEl.dataset.round = round;
+
+            const header = document.createElement('div');
+            header.className = 'ko-match-header';
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'ko-match-title';
+            const info = OFFICIAL_MATCH_INFO[matchId];
+            if (info && info.number) {
+                titleEl.textContent = `المباراة ${info.number}`;
+            } else {
+                titleEl.textContent = matchId.replace('-', ' ');
+            }
+
+            const infoBtn = document.createElement('button');
+            infoBtn.type = 'button';
+            infoBtn.className = 'match-info-btn';
+            infoBtn.textContent = 'i';
+            infoBtn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                toggleMatchInfoBubble(matchEl, matchId);
+            });
+
+            header.appendChild(titleEl);
+            header.appendChild(infoBtn);
+            matchEl.appendChild(header);
+
+            const team1NameSpan = document.createElement('span');
+            team1NameSpan.className = 'name';
+            const team2NameSpan = document.createElement('span');
+            team2NameSpan.className = 'name';
+
+            let placeholder1, placeholder2;
+
+            if (round === 'R32') {
+
+                if (config.slot1) {
+                    placeholder1 = config.slot1;
+                } else {
+                    placeholder1 = '?';
+                }
+
+
+                if (config.slot2) {
+                    placeholder2 = config.slot2;
+                } else if (config.thirdGroups) {
+                    placeholder2 = '3ᵉ ' + config.thirdGroups.join('/');
+
+                } else {
+                    placeholder2 = '?';
+                }
+            } else {
+                placeholder1 = 'الفائز ' + config.from1;
+                placeholder2 = 'الفائز ' + config.from2;
+            }
+
+
+            team1NameSpan.dataset.placeholder = placeholder1;
+            team2NameSpan.dataset.placeholder = placeholder2;
+            renderTeamLabel(team1NameSpan, placeholder1);
+            renderTeamLabel(team2NameSpan, placeholder2);
+
+            const team1Row = document.createElement('div');
+            team1Row.className = 'ko-team';
+            team1Row.appendChild(team1NameSpan);
+
+            const team2Row = document.createElement('div');
+            team2Row.className = 'ko-team';
+            team2Row.appendChild(team2NameSpan);
+
+            team1Row.addEventListener('click', () => {
+                if (isPlaceholderSpan(team1NameSpan) || isPlaceholderSpan(team2NameSpan)) return;
+                const teamName = team1NameSpan.dataset.teamName || team1NameSpan.textContent;
+                toggleWinner(matchId, 1, team1Row, team2Row, teamName);
+            });
+            team2Row.addEventListener('click', () => {
+                if (isPlaceholderSpan(team1NameSpan) || isPlaceholderSpan(team2NameSpan)) return;
+                const teamName = team2NameSpan.dataset.teamName || team2NameSpan.textContent;
+                toggleWinner(matchId, 2, team1Row, team2Row, teamName);
+            });
+
+            matchEl.appendChild(team1Row);
+            matchEl.appendChild(team2Row);
+
+            koDom[round][matchId] = {
+                el: matchEl,
+                team1Row,
+                team2Row,
+                team1NameSpan,
+                team2NameSpan
+            };
+
+            return matchEl;
+        }
+
+        function createRoundColumn(title) {
+            const col = document.createElement('div');
+            col.className = 'round-column';
+            const t = document.createElement('div');
+            t.className = 'round-title';
+            t.textContent = title;
+            col.appendChild(t);
+            return col;
+        }
+
+        function createKnockout() {
+            const bracketEl = document.getElementById('bracket');
+            if (!bracketEl) return;
+
+            initBracketConfig();
+            bracketEl.innerHTML = '';
+
+            const titles = {
+                R32: 'دور الـ32',
+                R16: 'دور الـ16',
+                QF: 'النهائي',
+                SF: 'النهائي',
+                F: 'النهائي'
+            };
+
+
+            const R32_LEFT_DISPLAY = [
+                'R32-2',
+                'R32-5',
+                'R32-1',
+                'R32-3',
+                'R32-11',
+                'R32-12',
+                'R32-9',
+                'R32-10',
+            ];
+
+            const R32_RIGHT_DISPLAY = [
+                'R32-4',
+                'R32-6',
+                'R32-7',
+                'R32-8',
+                'R32-14',
+                'R32-16',
+                'R32-13',
+                'R32-15',
+            ];
+
+
+            const R16_LEFT_CONFIGS = [
+                BRACKET_CONFIG.R16[0],
+                BRACKET_CONFIG.R16[1],
+                BRACKET_CONFIG.R16[4],
+                BRACKET_CONFIG.R16[5],
+            ];
+            const R16_RIGHT_CONFIGS = [
+                BRACKET_CONFIG.R16[2],
+                BRACKET_CONFIG.R16[3],
+                BRACKET_CONFIG.R16[6],
+                BRACKET_CONFIG.R16[7],
+            ];
+
+
+            const QF_LEFT_CONFIGS = [
+                BRACKET_CONFIG.QF[0],
+                BRACKET_CONFIG.QF[1],
+            ];
+            const QF_RIGHT_CONFIGS = [
+                BRACKET_CONFIG.QF[2],
+                BRACKET_CONFIG.QF[3],
+            ];
+
+
+            const colR32Left = createRoundColumn(titles.R32);
+            R32_LEFT_DISPLAY.forEach(id => {
+                const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+                if (cfg) colR32Left.appendChild(createKoMatchElement('R32', cfg));
+            });
+            bracketEl.appendChild(colR32Left);
+            bracketColumns.R32_left = colR32Left;
+
+
+            const colR16Left = createRoundColumn(titles.R16);
+            R16_LEFT_CONFIGS.forEach(cfg => {
+                colR16Left.appendChild(createKoMatchElement('R16', cfg));
+            });
+            bracketEl.appendChild(colR16Left);
+            bracketColumns.R16_left = colR16Left;
+
+
+            const colQFLeft = createRoundColumn(titles.QF);
+            QF_LEFT_CONFIGS.forEach(cfg => {
+                colQFLeft.appendChild(createKoMatchElement('QF', cfg));
+            });
+            bracketEl.appendChild(colQFLeft);
+            bracketColumns.QF_left = colQFLeft;
+
+
+            const colSFLeft = createRoundColumn(titles.SF);
+            BRACKET_CONFIG.SF.slice(0, 1).forEach(cfg => {
+                colSFLeft.appendChild(createKoMatchElement('SF', cfg));
+            });
+            bracketEl.appendChild(colSFLeft);
+            bracketColumns.SF_left = colSFLeft;
+
+
+            const colFinal = createRoundColumn(titles.F);
+            BRACKET_CONFIG.F.forEach(cfg => {
+                colFinal.appendChild(createKoMatchElement('F', cfg));
+            });
+            bracketEl.appendChild(colFinal);
+            bracketColumns.F_center = colFinal;
+
+
+            const colSFRight = createRoundColumn(titles.SF);
+            BRACKET_CONFIG.SF.slice(1).forEach(cfg => {
+                colSFRight.appendChild(createKoMatchElement('SF', cfg));
+            });
+            bracketEl.appendChild(colSFRight);
+            bracketColumns.SF_right = colSFRight;
+
+
+            const colQFRight = createRoundColumn(titles.QF);
+            QF_RIGHT_CONFIGS.forEach(cfg => {
+                colQFRight.appendChild(createKoMatchElement('QF', cfg));
+            });
+            bracketEl.appendChild(colQFRight);
+            bracketColumns.QF_right = colQFRight;
+
+
+            const colR16Right = createRoundColumn(titles.R16);
+            R16_RIGHT_CONFIGS.forEach(cfg => {
+                colR16Right.appendChild(createKoMatchElement('R16', cfg));
+            });
+            bracketEl.appendChild(colR16Right);
+            bracketColumns.R16_right = colR16Right;
+
+
+            const colR32Right = createRoundColumn(titles.R32);
+            R32_RIGHT_DISPLAY.forEach(id => {
+                const cfg = BRACKET_CONFIG.R32.find(m => m.id === id);
+                if (cfg) colR32Right.appendChild(createKoMatchElement('R32', cfg));
+            });
+            bracketEl.appendChild(colR32Right);
+            bracketColumns.R32_right = colR32Right;
+
+            bracketInitialized = true;
+        }
+
+
+
+        function alignMatchesBetween(roundHigher, roundLower, cfgList, colHigher) {
+            if (!colHigher) return;
+            const colRect = colHigher.getBoundingClientRect();
+            let maxBottom = 0;
+
+            cfgList.forEach(cfg => {
+                const higherDom = koDom[roundHigher][cfg.id];
+                if (!higherDom) return;
+                const matchEl = higherDom.el;
+                const lowerDom1 = koDom[roundLower][cfg.from1];
+                const lowerDom2 = koDom[roundLower][cfg.from2];
+                if (!lowerDom1 || !lowerDom2) return;
+
+                const r1 = lowerDom1.el.getBoundingClientRect();
+                const r2 = lowerDom2.el.getBoundingClientRect();
+
+                const center1 = (r1.top + r1.bottom) / 2;
+                const center2 = (r2.top + r2.bottom) / 2;
+                const midY = (center1 + center2) / 2;
+
+                const matchRect = matchEl.getBoundingClientRect();
+                const top = midY - colRect.top - matchRect.height / 2;
+
+                matchEl.style.position = 'absolute';
+                matchEl.style.left = '0';
+                matchEl.style.right = '0';
+                matchEl.style.top = top + 'px';
+
+                const bottom = top + matchRect.height;
+                if (bottom > maxBottom) maxBottom = bottom;
+            });
+
+            colHigher.style.position = 'relative';
+            colHigher.style.minHeight = (maxBottom + 20) + 'px';
+        }
+
+        function getMatchDom(matchId) {
+            const roundKey = matchId.split('-')[0];
+            const roundDom = koDom[roundKey];
+            if (!roundDom) return null;
+            return roundDom[matchId] || null;
+        }
+
+        function drawBracketLines() {
+            if (!bracketInitialized) return;
+            const wrapper = document.getElementById('bracket-wrapper');
+            const svg = document.getElementById('bracket-lines');
+            if (!wrapper || !svg) return;
+
+            const rect = wrapper.getBoundingClientRect();
+            const width = rect.width || 1;
+            const height = rect.height || 1;
+
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+            while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+            const strokeColor = 'rgba(148,163,255,0.7)';
+            const strokeWidth = 1.5;
+
+            function addBracketLine(fromMatchEl, toMatchEl) {
+                if (!fromMatchEl || !toMatchEl) return;
+
+                const r1 = fromMatchEl.getBoundingClientRect();
+                const r2 = toMatchEl.getBoundingClientRect();
+
+                let xStart, xEnd;
+                const yStart = (r1.top + r1.bottom) / 2 - rect.top;
+                const yEnd = (r2.top + r2.bottom) / 2 - rect.top;
+
+                if (r1.right <= r2.left) {
+                    xStart = r1.right - rect.left;
+                    xEnd = r2.left - rect.left;
+                } else if (r2.right <= r1.left) {
+                    xStart = r1.left - rect.left;
+                    xEnd = r2.right - rect.left;
+                } else {
+                    xStart = (r1.left + r1.right) / 2 - rect.left;
+                    xEnd = (r2.left + r2.right) / 2 - rect.left;
+                }
+
+                const midX = (xStart + xEnd) / 2;
+
+                const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                const points = [
+                    `${xStart},${yStart}`,
+                    `${midX},${yStart}`,
+                    `${midX},${yEnd}`,
+                    `${xEnd},${yEnd}`
+                ].join(' ');
+                poly.setAttribute('points', points);
+                poly.setAttribute('fill', 'none');
+                poly.setAttribute('stroke', strokeColor);
+                poly.setAttribute('stroke-width', strokeWidth);
+                poly.setAttribute('stroke-linecap', 'round');
+
+                svg.appendChild(poly);
+            }
+
+            function linkRound(nextRound, prevRound, cfgList) {
+                cfgList.forEach(cfg => {
+                    const toDom = koDom[nextRound][cfg.id];
+                    if (!toDom) return;
+                    const toEl = toDom.el;
+
+                    const fromDom1 = getMatchDom(cfg.from1);
+                    const fromDom2 = getMatchDom(cfg.from2);
+
+                    if (fromDom1) addBracketLine(fromDom1.el, toEl);
+                    if (fromDom2) addBracketLine(fromDom2.el, toEl);
+                });
+            }
+
+            linkRound('R16', 'R32', BRACKET_CONFIG.R16);
+            linkRound('QF', 'R16', BRACKET_CONFIG.QF);
+            linkRound('SF', 'QF', BRACKET_CONFIG.SF);
+            linkRound('F', 'SF', BRACKET_CONFIG.F);
+        }
+
+        function layoutBracket() {
+            if (!bracketInitialized) return;
+
+
+            ['R16', 'QF', 'SF', 'F'].forEach(round => {
+                BRACKET_CONFIG[round].forEach(cfg => {
+                    const dom = koDom[round][cfg.id];
+                    if (!dom) return;
+                    const el = dom.el;
+                    el.style.position = '';
+                    el.style.top = '';
+                });
+            });
+
+            const cols = bracketColumns;
+            if (!cols.R32_left || !cols.R32_right) return;
+
+
+            const R16_LEFT_CONFIGS = [
+                BRACKET_CONFIG.R16[0],
+                BRACKET_CONFIG.R16[1],
+                BRACKET_CONFIG.R16[4],
+                BRACKET_CONFIG.R16[5],
+            ];
+            const R16_RIGHT_CONFIGS = [
+                BRACKET_CONFIG.R16[2],
+                BRACKET_CONFIG.R16[3],
+                BRACKET_CONFIG.R16[6],
+                BRACKET_CONFIG.R16[7],
+            ];
+
+            const QF_LEFT_CONFIGS = [BRACKET_CONFIG.QF[0], BRACKET_CONFIG.QF[1]];
+            const QF_RIGHT_CONFIGS = [BRACKET_CONFIG.QF[2], BRACKET_CONFIG.QF[3]];
+
+
+            alignMatchesBetween('R16', 'R32', R16_LEFT_CONFIGS, cols.R16_left);
+            alignMatchesBetween('R16', 'R32', R16_RIGHT_CONFIGS, cols.R16_right);
+
+
+            alignMatchesBetween('QF', 'R16', QF_LEFT_CONFIGS, cols.QF_left);
+            alignMatchesBetween('QF', 'R16', QF_RIGHT_CONFIGS, cols.QF_right);
+
+
+            alignMatchesBetween('SF', 'QF', BRACKET_CONFIG.SF.slice(0, 1), cols.SF_left);
+            alignMatchesBetween('SF', 'QF', BRACKET_CONFIG.SF.slice(1, 2), cols.SF_right);
+
+
+            if (cols.F_center) {
+                alignMatchesBetween('F', 'SF', BRACKET_CONFIG.F, cols.F_center);
+            }
+
+            drawBracketLines();
+        }
+
+
+        function toggleWinner(matchId, which, row1, row2, winnerName) {
+            const current = knockoutWinners[matchId] || '';
+            const clicked = winnerName || '';
+
+            if (current === clicked && clicked !== '') {
+                delete knockoutWinners[matchId];
+                row1.classList.remove('winner');
+                row2.classList.remove('winner');
+                updateKnockoutFromWinners();
+            } else {
+                setWinner(matchId, which, row1, row2, winnerName);
+            }
+        }
+
+        function setWinner(matchId, which, row1, row2, winnerName) {
+            row1.classList.remove('winner');
+            row2.classList.remove('winner');
+
+            if (which === 1) row1.classList.add('winner');
+            else row2.classList.add('winner');
+
+            knockoutWinners[matchId] = winnerName || '';
+            updateKnockoutFromWinners();
+            setTimeout(layoutBracket, 0);
+
+            if (matchId === 'F-1' && winnerName && winnerName !== '?') {
+                launchConfetti();
+                showChampionPopup(winnerName);
+            }
+        }
+
+
+        function updateKnockoutFromWinners() {
+            BRACKET_CONFIG.R16.forEach(cfg => {
+                const dom = koDom.R16[cfg.id];
+                if (!dom) return;
+                const name1 = knockoutWinners[cfg.from1] || dom.team1NameSpan.dataset.placeholder;
+                const name2 = knockoutWinners[cfg.from2] || dom.team2NameSpan.dataset.placeholder;
+                renderTeamLabel(dom.team1NameSpan, name1);
+                renderTeamLabel(dom.team2NameSpan, name2);
+            });
+
+            BRACKET_CONFIG.QF.forEach(cfg => {
+                const dom = koDom.QF[cfg.id];
+                if (!dom) return;
+                const name1 = knockoutWinners[cfg.from1] || dom.team1NameSpan.dataset.placeholder;
+                const name2 = knockoutWinners[cfg.from2] || dom.team2NameSpan.dataset.placeholder;
+                renderTeamLabel(dom.team1NameSpan, name1);
+                renderTeamLabel(dom.team2NameSpan, name2);
+            });
+
+            BRACKET_CONFIG.SF.forEach(cfg => {
+                const dom = koDom.SF[cfg.id];
+                if (!dom) return;
+                const name1 = knockoutWinners[cfg.from1] || dom.team1NameSpan.dataset.placeholder;
+                const name2 = knockoutWinners[cfg.from2] || dom.team2NameSpan.dataset.placeholder;
+                renderTeamLabel(dom.team1NameSpan, name1);
+                renderTeamLabel(dom.team2NameSpan, name2);
+            });
+
+            BRACKET_CONFIG.F.forEach(cfg => {
+                const dom = koDom.F[cfg.id];
+                if (!dom) return;
+                const name1 = knockoutWinners[cfg.from1] || dom.team1NameSpan.dataset.placeholder;
+                const name2 = knockoutWinners[cfg.from2] || dom.team2NameSpan.dataset.placeholder;
+                renderTeamLabel(dom.team1NameSpan, name1);
+                renderTeamLabel(dom.team2NameSpan, name2);
+            });
+
+            const finalId = BRACKET_CONFIG.F[0].id;
+            const champName = knockoutWinners[finalId] || '?';
+            const champSpan = document.getElementById('champion-name');
+            if (champSpan) {
+                champSpan.dataset.placeholder = '';
+                renderTeamLabel(champSpan, champName);
+            }
+        }
+
+        function resetKnockoutSelections() {
+            Object.keys(knockoutWinners).forEach(k => delete knockoutWinners[k]);
+
+            document.querySelectorAll('.ko-team').forEach(row => row.classList.remove('winner'));
+
+            ['R16', 'QF', 'SF', 'F'].forEach(round => {
+                BRACKET_CONFIG[round].forEach(cfg => {
+                    const dom = koDom[round][cfg.id];
+                    if (!dom) return;
+                    renderTeamLabel(dom.team1NameSpan, dom.team1NameSpan.dataset.placeholder);
+                    renderTeamLabel(dom.team2NameSpan, dom.team2NameSpan.dataset.placeholder);
+                });
+            });
+
+            const champSpan = document.getElementById('champion-name');
+            if (champSpan) {
+                champSpan.dataset.placeholder = '';
+                renderTeamLabel(champSpan, '?');
+            }
+
+            setTimeout(layoutBracket, 0);
+        }
+
+
+
+
+        function buildSlotMap() {
+            const slot = {};
+            GROUP_IDS.forEach(groupId => {
+                const ranks = groupRanks[groupId];
+                if (!ranks) return;
+                if (ranks.first) slot['1' + groupId] = ranks.first;
+                if (ranks.second) slot['2' + groupId] = ranks.second;
+                if (ranks.third) slot['3' + groupId] = ranks.third;
+            });
+            return slot;
+        }
+
+
+
+        function computeThirdAssignments(slot) {
+            const qualifiedGroups = Array.from(selectedThirdGroups);
+
+
+            const matchesNeedingThird = BRACKET_CONFIG.R32.filter(cfg => Array.isArray(cfg.thirdGroups));
+
+            const mapping = {};
+            const usedGroups = new Set();
+
+            function backtrack(i) {
+                if (i === matchesNeedingThird.length) return true;
+
+                const cfg = matchesNeedingThird[i];
+                const allowed = cfg.thirdGroups;
+
+                for (const g of qualifiedGroups) {
+                    if (usedGroups.has(g)) continue;
+                    if (!allowed.includes(g)) continue;
+
+                    const teamName = slot['3' + g];
+                    if (!teamName) continue;
+
+                    mapping[cfg.id] = { group: g, team: teamName };
+                    usedGroups.add(g);
+
+                    if (backtrack(i + 1)) return true;
+
+                    usedGroups.delete(g);
+                    delete mapping[cfg.id];
+                }
+
+                return false;
+            }
+
+            if (!backtrack(0)) {
+                console.warn('[3e] Impossible de trouver une affectation parfaite, fallback simple.');
+                const mf = {};
+                let idx = 0;
+                for (const cfg of matchesNeedingThird) {
+                    const g = qualifiedGroups[idx % qualifiedGroups.length];
+                    const teamName = slot['3' + g] || ('3e ' + g);
+                    mf[cfg.id] = { group: g, team: teamName };
+                    idx++;
+                }
+                return mf;
+            }
+
+            return mapping;
+        }
+
+
+        function updateKnockoutSeeds() {
+            if (!bracketInitialized) return;
+
+            const slot = buildSlotMap();
+            const thirdAssignments = computeThirdAssignments(slot);
+
+            const champSpan = document.getElementById('champion-name');
+            if (champSpan) {
+                champSpan.dataset.placeholder = '';
+                renderTeamLabel(champSpan, '?');
+            }
+
+
+            BRACKET_CONFIG.R32.forEach(cfg => {
+                const dom = koDom.R32[cfg.id];
+                if (!dom) return;
+
+                const name1 = cfg.slot1
+                    ? (slot[cfg.slot1] || dom.team1NameSpan.dataset.placeholder)
+                    : dom.team1NameSpan.dataset.placeholder;
+
+                let name2;
+                if (cfg.slot2) {
+                    name2 = slot[cfg.slot2] || dom.team2NameSpan.dataset.placeholder;
+                } else if (cfg.thirdGroups) {
+                    const assign = thirdAssignments[cfg.id];
+                    name2 = assign ? assign.team : dom.team2NameSpan.dataset.placeholder;
+                } else {
+                    name2 = dom.team2NameSpan.dataset.placeholder;
+                }
+
+                renderTeamLabel(dom.team1NameSpan, name1);
+                renderTeamLabel(dom.team2NameSpan, name2);
+            });
+
+
+            resetKnockoutSelections();
+        }
+
+
+
+
+
+        function attachListeners() {
+
+            const winnerBackdrop = document.getElementById('winner-modal-backdrop');
+            const winnerCloseBtn = document.getElementById('winner-modal-close');
+            if (winnerCloseBtn) {
+                winnerCloseBtn.addEventListener('click', closeWinnerModal);
+            }
+            if (winnerBackdrop) {
+                winnerBackdrop.addEventListener('click', (e) => {
+                    if (e.target === winnerBackdrop) closeWinnerModal();
+                });
+            }
+
+
+            const openPlayoffBtn = document.getElementById('open-playoff-modal');
+            const playoffApplyBtn = document.getElementById('playoff-apply');
+            const playoffCancelBtn = document.getElementById('playoff-cancel');
+            const playoffBackdrop = document.getElementById('playoff-modal-backdrop');
+
+            if (openPlayoffBtn) {
+                openPlayoffBtn.addEventListener('click', openPlayoffModal);
+            }
+            if (playoffApplyBtn) {
+                playoffApplyBtn.addEventListener('click', applyPlayoffSelections);
+            }
+            if (playoffCancelBtn) {
+                playoffCancelBtn.addEventListener('click', closePlayoffModal);
+            }
+            if (playoffBackdrop) {
+                playoffBackdrop.addEventListener('click', (e) => {
+                    if (e.target === playoffBackdrop) closePlayoffModal();
+                });
+            }
+
+
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const step = parseInt(btn.dataset.step, 10);
+                    if (step === 1) {
+                        showStep(1);
+                    } else if (step === 2) {
+                        refreshThirdTable();
+                        showStep(2);
+                    } else if (step === 3) {
+                        if (selectedThirdGroups.size !== 8) {
+                            alert('يجب اختيار 8 أصحاب المركز الثالث المتأهلين بالضبط.');
+                            return;
+                        }
+                        updateKnockoutSeeds();
+                        setTimeout(layoutBracket, 0);
+                        showStep(3);
+                    }
+                });
+            });
+
+
+            const goStep2Btn = document.getElementById('go-step2-btn');
+            const backStep1Btn = document.getElementById('back-step1-btn');
+            const goStep3Btn = document.getElementById('go-step3-btn');
+            const backStep2Btn = document.getElementById('back-step2-btn');
+
+            if (goStep2Btn) {
+                goStep2Btn.addEventListener('click', () => {
+                    refreshThirdTable();
+                    showStep(2);
+                });
+            }
+            if (backStep1Btn) {
+                backStep1Btn.addEventListener('click', () => {
+                    showStep(1);
+                });
+            }
+            if (goStep3Btn) {
+                goStep3Btn.addEventListener('click', () => {
+                    if (selectedThirdGroups.size !== 8) {
+                        alert('يجب اختيار 8 أصحاب المركز الثالث المتأهلين بالضبط.');
+                        return;
+                    }
+                    updateKnockoutSeeds();
+                    setTimeout(layoutBracket, 0);
+                    showStep(3);
+                });
+            }
+            if (backStep2Btn) {
+                backStep2Btn.addEventListener('click', () => {
+                    showStep(2);
+                });
+            }
+
+
+            document.querySelectorAll('.group-info-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const groupId = btn.dataset.groupId;
+                    if (!groupId) return;
+                    toggleMatchInfoBubble(btn, `GROUP-${groupId}`);
+                });
+            });
+
+
+            window.addEventListener('resize', () => {
+                setTimeout(layoutBracket, 0);
+            });
+
+
+            document.addEventListener('click', (e) => {
+                if (!currentInfoBubble) return;
+                const isButton = e.target.closest('.match-info-btn');
+                const isBubble = e.target.closest('.match-info-bubble');
+                if (!isButton && !isBubble) {
+                    currentInfoBubble.remove();
+                    currentInfoBubble = null;
+                    currentInfoBubbleMatchId = null;
+                }
+            });
+
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && currentInfoBubble) {
+                    currentInfoBubble.remove();
+                    currentInfoBubble = null;
+                    currentInfoBubbleMatchId = null;
+                }
+            });
+
+
+            const matchInfoMobileBackdrop = document.getElementById('match-info-mobile-backdrop');
+            const matchInfoMobileClose = document.getElementById('match-info-mobile-close');
+
+            if (matchInfoMobileClose) {
+                matchInfoMobileClose.addEventListener('click', closeMatchInfoMobileModal);
+            }
+            if (matchInfoMobileBackdrop) {
+                matchInfoMobileBackdrop.addEventListener('click', (e) => {
+                    if (e.target === matchInfoMobileBackdrop) {
+                        closeMatchInfoMobileModal();
+                    }
+                });
+            }
+        }
+
+
+
+
+    </script>
+
+    <div class="modal-backdrop" id="playoff-modal-backdrop" style="display:none;">
+        <div class="modal">
+            <h2>اختيار الفائزين في الملحق</h2>
+            <p class="modal-subtitle">
+                لكل مسار ملحق، اختر الفريق المتأهل.
+                إذا تركت الخيار الافتراضي، فسيبقى «الفائز في ملحق …».
+            </p>
+            <div id="playoff-slots-container"></div>
+            <div class="modal-footer">
+                <button class="btn" id="playoff-cancel">إلغاء</button>
+                <button class="btn primary" id="playoff-apply">تطبيق</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="winner-modal-backdrop" style="display:none;">
+        <div class="modal">
+            <h2>الفائز الذي توقّعته</h2>
+            <p class="modal-subtitle">
+                هذا هو البطل الذي اخترته لكأس العالم 2026.
+            </p>
+            <div class="winner-modal-content" id="winner-modal-content">
+
+            </div>
+            <div class="winner-modal-summary" id="winner-modal-summary">
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" id="winner-modal-close">حسنًا</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="match-info-mobile-backdrop" style="display:none;">
+        <div class="modal">
+            <h2 id="match-info-mobile-title">معلومات المباراة</h2>
+            <div id="match-info-mobile-content"></div>
+            <div class="modal-footer">
+                <button class="btn primary" id="match-info-mobile-close">إغلاق</button>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            createGroups();
+            setupDragAndDrop();
+            attachListeners();
+            createKnockout();
+
+            showStep(1);
+
+
+            setTimeout(() => {
+                layoutBracket();
+            }, 0);
+        });
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdowns = document.querySelectorAll('.lang-dropdown');
+
+            dropdowns.forEach(function (dropdown) {
+                const btn = dropdown.querySelector('.lang-btn');
+
+                if (!btn) return;
+
+
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    const isOpen = dropdown.classList.contains('open');
+
+
+                    document.querySelectorAll('.lang-dropdown.open').forEach(function (d) {
+                        d.classList.remove('open');
+                        const b = d.querySelector('.lang-btn');
+                        if (b) b.setAttribute('aria-expanded', 'false');
+                    });
+
+
+                    if (!isOpen) {
+                        dropdown.classList.add('open');
+                        btn.setAttribute('aria-expanded', 'true');
+                    } else {
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+
+                btn.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        btn.click();
+                    }
+                });
+            });
+
+
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.lang-dropdown.open').forEach(function (d) {
+                    d.classList.remove('open');
+                    const b = d.querySelector('.lang-btn');
+                    if (b) b.setAttribute('aria-expanded', 'false');
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</body>
+</html>
